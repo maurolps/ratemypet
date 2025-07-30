@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "git-commit-msg-linter": "^5.0.8"
+    "@types/node": "^24.1.0",
+    "git-commit-msg-linter": "^5.0.8",
+    "typescript": "^5.8.3"
   }
 }
