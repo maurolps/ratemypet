@@ -1,6 +1,9 @@
 {
   "devDependencies": {
-    "husky": "^9.1.7"
+    "@biomejs/biome": "2.1.3",
+    "git-commit-msg-linter": "^5.0.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2"
   },
   "scripts": {
     "prepare": "husky"

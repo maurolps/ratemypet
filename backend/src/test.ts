@@ -1,5 +1,5 @@
-function test():string {
-  return 'Typescript test'
+function test(jenis: string): string {
+  return jenis;
 }
 
-test();
+test("jenis");
