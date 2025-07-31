@@ -1,4 +1,4 @@
-function test(): string {
+function test():string {
   return 'Typescript test'
 }
 
