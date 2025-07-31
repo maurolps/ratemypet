@@ -2,8 +2,10 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "./backend/dist",
+    "rootDir": "./backend/src",
+    "moduleResolution": "Node",
+    "types": ["node", "vitest/globals"],
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,5 +13,5 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
   },
-  "include": ["./src/**/*"],
+  "include": ["./backend/src/**/*"],
 }

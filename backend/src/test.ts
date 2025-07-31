@@ -1,5 +1,3 @@
-function test(jenis: string): string {
-  return jenis;
+export default function helloWorld(world: string): string {
+  return world;
 }
-
-test("jenis");
