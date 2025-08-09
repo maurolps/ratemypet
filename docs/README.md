@@ -6,4 +6,4 @@ This folder contains all technical documentation related to the RateMyPet projec
 - [Use Cases and Functional Requirements](./requirements/)
 - [Branching Strategy](./branching-strategy.md)
 - Domain Analysis (WIP)
-- Architecture Diagrams (WIP)
+- [Architecture Diagrams](./diagrams/)
