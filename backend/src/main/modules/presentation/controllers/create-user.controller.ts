@@ -1,3 +1,5 @@
+import type { CreateUser } from "../../domain/usecases/create-user";
+
 interface HttpRequest {
   body: {
     name: string;
@@ -9,6 +11,7 @@ interface HttpRequest {
 
 interface HttpResponse {
   body: {
+    id: string;
     name: string;
     email: string;
   };
@@ -16,15 +19,21 @@ interface HttpResponse {
 }
 
 export class CreateUserController {
-  handle(request: HttpRequest): Promise<HttpResponse> {
-    return new Promise((res) => {
-      res({
-        body: {
-          name: request.body.name,
-          email: request.body.email,
-        },
-        status: 201,
-      });
+  constructor(private readonly createUser: CreateUser) {}
+  async handle(request: HttpRequest): Promise<HttpResponse> {
+    const { name, email, password } = request.body;
+    const createdUser = await this.createUser.create({
+      name,
+      email,
+      password,
     });
+    return {
+      body: {
+        id: createdUser.id,
+        name: createdUser.name,
+        email: createdUser.email,
+      },
+      status: 201,
+    };
   }
 }
