@@ -6,12 +6,11 @@ import type {
 import { CreateUserController } from "./create-user.controller";
 
 class CreateUserStub implements CreateUser {
-  async create(user: CreateUserDTO): Promise<User> {
+  async execute(user: CreateUserDTO): Promise<User> {
     return {
       id: "valid_id",
       name: user.name,
       email: user.email,
-      passwordHash: "hashed_password",
     };
   }
 }
@@ -30,7 +29,6 @@ describe("CreateUserController", () => {
         name: "valid_name",
         email: "valid_email@mail.com",
         password: "valid_password",
-        confirmPassword: "valid_password",
       },
     };
 
@@ -41,13 +39,12 @@ describe("CreateUserController", () => {
 
   it("Should call CreateUser usecase with correct values", async () => {
     const { sut, createUserStub } = makeSut();
-    const createUserSpy = vi.spyOn(createUserStub, "create");
+    const createUserSpy = vi.spyOn(createUserStub, "execute");
     const dummyRequest = {
       body: {
         name: "any_name",
         email: "any_email@mail.com",
         password: "any_password",
-        confirmPassword: "any_password",
       },
     };
 
