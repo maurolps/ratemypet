@@ -56,4 +56,23 @@ describe("CreateUserController", () => {
       password: dummyRequest.body.password,
     });
   });
+
+  it("Should return 500 on unexpected error", async () => {
+    const { sut, createUserStub } = makeSut();
+    vi.spyOn(createUserStub, "execute").mockRejectedValueOnce(
+      new Error("any_error"),
+    );
+    const dummyRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
+
+    const httpResponse = await sut.handle(dummyRequest);
+
+    expect(httpResponse.status).toBe(500);
+    expect(httpResponse.error).toEqual(new Error("Internal server error"));
+  });
 });
