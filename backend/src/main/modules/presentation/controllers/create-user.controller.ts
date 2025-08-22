@@ -14,10 +14,36 @@ type HttpResponse = {
     name: string;
     email: string;
   };
-  error?: unknown;
+  error?: string;
   status: number;
 };
 
+class DomainError extends Error {
+  readonly isDomainError = true;
+  constructor(public readonly code: string) {
+    super(code);
+    this.name = "DomainError";
+  }
+}
+
+const isDomainError = (err: unknown): err is DomainError => {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "isDomainError" in err &&
+    (err as { isDomainError?: unknown }).isDomainError === true
+  );
+};
+
+const ErrorPresenter = (err: unknown): HttpResponse => {
+  if (isDomainError(err)) {
+    switch (err.code) {
+      case "EMAIL_TAKEN":
+        return { error: "Email already in use", status: 409 };
+    }
+  }
+  return { error: "Internal server error", status: 500 };
+};
 export class CreateUserController {
   constructor(private readonly createUser: CreateUser) {}
   async handle(request: HttpRequest): Promise<HttpResponse> {
@@ -36,11 +62,8 @@ export class CreateUserController {
         },
         status: 201,
       };
-    } catch (_) {
-      return {
-        error: new Error("Internal server error"),
-        status: 500,
-      };
+    } catch (error) {
+      return ErrorPresenter(error);
     }
   }
 }
