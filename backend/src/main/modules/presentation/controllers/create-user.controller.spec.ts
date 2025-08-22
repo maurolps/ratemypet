@@ -1,4 +1,5 @@
 import type { User } from "../../domain/entities/user";
+import { DomainError } from "../../domain/errors/domain-error";
 import type {
   CreateUser,
   CreateUserDTO,
@@ -12,14 +13,6 @@ class CreateUserStub implements CreateUser {
       name: user.name,
       email: user.email,
     };
-  }
-}
-
-class DomainError extends Error {
-  readonly isDomainError = true;
-  constructor(public readonly code: string) {
-    super(code);
-    this.name = "DomainError";
   }
 }
 
