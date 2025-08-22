@@ -1,23 +1,7 @@
 import { isDomainError } from "../../domain/errors/domain-error";
 import type { CreateUser } from "../../domain/usecases/create-user";
-
-type HttpRequest = {
-  body: {
-    name: string;
-    email: string;
-    password: string;
-  };
-};
-
-type HttpResponse = {
-  body?: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  error?: string;
-  status: number;
-};
+import type { HttpRequest } from "../dtos/http-request.dto";
+import type { HttpResponse } from "../dtos/http-response.dto";
 
 const ErrorPresenter = (err: unknown): HttpResponse => {
   if (isDomainError(err)) {
@@ -28,6 +12,7 @@ const ErrorPresenter = (err: unknown): HttpResponse => {
   }
   return { error: "Internal server error", status: 500 };
 };
+
 export class CreateUserController {
   constructor(private readonly createUser: CreateUser) {}
   async handle(request: HttpRequest): Promise<HttpResponse> {
