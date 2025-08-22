@@ -2,9 +2,11 @@ import type { CreateUser } from "../../domain/usecases/create-user";
 import type { HttpRequest } from "../dtos/http-request.dto";
 import type { HttpResponse } from "../dtos/http-response.dto";
 import { ErrorPresenter } from "../errors/error-presenter";
+import { created } from "../http/http-helpers";
 
 export class CreateUserController {
   constructor(private readonly createUser: CreateUser) {}
+
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
       const { name, email, password } = request.body;
@@ -13,14 +15,7 @@ export class CreateUserController {
         email,
         password,
       });
-      return {
-        body: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-        status: 201,
-      };
+      return created(user);
     } catch (error) {
       return ErrorPresenter(error);
     }
