@@ -1,10 +1,11 @@
-import type { User } from "../../domain/entities/user";
-import { DomainError } from "../../domain/errors/domain-error";
+import { describe, expect, it, vi } from "vitest";
+import type { User } from "../../src/main/modules/domain/entities/user";
+import { DomainError } from "../../src/main/modules/domain/errors/domain-error";
 import type {
   CreateUser,
   CreateUserDTO,
-} from "../../domain/usecases/create-user";
-import { CreateUserController } from "./create-user.controller";
+} from "../../src/main/modules/domain/usecases/create-user";
+import { CreateUserController } from "../../src/main/modules/presentation/controllers/create-user.controller";
 
 class CreateUserStub implements CreateUser {
   async execute(user: CreateUserDTO): Promise<User> {
