@@ -1,29 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
-import type { User } from "../../src/main/modules/domain/entities/user";
 import { DomainError } from "../../src/main/modules/domain/errors/domain-error";
-import type {
-  CreateUser,
-  CreateUserDTO,
-} from "../../src/main/modules/domain/usecases/create-user";
 import { CreateUserController } from "../../src/main/modules/presentation/controllers/create-user.controller";
-
-class CreateUserStub implements CreateUser {
-  async execute(user: CreateUserDTO): Promise<User> {
-    return {
-      id: "valid_id",
-      name: user.name,
-      email: user.email,
-    };
-  }
-}
-
-const makeSut = () => {
-  const createUserStub = new CreateUserStub();
-  const sut = new CreateUserController(createUserStub);
-  return { sut, createUserStub };
-};
+import { CreateUserStub } from "./doubles/create-user.usecase.stub";
 
 describe("CreateUserController", () => {
+  const makeSut = () => {
+    const createUserStub = new CreateUserStub();
+    const sut = new CreateUserController(createUserStub);
+    const createUserSpy = vi.spyOn(createUserStub, "execute");
+    return { sut, createUserStub, createUserSpy };
+  };
+
   it("Should return 201 when user is created successfully", async () => {
     const { sut } = makeSut();
     const dummyRequest = {
@@ -40,8 +27,7 @@ describe("CreateUserController", () => {
   });
 
   it("Should call CreateUser usecase with correct values", async () => {
-    const { sut, createUserStub } = makeSut();
-    const createUserSpy = vi.spyOn(createUserStub, "execute");
+    const { sut, createUserSpy } = makeSut();
     const dummyRequest = {
       body: {
         name: "any_name",
@@ -60,10 +46,8 @@ describe("CreateUserController", () => {
   });
 
   it("Should return 500 on unexpected error", async () => {
-    const { sut, createUserStub } = makeSut();
-    vi.spyOn(createUserStub, "execute").mockRejectedValueOnce(
-      new Error("any_error"),
-    );
+    const { sut, createUserSpy } = makeSut();
+    createUserSpy.mockRejectedValueOnce(new Error("any_error"));
     const dummyRequest = {
       body: {
         name: "any_name",
@@ -79,10 +63,8 @@ describe("CreateUserController", () => {
   });
 
   it("Should return 409 when email is already in use", async () => {
-    const { sut, createUserStub } = makeSut();
-    vi.spyOn(createUserStub, "execute").mockRejectedValueOnce(
-      new DomainError("EMAIL_TAKEN"),
-    );
+    const { sut, createUserSpy } = makeSut();
+    createUserSpy.mockRejectedValueOnce(new DomainError("EMAIL_TAKEN"));
     const dummyRequest = {
       body: {
         name: "any_name",
