@@ -15,6 +15,14 @@ class CreateUserStub implements CreateUser {
   }
 }
 
+class DomainError extends Error {
+  readonly isDomainError = true;
+  constructor(public readonly code: string) {
+    super(code);
+    this.name = "DomainError";
+  }
+}
+
 const makeSut = () => {
   const createUserStub = new CreateUserStub();
   const sut = new CreateUserController(createUserStub);
@@ -73,6 +81,25 @@ describe("CreateUserController", () => {
     const httpResponse = await sut.handle(dummyRequest);
 
     expect(httpResponse.status).toBe(500);
-    expect(httpResponse.error).toEqual(new Error("Internal server error"));
+    expect(httpResponse.error).toEqual("Internal server error");
+  });
+
+  it("Should return 409 when email is already in use", async () => {
+    const { sut, createUserStub } = makeSut();
+    vi.spyOn(createUserStub, "execute").mockRejectedValueOnce(
+      new DomainError("EMAIL_TAKEN"),
+    );
+    const dummyRequest = {
+      body: {
+        name: "any_name",
+        email: "taken_email",
+        password: "any_password",
+      },
+    };
+
+    const httpResponse = await sut.handle(dummyRequest);
+
+    expect(httpResponse.status).toBe(409);
+    expect(httpResponse.error).toEqual("Email already in use");
   });
 });
