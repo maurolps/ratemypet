@@ -1,17 +1,10 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "outDir": "./backend/dist",
-    "rootDir": "./backend/src",
-    "moduleResolution": "Node",
-    "types": ["node", "vitest/globals"],
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitOverride": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "types": ["node"]
   },
-  "include": ["./backend/src/**/*"],
+  "include": ["./backend/src/**/*", "./backend/tests/**/*"]
 }

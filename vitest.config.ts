@@ -10,4 +10,10 @@ export default defineConfig({
       reportsDirectory: "./backend/coverage",
     },
   },
+  resolve: {
+    alias: {
+      "@domain": "/backend/src/main/modules/domain",
+      "@presentation": "/backend/src/main/modules/presentation",
+    },
+  },
 });

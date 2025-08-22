@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./backend/dist",
+    "rootDir": "./backend/src",
+    "noEmit": false
+  },
+  "include": ["./backend/src/**/*"],
+  "exclude": ["./backend/tests/**/*"]
+}
