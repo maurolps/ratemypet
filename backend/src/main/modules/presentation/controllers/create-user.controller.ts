@@ -1,3 +1,4 @@
+import { isDomainError } from "../../domain/errors/domain-error";
 import type { CreateUser } from "../../domain/usecases/create-user";
 
 type HttpRequest = {
@@ -16,23 +17,6 @@ type HttpResponse = {
   };
   error?: string;
   status: number;
-};
-
-class DomainError extends Error {
-  readonly isDomainError = true;
-  constructor(public readonly code: string) {
-    super(code);
-    this.name = "DomainError";
-  }
-}
-
-const isDomainError = (err: unknown): err is DomainError => {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    "isDomainError" in err &&
-    (err as { isDomainError?: unknown }).isDomainError === true
-  );
 };
 
 const ErrorPresenter = (err: unknown): HttpResponse => {
