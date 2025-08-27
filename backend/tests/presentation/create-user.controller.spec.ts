@@ -1,6 +1,6 @@
+import { AppError } from "@presentation/errors/app-error";
+import { CreateUserController } from "@presentation/controllers/create-user.controller";
 import { describe, expect, it, vi } from "vitest";
-import { DomainError } from "../../src/main/modules/domain/errors/domain-error";
-import { CreateUserController } from "../../src/main/modules/presentation/controllers/create-user.controller";
 import { CreateUserStub } from "./doubles/create-user.usecase.stub";
 
 describe("CreateUserController", () => {
@@ -64,7 +64,7 @@ describe("CreateUserController", () => {
 
   it("Should return 409 when email is already in use", async () => {
     const { sut, createUserSpy } = makeSut();
-    createUserSpy.mockRejectedValueOnce(new DomainError("EMAIL_TAKEN"));
+    createUserSpy.mockRejectedValueOnce(new AppError("EMAIL_TAKEN"));
     const dummyRequest = {
       body: {
         name: "any_name",

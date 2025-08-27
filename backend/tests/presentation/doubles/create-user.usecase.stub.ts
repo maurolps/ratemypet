@@ -1,8 +1,5 @@
-import type { User } from "../../../src/main/modules/domain/entities/user";
-import type {
-  CreateUser,
-  CreateUserDTO,
-} from "../../../src/main/modules/domain/usecases/create-user";
+import type { User } from "@domain/entities/user";
+import type { CreateUser, CreateUserDTO } from "@domain/usecases/create-user";
 
 export class CreateUserStub implements CreateUser {
   async execute(user: CreateUserDTO): Promise<User> {
