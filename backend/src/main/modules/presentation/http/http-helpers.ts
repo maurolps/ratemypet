@@ -25,3 +25,11 @@ export const serverError = (): HttpResponse => ({
     message: "Internal server error",
   },
 });
+
+export const badRequest = (message: string): HttpResponse => ({
+  status: 400,
+  body: {
+    message,
+    name: "BadRequestError",
+  },
+});
