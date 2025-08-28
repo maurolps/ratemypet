@@ -1,0 +1,1 @@
+export type ERROR_CODE = "EMAIL_TAKEN"; // "EMAIL_TAKEN" | "INVALID_EMAIL" ...;
