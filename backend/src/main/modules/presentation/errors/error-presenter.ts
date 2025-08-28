@@ -1,13 +1,17 @@
 import { isAppError } from "./app-error";
-import type { HttpResponse } from "../dtos/http-response.dto";
-import { conflict, serverError } from "../http/http-helpers";
+import type { HttpResponse } from "@presentation/dtos/http-response.dto";
+import { conflict, serverError } from "@presentation/http/http-helpers";
+import type { ERROR_CODE } from "./error-codes";
+
+const ErrorResponse = {
+  EMAIL_TAKEN: conflict("Email already in use"),
+  // INVALID_EMAIL: conflict("..."),
+} as const satisfies Record<ERROR_CODE, HttpResponse>;
 
 export const ErrorPresenter = (err: unknown): HttpResponse => {
   if (isAppError(err)) {
-    switch (err.code) {
-      case "EMAIL_TAKEN":
-        return conflict("Email already in use");
-    }
+    const response = ErrorResponse[err.code];
+    return response;
   }
-  return serverError("Internal server error");
+  return serverError();
 };

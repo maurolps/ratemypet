@@ -1,5 +1,5 @@
-import type { User } from "../../domain/entities/user";
-import type { HttpResponse } from "../dtos/http-response.dto";
+import type { User } from "@domain/entities/user";
+import type { HttpResponse } from "@presentation/dtos/http-response.dto";
 
 export const created = (user: User): HttpResponse => ({
   status: 201,
@@ -10,12 +10,18 @@ export const created = (user: User): HttpResponse => ({
   },
 });
 
-export const conflict = (error: string): HttpResponse => ({
+export const conflict = (message: string): HttpResponse => ({
   status: 409,
-  error,
+  body: {
+    message,
+    name: "ConflictError",
+  },
 });
 
-export const serverError = (error: string): HttpResponse => ({
+export const serverError = (): HttpResponse => ({
   status: 500,
-  error,
+  body: {
+    name: "ServerError",
+    message: "Internal server error",
+  },
 });

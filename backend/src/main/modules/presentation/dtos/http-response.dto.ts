@@ -1,9 +1,9 @@
 export type HttpResponse = {
-  body?: {
-    id: string;
+  body: {
+    id?: string;
     name: string;
-    email: string;
+    email?: string;
+    message?: string;
   };
-  error?: string;
   status: number;
 };

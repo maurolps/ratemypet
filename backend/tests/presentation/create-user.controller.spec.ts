@@ -59,7 +59,7 @@ describe("CreateUserController", () => {
     const httpResponse = await sut.handle(dummyRequest);
 
     expect(httpResponse.status).toBe(500);
-    expect(httpResponse.error).toEqual("Internal server error");
+    expect(httpResponse.body.message).toEqual("Internal server error");
   });
 
   it("Should return 409 when email is already in use", async () => {
@@ -76,6 +76,6 @@ describe("CreateUserController", () => {
     const httpResponse = await sut.handle(dummyRequest);
 
     expect(httpResponse.status).toBe(409);
-    expect(httpResponse.error).toEqual("Email already in use");
+    expect(httpResponse.body.message).toEqual("Email already in use");
   });
 });
