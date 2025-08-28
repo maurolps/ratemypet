@@ -68,7 +68,7 @@ describe("CreateUserController", () => {
     const dummyRequest = {
       body: {
         name: "any_name",
-        email: "taken_email",
+        email: "taken_email@mail.com",
         password: "any_password",
       },
     };
@@ -77,5 +77,15 @@ describe("CreateUserController", () => {
 
     expect(httpResponse.status).toBe(409);
     expect(httpResponse.body.message).toEqual("Email already in use");
+  });
+
+  it("Should return 400 if body is missing", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {};
+
+    const httpResponse = await sut.handle(dummyRequest);
+
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual("Missing request body");
   });
 });
