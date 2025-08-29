@@ -161,5 +161,24 @@ describe("CreateUserController", () => {
       expect(httpResponse.status).toBe(400);
       expect(httpResponse.body.message).toEqual("Missing Param: password");
     });
+
+    it("Should return 400 if email is invalid", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "valid_name",
+          email: "invalid_email",
+          password: "valid_password",
+        },
+      };
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("INVALID_PARAM", "email");
+      });
+
+      const httpResponse = await sut.handle(dummyRequest);
+
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual("Invalid Param: email");
+    });
   });
 });
