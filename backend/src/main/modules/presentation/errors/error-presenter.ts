@@ -7,14 +7,19 @@ import {
 } from "@presentation/http/http-helpers";
 import type { ERROR_CODE } from "./error-codes";
 
-const ErrorResponse = {
-  EMAIL_TAKEN: conflict("Email already in use"),
-  MISSING_BODY: badRequest("Missing request body"),
-} as const satisfies Record<ERROR_CODE, HttpResponse>;
+type ErrorResponseType = {
+  [key in ERROR_CODE]: (detail?: string) => HttpResponse;
+};
 
-export const ErrorPresenter = (err: unknown): HttpResponse => {
-  if (isAppError(err)) {
-    const response = ErrorResponse[err.code];
+const ErrorResponse: ErrorResponseType = {
+  EMAIL_TAKEN: () => conflict("Email already in use"),
+  MISSING_BODY: () => badRequest("Missing request body"),
+  MISSING_PARAM: (detail) => badRequest(`Missing Param: ${detail}`),
+};
+
+export const ErrorPresenter = (error: unknown): HttpResponse => {
+  if (isAppError(error)) {
+    const response = ErrorResponse[error.code](error.detail);
     return response;
   }
   return serverError();
