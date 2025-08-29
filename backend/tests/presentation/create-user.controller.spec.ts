@@ -2,13 +2,18 @@ import { AppError } from "@presentation/errors/app-error";
 import { CreateUserController } from "@presentation/controllers/create-user.controller";
 import { describe, expect, it, vi } from "vitest";
 import { CreateUserStub } from "./doubles/create-user.usecase.stub";
+import { CreateUserValidatorStub } from "./doubles/create-user.validator.stub";
 
 describe("CreateUserController", () => {
   const makeSut = () => {
     const createUserStub = new CreateUserStub();
-    const sut = new CreateUserController(createUserStub);
+    const createUserValidatorStub = new CreateUserValidatorStub();
+    const sut = new CreateUserController(
+      createUserStub,
+      createUserValidatorStub,
+    );
     const createUserSpy = vi.spyOn(createUserStub, "execute");
-    return { sut, createUserStub, createUserSpy };
+    return { sut, createUserStub, createUserSpy, createUserValidatorStub };
   };
 
   it("Should return 201 when user is created successfully", async () => {
@@ -80,8 +85,12 @@ describe("CreateUserController", () => {
   });
 
   it("Should return 400 if body is missing", async () => {
-    const { sut } = makeSut();
+    const { sut, createUserValidatorStub } = makeSut();
     const dummyRequest = {};
+    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
+    createUserValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("MISSING_BODY");
+    });
 
     const httpResponse = await sut.handle(dummyRequest);
 
