@@ -180,5 +180,47 @@ describe("CreateUserController", () => {
       expect(httpResponse.status).toBe(400);
       expect(httpResponse.body.message).toEqual("Invalid Param: email");
     });
+
+    it("Should return 400 if password is less than 6 char", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "valid_name",
+          email: "valid_email@mail.com",
+          password: "123",
+        },
+      };
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("WEAK_PASSWORD");
+      });
+
+      const httpResponse = await sut.handle(dummyRequest);
+
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual(
+        "Invalid Param: <password> should be at least 6 characters long",
+      );
+    });
+
+    it("Should return 400 if name is less than 3 char", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "ab",
+          email: "valid_email@mail.com",
+          password: "valid_password",
+        },
+      };
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("INVALID_NAME");
+      });
+
+      const httpResponse = await sut.handle(dummyRequest);
+
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual(
+        "Invalid Param: <name> should be at least 3 characters long",
+      );
+    });
   });
 });
