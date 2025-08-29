@@ -1,1 +1,5 @@
-export type ERROR_CODE = "EMAIL_TAKEN" | "MISSING_BODY" | "MISSING_PARAM";
+export type ERROR_CODE =
+  | "EMAIL_TAKEN"
+  | "MISSING_BODY"
+  | "MISSING_PARAM"
+  | "INVALID_PARAM";

@@ -15,6 +15,7 @@ const ErrorResponse: ErrorResponseType = {
   EMAIL_TAKEN: () => conflict("Email already in use"),
   MISSING_BODY: () => badRequest("Missing request body"),
   MISSING_PARAM: (detail) => badRequest(`Missing Param: ${detail}`),
+  INVALID_PARAM: (detail) => badRequest(`Invalid Param: ${detail}`),
 };
 
 export const ErrorPresenter = (error: unknown): HttpResponse => {
