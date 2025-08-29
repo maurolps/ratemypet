@@ -97,4 +97,61 @@ describe("CreateUserController", () => {
     expect(httpResponse.status).toBe(400);
     expect(httpResponse.body.message).toEqual("Missing request body");
   });
+
+  it("Should return 400 if name is missing", async () => {
+    const { sut, createUserValidatorStub } = makeSut();
+    const dummyRequest = {
+      body: {
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
+    createUserValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("MISSING_PARAM", "name");
+    });
+
+    const httpResponse = await sut.handle(dummyRequest);
+
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual("Missing Param: name");
+  });
+
+  it("Should return 400 if email is missing", async () => {
+    const { sut, createUserValidatorStub } = makeSut();
+    const dummyRequest = {
+      body: {
+        name: "valid_name",
+        password: "valid_password",
+      },
+    };
+    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
+    createUserValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("MISSING_PARAM", "email");
+    });
+
+    const httpResponse = await sut.handle(dummyRequest);
+
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual("Missing Param: email");
+  });
+
+  it("Should return 400 if password is missing", async () => {
+    const { sut, createUserValidatorStub } = makeSut();
+    const dummyRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+      },
+    };
+    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
+    createUserValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("MISSING_PARAM", "password");
+    });
+
+    const httpResponse = await sut.handle(dummyRequest);
+
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual("Missing Param: password");
+  });
 });
