@@ -13,145 +13,153 @@ describe("CreateUserController", () => {
       createUserValidatorStub,
     );
     const createUserSpy = vi.spyOn(createUserStub, "execute");
-    return { sut, createUserStub, createUserSpy, createUserValidatorStub };
+    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
+    return {
+      sut,
+      createUserStub,
+      createUserSpy,
+      createUserValidatorStub,
+      createUserValidatorSpy,
+    };
   };
 
-  it("Should return 201 when user is created successfully", async () => {
-    const { sut } = makeSut();
-    const dummyRequest = {
-      body: {
-        name: "valid_name",
-        email: "valid_email@mail.com",
-        password: "valid_password",
-      },
-    };
+  describe("Core", () => {
+    it("Should return 201 when user is created successfully", async () => {
+      const { sut } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "valid_name",
+          email: "valid_email@mail.com",
+          password: "valid_password",
+        },
+      };
 
-    const httpResponse = await sut.handle(dummyRequest);
+      const httpResponse = await sut.handle(dummyRequest);
 
-    expect(httpResponse.status).toBe(201);
-  });
+      expect(httpResponse.status).toBe(201);
+    });
 
-  it("Should call CreateUser usecase with correct values", async () => {
-    const { sut, createUserSpy } = makeSut();
-    const dummyRequest = {
-      body: {
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      },
-    };
+    it("Should call CreateUser usecase with correct values", async () => {
+      const { sut, createUserSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "any_name",
+          email: "any_email@mail.com",
+          password: "any_password",
+        },
+      };
 
-    await sut.handle(dummyRequest);
+      await sut.handle(dummyRequest);
 
-    expect(createUserSpy).toHaveBeenCalledWith({
-      name: dummyRequest.body.name,
-      email: dummyRequest.body.email,
-      password: dummyRequest.body.password,
+      expect(createUserSpy).toHaveBeenCalledWith({
+        name: dummyRequest.body.name,
+        email: dummyRequest.body.email,
+        password: dummyRequest.body.password,
+      });
+    });
+
+    it("Should return 500 on unexpected error", async () => {
+      const { sut, createUserSpy } = makeSut();
+      createUserSpy.mockRejectedValueOnce(new Error("any_error"));
+      const dummyRequest = {
+        body: {
+          name: "any_name",
+          email: "any_email@mail.com",
+          password: "any_password",
+        },
+      };
+
+      const httpResponse = await sut.handle(dummyRequest);
+
+      expect(httpResponse.status).toBe(500);
+      expect(httpResponse.body.message).toEqual("Internal server error");
+    });
+
+    it("Should return 409 when email is already in use", async () => {
+      const { sut, createUserSpy } = makeSut();
+      createUserSpy.mockRejectedValueOnce(new AppError("EMAIL_TAKEN"));
+      const dummyRequest = {
+        body: {
+          name: "any_name",
+          email: "taken_email@mail.com",
+          password: "any_password",
+        },
+      };
+
+      const httpResponse = await sut.handle(dummyRequest);
+
+      expect(httpResponse.status).toBe(409);
+      expect(httpResponse.body.message).toEqual("Email already in use");
     });
   });
 
-  it("Should return 500 on unexpected error", async () => {
-    const { sut, createUserSpy } = makeSut();
-    createUserSpy.mockRejectedValueOnce(new Error("any_error"));
-    const dummyRequest = {
-      body: {
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      },
-    };
+  describe("Validations", () => {
+    it("Should return 400 if body is missing", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {};
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("MISSING_BODY");
+      });
 
-    const httpResponse = await sut.handle(dummyRequest);
+      const httpResponse = await sut.handle(dummyRequest);
 
-    expect(httpResponse.status).toBe(500);
-    expect(httpResponse.body.message).toEqual("Internal server error");
-  });
-
-  it("Should return 409 when email is already in use", async () => {
-    const { sut, createUserSpy } = makeSut();
-    createUserSpy.mockRejectedValueOnce(new AppError("EMAIL_TAKEN"));
-    const dummyRequest = {
-      body: {
-        name: "any_name",
-        email: "taken_email@mail.com",
-        password: "any_password",
-      },
-    };
-
-    const httpResponse = await sut.handle(dummyRequest);
-
-    expect(httpResponse.status).toBe(409);
-    expect(httpResponse.body.message).toEqual("Email already in use");
-  });
-
-  it("Should return 400 if body is missing", async () => {
-    const { sut, createUserValidatorStub } = makeSut();
-    const dummyRequest = {};
-    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
-    createUserValidatorSpy.mockImplementationOnce(() => {
-      throw new AppError("MISSING_BODY");
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual("Missing request body");
     });
 
-    const httpResponse = await sut.handle(dummyRequest);
+    it("Should return 400 if name is missing", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          email: "valid_email@mail.com",
+          password: "valid_password",
+        },
+      };
 
-    expect(httpResponse.status).toBe(400);
-    expect(httpResponse.body.message).toEqual("Missing request body");
-  });
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("MISSING_PARAM", "name");
+      });
 
-  it("Should return 400 if name is missing", async () => {
-    const { sut, createUserValidatorStub } = makeSut();
-    const dummyRequest = {
-      body: {
-        email: "valid_email@mail.com",
-        password: "valid_password",
-      },
-    };
-    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
-    createUserValidatorSpy.mockImplementationOnce(() => {
-      throw new AppError("MISSING_PARAM", "name");
+      const httpResponse = await sut.handle(dummyRequest);
+
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual("Missing Param: name");
     });
 
-    const httpResponse = await sut.handle(dummyRequest);
+    it("Should return 400 if email is missing", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "valid_name",
+          password: "valid_password",
+        },
+      };
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("MISSING_PARAM", "email");
+      });
 
-    expect(httpResponse.status).toBe(400);
-    expect(httpResponse.body.message).toEqual("Missing Param: name");
-  });
+      const httpResponse = await sut.handle(dummyRequest);
 
-  it("Should return 400 if email is missing", async () => {
-    const { sut, createUserValidatorStub } = makeSut();
-    const dummyRequest = {
-      body: {
-        name: "valid_name",
-        password: "valid_password",
-      },
-    };
-    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
-    createUserValidatorSpy.mockImplementationOnce(() => {
-      throw new AppError("MISSING_PARAM", "email");
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual("Missing Param: email");
     });
 
-    const httpResponse = await sut.handle(dummyRequest);
+    it("Should return 400 if password is missing", async () => {
+      const { sut, createUserValidatorSpy } = makeSut();
+      const dummyRequest = {
+        body: {
+          name: "valid_name",
+          email: "valid_email@mail.com",
+        },
+      };
+      createUserValidatorSpy.mockImplementationOnce(() => {
+        throw new AppError("MISSING_PARAM", "password");
+      });
 
-    expect(httpResponse.status).toBe(400);
-    expect(httpResponse.body.message).toEqual("Missing Param: email");
-  });
+      const httpResponse = await sut.handle(dummyRequest);
 
-  it("Should return 400 if password is missing", async () => {
-    const { sut, createUserValidatorStub } = makeSut();
-    const dummyRequest = {
-      body: {
-        name: "valid_name",
-        email: "valid_email@mail.com",
-      },
-    };
-    const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
-    createUserValidatorSpy.mockImplementationOnce(() => {
-      throw new AppError("MISSING_PARAM", "password");
+      expect(httpResponse.status).toBe(400);
+      expect(httpResponse.body.message).toEqual("Missing Param: password");
     });
-
-    const httpResponse = await sut.handle(dummyRequest);
-
-    expect(httpResponse.status).toBe(400);
-    expect(httpResponse.body.message).toEqual("Missing Param: password");
   });
 });
