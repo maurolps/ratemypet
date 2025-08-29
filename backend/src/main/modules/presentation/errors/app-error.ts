@@ -2,7 +2,10 @@ import type { ERROR_CODE } from "./error-codes";
 
 export class AppError extends Error {
   readonly isAppError = true;
-  constructor(public readonly code: ERROR_CODE) {
+  constructor(
+    public readonly code: ERROR_CODE,
+    public readonly detail?: string,
+  ) {
     super(code);
     this.name = "AppError";
   }
