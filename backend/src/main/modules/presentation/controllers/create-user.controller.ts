@@ -1,9 +1,9 @@
+import type { CreateUser } from "@domain/usecases/create-user.contract";
 import type { HttpValidator } from "@presentation/contracts/http-validator.contract";
-import type { CreateUser } from "../../domain/usecases/create-user";
-import type { HttpRequest } from "../dtos/http-request.dto";
-import type { HttpResponse } from "../dtos/http-response.dto";
-import { ErrorPresenter } from "../errors/error-presenter";
-import { created } from "../http/http-helpers";
+import type { HttpRequest } from "@presentation/dtos/http-request.dto";
+import type { HttpResponse } from "@presentation/dtos/http-response.dto";
+import { ErrorPresenter } from "@presentation/errors/error-presenter";
+import { created } from "@presentation/http/http-helpers";
 
 export class CreateUserController {
   constructor(
