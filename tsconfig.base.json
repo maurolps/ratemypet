@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitOverride": true,
+    "paths": {
+      "@domain/*": ["./backend/src/main/modules/domain/*"],
+      "@presentation/*": ["./backend/src/main/modules/presentation/*"]
+    }
+  },
+}

@@ -9,14 +9,16 @@ classDef presentation fill:#C5E1A5, color:#000000, stroke:#999999, stroke-width:
 classDef application fill:#B3E5FC, color:#000000, stroke:#999999, stroke-width:1.5px;
 classDef domain fill:#FFF9C4, color:#000000, stroke:#999999, stroke-width:1.5px;
 classDef infra fill:#E1BEE7, color:#000000, stroke:#999999, stroke-width:1.5px;
+classDef error fill:#F12E42, color:#000000, stroke:#999999, stroke-width:1.5px;
 classDef interface color:#000000, stroke:#fff, stroke-dasharray: 13 5, stroke-width:2px;
 
   subgraph UC-001 CreateUser Architecture
   
     subgraph Presentation
-      Controller-->RequestDTO:::interface
-      Controller-->ResponseDTO:::interface
-      Controller-->ControllerModel:::interface
+      CreateUserController-->RequestDTO:::interface
+      CreateUserController-->ResponseDTO:::interface
+      CreateUserController-->HttpValidator
+      CreateUserController-->ErrorPresenter
     end
     subgraph Infra
       Adapter
@@ -30,16 +32,17 @@ classDef interface color:#000000, stroke:#fff, stroke-dasharray: 13 5, stroke-wi
     end
 
     subgraph Domain
-      Controller-.->CreateUser
+      CreateUserController-.->CreateUser
       UseCase-..->CreateUser
       CreateUser:::interface --> User
     end
 
     class App,SignUpRouter,ExpressRouteAdapter,CompositionRoot main;
-    class Controller,RequestDTO,ResponseDTO,ControllerModel presentation;
+    class CreateUserController,RequestDTO,ResponseDTO,HttpValidator presentation;
     class UseCase,Repository,Port application;
     class CreateUser,User domain;
     class Adapter,RepositoryAdapter,JwtAdapter infra;
+    class ErrorPresenter error;
    
 end
 ```
