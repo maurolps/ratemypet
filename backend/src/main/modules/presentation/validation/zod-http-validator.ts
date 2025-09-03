@@ -13,9 +13,13 @@ export class ZodHttpValidator implements HttpValidator {
 
   execute(request: HttpRequest): CreateUserDTO {
     const parsed = this.schema.safeParse(request);
+    let detail: string | undefined;
+
     if (!parsed.success) {
       const error = parsed.error.issues[0].message as ERROR_CODE;
-      const detail = parsed.error.issues[0].path[1]?.toString();
+      if (error === "MISSING_PARAM" || error === "INVALID_PARAM") {
+        detail = parsed.error.issues[0].path.at(-1)?.toString();
+      }
       throw new AppError(error, detail);
     }
 

@@ -72,7 +72,7 @@ describe("ZodHttpValidator", () => {
       },
     };
     expect(() => sut.execute(request)).toThrowError(
-      new AppError("WEAK_PASSWORD", "password"),
+      new AppError("WEAK_PASSWORD"),
     );
   });
 
@@ -86,7 +86,7 @@ describe("ZodHttpValidator", () => {
       },
     };
     expect(() => sut.execute(request)).toThrowError(
-      new AppError("INVALID_NAME", "name"),
+      new AppError("INVALID_NAME"),
     );
   });
 });
