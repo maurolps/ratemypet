@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
+import { AppError } from "@presentation/errors/app-error";
 import { ZodHttpValidator } from "@presentation/validation/zod-http-validator";
 import { createUserSchema } from "@presentation/validation/create-user.schema";
-import { AppError } from "@presentation/errors/app-error";
-import type { CreateUserDTO } from "@domain/usecases/create-user";
+import { describe, expect, it } from "vitest";
 
 describe("ZodHttpValidator", () => {
   const sut = new ZodHttpValidator(createUserSchema);
