@@ -14,5 +14,5 @@ This folder contains all functional requirements for the backend, organized by u
 
 Are included inside each file:
 - Functional requirements
+- Non-Functional requirements
 - Error handling
-- Sample response/request
