@@ -21,7 +21,7 @@
    
 ## Error Handling
 
-- [x] Returns **400** when the email format is invalid
-- [x] Returns **400** when the password is too short
+- [x] Returns **400** when the name/email/password format is invalid
+- [x] Returns **400** when the name/email/password is missing
 - [x] Returns **409** when the email is already registered
 - [x] Returns **500** when an unexpected server error occurs
