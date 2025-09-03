@@ -75,4 +75,18 @@ describe("ZodHttpValidator", () => {
       new AppError("WEAK_PASSWORD", "password"),
     );
   });
+
+  it("Should throw if name has less than 3 characters", () => {
+    const sut = new ZodHttpValidator(createUserSchema);
+    const request = {
+      body: {
+        name: "ab",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+    expect(() => sut.execute(request)).toThrowError(
+      new AppError("INVALID_NAME", "name"),
+    );
+  });
 });
