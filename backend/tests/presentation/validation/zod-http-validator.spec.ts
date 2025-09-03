@@ -61,4 +61,18 @@ describe("ZodHttpValidator", () => {
       new AppError("INVALID_PARAM", "email"),
     );
   });
+
+  it("Should throw if password has less than 6 characters", () => {
+    const sut = new ZodHttpValidator(createUserSchema);
+    const request = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "123",
+      },
+    };
+    expect(() => sut.execute(request)).toThrowError(
+      new AppError("WEAK_PASSWORD", "password"),
+    );
+  });
 });
