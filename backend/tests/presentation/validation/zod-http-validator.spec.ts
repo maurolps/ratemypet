@@ -47,4 +47,18 @@ describe("ZodHttpValidator", () => {
       );
     },
   );
+
+  it("Should throw an AppError if email is invalid", () => {
+    const sut = new ZodHttpValidator(createUserSchema);
+    const request = {
+      body: {
+        name: "valid_name",
+        email: "invalid_email",
+        password: "valid_password",
+      },
+    };
+    expect(() => sut.execute(request)).toThrowError(
+      new AppError("INVALID_PARAM", "email"),
+    );
+  });
 });
