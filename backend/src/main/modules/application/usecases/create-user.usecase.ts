@@ -6,20 +6,29 @@ import type {
 } from "@domain/usecases/create-user.contract";
 import { AppError } from "@presentation/errors/app-error";
 
-export class CreateUserUseCase implements CreateUser {
-  constructor(private readonly findUserByEmail: FindUserByEmailRepository) {}
+interface Hasher {
+  execute(password: string): string;
+}
 
-  async execute(user: CreateUserDTO): Promise<User> {
-    const userExists = await this.findUserByEmail.perform(user.email);
+export class CreateUserUseCase implements CreateUser {
+  constructor(
+    private readonly findUserByEmail: FindUserByEmailRepository,
+    private readonly hashPassword: Hasher,
+  ) {}
+
+  async execute(userDTO: CreateUserDTO): Promise<User> {
+    const userExists = await this.findUserByEmail.perform(userDTO.email);
 
     if (userExists) {
       throw new AppError("EMAIL_TAKEN");
     }
 
+    const _hashedPassword = this.hashPassword.execute(userDTO.password);
+
     return {
       id: "any_id",
-      name: user.name,
-      email: user.email,
+      name: userDTO.name,
+      email: userDTO.email,
     };
   }
 }
