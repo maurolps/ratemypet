@@ -1,17 +1,8 @@
 import { AppError } from "@presentation/errors/app-error";
 import { CreateUserUseCase } from "@application/usecases/create-user.usecase";
-import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
 import { describe, vi, it, expect } from "vitest";
-
-interface Hasher {
-  execute(password: string): string;
-}
-
-class HashPasswordStub implements Hasher {
-  execute(password: string): string {
-    return `hashed_${password}`;
-  }
-}
+import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
+import { HashPasswordStub } from "./doubles/hash-password.stub";
 
 describe("CreateUserUseCase", () => {
   it("Should throw if user already exists", async () => {
