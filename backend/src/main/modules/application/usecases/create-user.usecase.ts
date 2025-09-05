@@ -1,14 +1,11 @@
 import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
+import type { Hasher } from "@application/ports/hasher.contract";
 import type { User } from "@domain/entities/user";
 import type {
   CreateUser,
   CreateUserDTO,
 } from "@domain/usecases/create-user.contract";
 import { AppError } from "@presentation/errors/app-error";
-
-interface Hasher {
-  execute(password: string): string;
-}
 
 export class CreateUserUseCase implements CreateUser {
   constructor(
