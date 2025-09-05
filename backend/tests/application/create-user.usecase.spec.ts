@@ -5,16 +5,25 @@ import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repo
 import { HashPasswordStub } from "./doubles/hash-password.stub";
 
 describe("CreateUserUseCase", () => {
-  it("Should throw if user already exists", async () => {
+  const makeSut = () => {
     const findUserByEmailRepositoryStub = new FindUserByEmailRepositoryStub();
     const hashPasswordStub = new HashPasswordStub();
-    const findUserByEmailRepositorySpy = vi.spyOn(
-      findUserByEmailRepositoryStub,
-      "perform",
-    );
     const sut = new CreateUserUseCase(
       findUserByEmailRepositoryStub,
       hashPasswordStub,
+    );
+    return {
+      sut,
+      findUserByEmailRepositoryStub,
+      hashPasswordStub,
+    };
+  };
+
+  it("Should throw if user already exists", async () => {
+    const { findUserByEmailRepositoryStub, sut } = makeSut();
+    const findUserByEmailRepositorySpy = vi.spyOn(
+      findUserByEmailRepositoryStub,
+      "perform",
     );
     const userDTO = {
       name: "valid_name",
@@ -33,12 +42,7 @@ describe("CreateUserUseCase", () => {
   });
 
   it("Should call Hasher with correct password", async () => {
-    const findUserByEmailRepositoryStub = new FindUserByEmailRepositoryStub();
-    const hashPasswordStub = new HashPasswordStub();
-    const sut = new CreateUserUseCase(
-      findUserByEmailRepositoryStub,
-      hashPasswordStub,
-    );
+    const { hashPasswordStub, sut } = makeSut();
     const hashPasswordSpy = vi.spyOn(hashPasswordStub, "execute");
     const UserDTO = {
       name: "valid_name",
