@@ -1,3 +1,4 @@
+import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
 import type { User } from "@domain/entities/user";
 import type {
   CreateUser,
@@ -5,12 +6,8 @@ import type {
 } from "@domain/usecases/create-user.contract";
 import { AppError } from "@presentation/errors/app-error";
 
-interface FindUserRepository {
-  perform(email: string): Promise<User | null>;
-}
-
 export class CreateUserUseCase implements CreateUser {
-  constructor(private readonly findUserByEmail: FindUserRepository) {}
+  constructor(private readonly findUserByEmail: FindUserByEmailRepository) {}
 
   async execute(user: CreateUserDTO): Promise<User> {
     const userExists = await this.findUserByEmail.perform(user.email);
