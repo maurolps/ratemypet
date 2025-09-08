@@ -6,7 +6,7 @@ import type {
   CreateUser,
   CreateUserDTO,
 } from "@domain/usecases/create-user.contract";
-import { AppError } from "@presentation/errors/app-error";
+import { AppError } from "@application/errors/app-error";
 
 export class CreateUserUseCase implements CreateUser {
   constructor(

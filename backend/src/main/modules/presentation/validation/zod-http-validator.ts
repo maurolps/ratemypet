@@ -3,8 +3,8 @@ import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
 import type { HttpRequest } from "@presentation/dtos/http-request.dto";
 import type { createUserSchema } from "@presentation/validation/create-user.schema";
 import type { HttpValidator } from "@presentation/contracts/http-validator.contract";
-import type { ERROR_CODE } from "@presentation/errors/error-codes";
-import { AppError } from "@presentation/errors/app-error";
+import type { ERROR_CODE } from "@application/errors/error-codes";
+import { AppError } from "@application/errors/app-error";
 
 type Schema = z.infer<typeof createUserSchema>;
 
