@@ -23,39 +23,31 @@ describe("CreateUserUseCase", () => {
     };
   };
 
+  const userDTO = {
+    name: "valid_name",
+    email: "valid_email@mail.com",
+    password: "valid_password",
+  };
+
   it("Should throw if user already exists", async () => {
     const { findUserByEmailRepositoryStub, sut } = makeSut();
     const findUserByEmailRepositorySpy = vi.spyOn(
       findUserByEmailRepositoryStub,
       "perform",
     );
-    const userDTO = {
-      name: "valid_name",
-      email: "taken_email@mail.com",
-      password: "valid_password",
-    };
     const fakeUser = {
       id: "valid_id",
       ...userDTO,
     };
     findUserByEmailRepositorySpy.mockResolvedValueOnce(fakeUser);
-
     const newUserPromise = sut.execute(userDTO);
-
     await expect(newUserPromise).rejects.toThrow(new AppError("EMAIL_TAKEN"));
   });
 
   it("Should call Hasher with correct password", async () => {
     const { hashPasswordStub, sut } = makeSut();
     const hashPasswordSpy = vi.spyOn(hashPasswordStub, "execute");
-    const userDTO = {
-      name: "valid_name",
-      email: "valid_email@mail.com",
-      password: "valid_password",
-    };
-
     await sut.execute(userDTO);
-
     expect(hashPasswordSpy).toHaveBeenCalledWith(userDTO.password);
   });
 
@@ -65,15 +57,8 @@ describe("CreateUserUseCase", () => {
       createUserRepositoryStub,
       "perform",
     );
-    const userDTO = {
-      name: "valid_name",
-      email: "valid_email@mail.com",
-      password: "valid_password",
-    };
     const hashedPassword = `hashed_${userDTO.password}`;
-
     await sut.execute(userDTO);
-
     expect(createUserRepositorySpy).toHaveBeenCalledWith({
       ...userDTO,
       password: hashedPassword,
@@ -82,14 +67,7 @@ describe("CreateUserUseCase", () => {
 
   it("Should return a User on success", async () => {
     const { sut } = makeSut();
-    const userDTO = {
-      name: "valid_name",
-      email: "valid_email@mail.com",
-      password: "valid_password",
-    };
-
     const result = await sut.execute(userDTO);
-
     expect(result).toEqual({
       id: "any_id",
       ...userDTO,
@@ -104,13 +82,6 @@ describe("CreateUserUseCase", () => {
       "perform",
     );
     findUserByEmailRepositorySpy.mockRejectedValueOnce(new Error());
-
-    const userDTO = {
-      name: "valid_name",
-      email: "valid_email@mail.com",
-      password: "valid_password",
-    };
-
-    await expect(sut.execute(userDTO)).rejects.toThrow();
+    await expect(sut.execute(userDTO)).rejects.toThrow(new Error());
   });
 });
