@@ -1,6 +1,7 @@
 import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { User } from "@domain/entities/user";
+import type { CreateUserRepository } from "@application/repositories/create-user.repository";
 import type {
   CreateUser,
   CreateUserDTO,
@@ -11,6 +12,7 @@ export class CreateUserUseCase implements CreateUser {
   constructor(
     private readonly findUserByEmail: FindUserByEmailRepository,
     private readonly hashPassword: Hasher,
+    private readonly createUserRepository: CreateUserRepository,
   ) {}
 
   async execute(userDTO: CreateUserDTO): Promise<User> {
@@ -20,12 +22,12 @@ export class CreateUserUseCase implements CreateUser {
       throw new AppError("EMAIL_TAKEN");
     }
 
-    const _hashedPassword = this.hashPassword.execute(userDTO.password);
+    const hashedPassword = this.hashPassword.execute(userDTO.password);
+    const user = await this.createUserRepository.perform({
+      ...userDTO,
+      password: hashedPassword,
+    });
 
-    return {
-      id: "any_id",
-      name: userDTO.name,
-      email: userDTO.email,
-    };
+    return user;
   }
 }
