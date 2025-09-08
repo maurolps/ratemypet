@@ -1,4 +1,4 @@
-import { AppError } from "@presentation/errors/app-error";
+import { AppError } from "@application/errors/app-error";
 import { CreateUserController } from "@presentation/controllers/create-user.controller";
 import { describe, expect, it, vi } from "vitest";
 import { CreateUserStub } from "./doubles/create-user.usecase.stub";

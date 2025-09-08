@@ -1,11 +1,11 @@
-import { isAppError } from "./app-error";
+import type { ERROR_CODE } from "@application/errors/error-codes";
 import type { HttpResponse } from "@presentation/dtos/http-response.dto";
+import { isAppError } from "@application/errors/app-error";
 import {
   badRequest,
   conflict,
   serverError,
 } from "@presentation/http/http-helpers";
-import type { ERROR_CODE } from "./error-codes";
 
 type ErrorResponseType = {
   [key in ERROR_CODE]: (detail?: string) => HttpResponse;

@@ -14,6 +14,11 @@ export default defineConfig({
     alias: {
       "@domain": "/backend/src/main/modules/domain",
       "@presentation": "/backend/src/main/modules/presentation",
+      "@application": "/backend//src/main/modules/application",
+      "@infrastructure": "/backend/src/main/modules/infrastructure",
+      "@shared": "/backend/src/main/shared",
+      "@tests": "/backend/src/tests",
+      "@main": "/backend/src/main",
     },
   },
 });
