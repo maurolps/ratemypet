@@ -79,4 +79,21 @@ describe("CreateUserUseCase", () => {
       password: hashedPassword,
     });
   });
+
+  it("Should return a User on success", async () => {
+    const { sut } = makeSut();
+    const userDTO = {
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+
+    const result = await sut.execute(userDTO);
+
+    expect(result).toEqual({
+      id: "any_id",
+      ...userDTO,
+      password: `hashed_${userDTO.password}`,
+    });
+  });
 });
