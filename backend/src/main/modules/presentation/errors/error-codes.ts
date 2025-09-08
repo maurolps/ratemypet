@@ -1,7 +1,0 @@
-export type ERROR_CODE =
-  | "EMAIL_TAKEN"
-  | "MISSING_BODY"
-  | "MISSING_PARAM"
-  | "INVALID_PARAM"
-  | "WEAK_PASSWORD"
-  | "INVALID_NAME";

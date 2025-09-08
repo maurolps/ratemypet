@@ -1,4 +1,4 @@
-import { AppError } from "@presentation/errors/app-error";
+import { AppError } from "@application/errors/app-error";
 import { CreateUserUseCase } from "@application/usecases/create-user.usecase";
 import { describe, vi, it, expect } from "vitest";
 import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
