@@ -96,4 +96,21 @@ describe("CreateUserUseCase", () => {
       password: `hashed_${userDTO.password}`,
     });
   });
+
+  it("Should rethrow if FindUserByEmailRepository throws", async () => {
+    const { findUserByEmailRepositoryStub, sut } = makeSut();
+    const findUserByEmailRepositorySpy = vi.spyOn(
+      findUserByEmailRepositoryStub,
+      "perform",
+    );
+    findUserByEmailRepositorySpy.mockRejectedValueOnce(new Error());
+
+    const userDTO = {
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+
+    await expect(sut.execute(userDTO)).rejects.toThrow();
+  });
 });
