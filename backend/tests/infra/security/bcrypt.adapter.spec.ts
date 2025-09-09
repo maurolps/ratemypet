@@ -11,4 +11,12 @@ describe("Bcrypt Adapter", () => {
     await sut.execute("any_value");
     expect(hashSpy).toHaveBeenCalledWith("any_value", SALT_ROUNDS);
   });
+
+  it("Should rethrow if bcrypt throws", async () => {
+    vi.spyOn(bcrypt, "hash").mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const promise = sut.execute("any_value");
+    await expect(promise).rejects.toThrow();
+  });
 });
