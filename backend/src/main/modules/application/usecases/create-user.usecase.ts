@@ -22,7 +22,7 @@ export class CreateUserUseCase implements CreateUser {
       throw new AppError("EMAIL_TAKEN");
     }
 
-    const hashedPassword = this.hashPassword.execute(userDTO.password);
+    const hashedPassword = await this.hashPassword.execute(userDTO.password);
     const user = await this.createUserRepository.perform({
       ...userDTO,
       password: hashedPassword,

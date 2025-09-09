@@ -1,3 +1,3 @@
 export interface Hasher {
-  execute(password: string): string;
+  execute(plainPassword: string): Promise<string>;
 }
