@@ -15,10 +15,11 @@
   },
   "scripts": {
     "prepare": "husky",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "vitest run --project unit --project integration",
+    "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --coverage",
     "test:staged": "vitest related --run --silent=true",
+    "test:integration": "vitest run --project integration",
     "migrate": "dbmate --help",
     "migrate:new": "dbmate --env-file dbmate.env new"
   },

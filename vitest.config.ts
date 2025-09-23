@@ -4,11 +4,26 @@ export default defineConfig({
   root: __dirname,
   test: {
     environment: "node",
-    include: ["./backend/tests/**/*.spec.ts"],
     coverage: {
       reporter: ["text-summary"],
       reportsDirectory: "./backend/coverage",
     },
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: ["./backend/tests/**/*.spec.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          include: ["./backend/tests/**/*.test.ts"],
+        },
+      },
+    ],
   },
   resolve: {
     alias: {
