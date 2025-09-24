@@ -6,6 +6,7 @@ import {
 } from "@testcontainers/postgresql";
 import { dbmateMigrate } from "@infra/db/postgres/helpers/dbmate-migrate";
 import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
+import { CREATE_USER } from "@infra/db/postgres/sql/user.sql";
 
 describe("Postgres UserRepository", () => {
   let pgContainer: PostgreSqlContainer;
@@ -36,14 +37,11 @@ describe("Postgres UserRepository", () => {
     };
     const { name, email, passwordHash } = userDTO;
 
-    const userRows = await pgPool.query<User>(
-      `
-          INSERT INTO users (name, email, password_hash)
-          VALUES ($1, $2, $3)
-          RETURNING id, name, email
-        `,
-      [name, email, passwordHash],
-    );
+    const userRows = await pgPool.query<User>(CREATE_USER, [
+      name,
+      email,
+      passwordHash,
+    ]);
 
     expect(userRows.rows[0].name).toEqual("valid_name");
   });
