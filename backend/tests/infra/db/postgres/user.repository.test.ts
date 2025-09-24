@@ -4,30 +4,26 @@ import {
   PostgreSqlContainer,
   type StartedPostgreSqlContainer,
 } from "@testcontainers/postgresql";
-import { Pool, type PoolClient } from "pg";
 import { dbmateMigrate } from "@infra/db/postgres/helpers/dbmate-migrate";
+import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 
 describe("Postgres UserRepository", () => {
   let pgContainer: PostgreSqlContainer;
   let pgConnection: StartedPostgreSqlContainer;
-  let pgClient: PoolClient;
-  let pgPool: Pool;
+  let pgPool: PgPool;
 
   beforeAll(async () => {
     pgContainer = new PostgreSqlContainer("postgres:17");
     pgConnection = await pgContainer.start();
     const pgUri = pgConnection.getConnectionUri();
     await dbmateMigrate(pgUri);
-    pgPool = new Pool({
-      connectionString: pgUri,
-    });
-    pgClient = await pgPool.connect();
+    pgPool = PgPool.getInstance();
+    pgPool.connect(pgUri);
   }, 60_000);
 
   afterAll(async () => {
     if (pgConnection) {
-      pgClient.release();
-      await pgPool.end();
+      await pgPool.disconnect();
       await pgConnection.stop();
     }
   }, 60_000);
@@ -40,7 +36,7 @@ describe("Postgres UserRepository", () => {
     };
     const { name, email, passwordHash } = userDTO;
 
-    const user = await pgClient.query<User>(
+    const userRows = await pgPool.query<User>(
       `
           INSERT INTO users (name, email, password_hash)
           VALUES ($1, $2, $3)
@@ -49,6 +45,6 @@ describe("Postgres UserRepository", () => {
       [name, email, passwordHash],
     );
 
-    expect(user.rows[0].name).toEqual("valid_name");
+    expect(userRows.rows[0].name).toEqual("valid_name");
   });
 });
