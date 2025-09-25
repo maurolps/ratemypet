@@ -36,7 +36,7 @@ describe("PgUserRepository", () => {
       password: "hashed_password",
     };
 
-    const user = await sut.perform(userDTO);
+    const user = await sut.create(userDTO);
 
     expect(user.id).toBeTruthy();
     expect(user.name).toEqual("valid_name");
