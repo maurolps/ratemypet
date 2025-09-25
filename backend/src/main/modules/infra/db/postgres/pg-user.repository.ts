@@ -23,7 +23,7 @@ export class PgUserRepository
 
   async findByEmail(email: string): Promise<User | null> {
     const userRows = await this.pool.query<User>(sql.FIND_BY_EMAIL, [email]);
-    const user = userRows.rows[0];
+    const user = userRows.rows[0] || null;
     return user;
   }
 }
