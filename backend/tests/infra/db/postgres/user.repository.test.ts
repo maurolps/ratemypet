@@ -42,13 +42,20 @@ describe("PgUserRepository", () => {
       expect(user.name).toEqual("valid_name");
     });
   });
-  describe("findbyemail", () => {
+  describe("findByEmail", () => {
     it("Should return an User on success", async () => {
       const sut = new PgUserRepository(pgPool);
 
       const user = await sut.findByEmail(userDTO.email);
 
       expect(user?.name).toEqual(userDTO.name);
+    });
+    it("Should return null on fail", async () => {
+      const sut = new PgUserRepository(pgPool);
+
+      const response = await sut.findByEmail("non_exists@email.com");
+
+      expect(response).toBeNull();
     });
   });
 });
