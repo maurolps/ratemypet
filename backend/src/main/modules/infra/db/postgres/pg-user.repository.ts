@@ -3,7 +3,7 @@ import type { FindUserByEmailRepository } from "@application/repositories/find-u
 import type { User } from "@domain/entities/user";
 import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
 import type { PgPool } from "./helpers/pg-pool";
-import { CREATE_USER, FIND_BY_EMAIL } from "./sql/user.sql";
+import { sql } from "./sql/user.sql";
 
 export class PgUserRepository
   implements CreateUserRepository, FindUserByEmailRepository
@@ -12,7 +12,7 @@ export class PgUserRepository
 
   async create(userDTO: CreateUserDTO): Promise<User> {
     const { name, email, password: passwordHash } = userDTO;
-    const userRows = await this.pool.query<User>(CREATE_USER, [
+    const userRows = await this.pool.query<User>(sql.CREATE_USER, [
       name,
       email,
       passwordHash,
@@ -22,7 +22,7 @@ export class PgUserRepository
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const userRows = await this.pool.query<User>(FIND_BY_EMAIL, [email]);
+    const userRows = await this.pool.query<User>(sql.FIND_BY_EMAIL, [email]);
     const user = userRows.rows[0];
     return user;
   }
