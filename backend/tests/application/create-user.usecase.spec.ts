@@ -33,7 +33,7 @@ describe("CreateUserUseCase", () => {
     const { findUserByEmailRepositoryStub, sut } = makeSut();
     const findUserByEmailRepositorySpy = vi.spyOn(
       findUserByEmailRepositoryStub,
-      "perform",
+      "findByEmail",
     );
     const fakeUser = {
       id: "valid_id",
@@ -55,7 +55,7 @@ describe("CreateUserUseCase", () => {
     const { createUserRepositoryStub, sut } = makeSut();
     const createUserRepositorySpy = vi.spyOn(
       createUserRepositoryStub,
-      "perform",
+      "create",
     );
     const hashedPassword = `hashed_${userDTO.password}`;
     await sut.execute(userDTO);
@@ -79,7 +79,7 @@ describe("CreateUserUseCase", () => {
     const { findUserByEmailRepositoryStub, sut } = makeSut();
     const findUserByEmailRepositorySpy = vi.spyOn(
       findUserByEmailRepositoryStub,
-      "perform",
+      "findByEmail",
     );
     findUserByEmailRepositorySpy.mockRejectedValueOnce(new Error());
     await expect(sut.execute(userDTO)).rejects.toThrow(new Error());
