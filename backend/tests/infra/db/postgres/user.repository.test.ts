@@ -1,14 +1,13 @@
-import type { User } from "@domain/entities/user";
 import { it, describe, beforeAll, afterAll, expect } from "vitest";
 import {
   PostgreSqlContainer,
   type StartedPostgreSqlContainer,
 } from "@testcontainers/postgresql";
-import { dbmateMigrate } from "@infra/db/postgres/helpers/dbmate-migrate";
+import { dbmateMigrate } from "./helpers/dbmate-migrate";
 import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
-import { CREATE_USER } from "@infra/db/postgres/sql/user.sql";
+import { PgUserRepository } from "@infra/db/postgres/pg-user.repository";
 
-describe("Postgres UserRepository", () => {
+describe("PgUserRepository", () => {
   let pgContainer: PostgreSqlContainer;
   let pgConnection: StartedPostgreSqlContainer;
   let pgPool: PgPool;
@@ -30,19 +29,16 @@ describe("Postgres UserRepository", () => {
   }, 60_000);
 
   it("Should return an User on success", async () => {
+    const sut = new PgUserRepository(pgPool);
     const userDTO = {
       name: "valid_name",
       email: "valid_email@mail.com",
-      passwordHash: "hashed_password",
+      password: "hashed_password",
     };
-    const { name, email, passwordHash } = userDTO;
 
-    const userRows = await pgPool.query<User>(CREATE_USER, [
-      name,
-      email,
-      passwordHash,
-    ]);
+    const user = await sut.perform(userDTO);
 
-    expect(userRows.rows[0].name).toEqual("valid_name");
+    expect(user.id).toBeTruthy();
+    expect(user.name).toEqual("valid_name");
   });
 });
