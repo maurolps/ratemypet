@@ -23,7 +23,7 @@ export class CreateUserUseCase implements CreateUser {
     }
 
     const hashedPassword = await this.hashPassword.execute(userDTO.password);
-    const user = await this.createUserRepository.perform({
+    const user = await this.createUserRepository.create({
       ...userDTO,
       password: hashedPassword,
     });

@@ -7,7 +7,7 @@ import { CREATE_USER } from "./sql/user.sql";
 export class PgUserRepository implements CreateUserRepository {
   constructor(private readonly pool: PgPool) {}
 
-  async perform(userDTO: CreateUserDTO): Promise<User> {
+  async create(userDTO: CreateUserDTO): Promise<User> {
     const { name, email, password: passwordHash } = userDTO;
     const userRows = await this.pool.query<User>(CREATE_USER, [
       name,
