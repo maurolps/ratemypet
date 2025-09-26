@@ -16,14 +16,14 @@ export class CreateUserUseCase implements CreateUser {
   ) {}
 
   async execute(userDTO: CreateUserDTO): Promise<User> {
-    const userExists = await this.findUserByEmail.perform(userDTO.email);
+    const userExists = await this.findUserByEmail.findByEmail(userDTO.email);
 
     if (userExists) {
       throw new AppError("EMAIL_TAKEN");
     }
 
-    const hashedPassword = this.hashPassword.execute(userDTO.password);
-    const user = await this.createUserRepository.perform({
+    const hashedPassword = await this.hashPassword.execute(userDTO.password);
+    const user = await this.createUserRepository.create({
       ...userDTO,
       password: hashedPassword,
     });

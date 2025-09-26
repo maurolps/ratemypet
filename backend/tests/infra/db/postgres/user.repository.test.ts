@@ -1,0 +1,61 @@
+import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
+import { it, describe, beforeAll, afterAll, expect } from "vitest";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
+import { dbmateMigrate } from "./helpers/dbmate-migrate";
+import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
+import { PgUserRepository } from "@infra/db/postgres/pg-user.repository";
+
+describe("PgUserRepository", () => {
+  let pgContainer: PostgreSqlContainer;
+  let pgConnection: StartedPostgreSqlContainer;
+  let pgPool: PgPool;
+  const userDTO: CreateUserDTO = {
+    name: "valid_name",
+    email: "valid_email@mail.com",
+    password: "hashed_password",
+  };
+
+  beforeAll(async () => {
+    pgContainer = new PostgreSqlContainer("postgres:17");
+    pgConnection = await pgContainer.start();
+    const pgUri = pgConnection.getConnectionUri();
+    await dbmateMigrate(pgUri);
+    pgPool = PgPool.getInstance();
+    pgPool.connect(pgUri);
+  }, 60_000);
+
+  afterAll(async () => {
+    if (pgConnection) {
+      await pgPool.disconnect();
+      await pgConnection.stop();
+    }
+  }, 60_000);
+
+  describe("create", () => {
+    it("Should persist and return an User on success", async () => {
+      const sut = new PgUserRepository(pgPool);
+      const user = await sut.create(userDTO);
+      expect(user.id).toBeTruthy();
+      expect(user.name).toEqual("valid_name");
+    });
+  });
+  describe("findByEmail", () => {
+    it("Should return an User on success", async () => {
+      const sut = new PgUserRepository(pgPool);
+
+      const user = await sut.findByEmail(userDTO.email);
+
+      expect(user?.name).toEqual(userDTO.name);
+    });
+    it("Should return null on fail", async () => {
+      const sut = new PgUserRepository(pgPool);
+
+      const response = await sut.findByEmail("non_exists@email.com");
+
+      expect(response).toBeNull();
+    });
+  });
+});

@@ -4,7 +4,7 @@ import type { User } from "@domain/entities/user";
 export class FindUserByEmailRepositoryStub
   implements FindUserByEmailRepository
 {
-  perform(_email: string): Promise<User | null> {
+  findByEmail(_email: string): Promise<User | null> {
     return new Promise((resolve) => resolve(null));
   }
 }
