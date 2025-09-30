@@ -8,10 +8,10 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
     "paths": {
-      "@domain/*": ["./backend/src/main/modules/domain/*"],
-      "@presentation/*": ["./backend/src/main/modules/presentation/*"],
-      "@application/*": ["./backend/src/main/modules/application/*"],
-      "@infra/*": ["./backend/src/main/modules/infra/*"],
+      "@domain/*": ["./backend/src/main/layers/domain/*"],
+      "@presentation/*": ["./backend/src/main/layers/presentation/*"],
+      "@application/*": ["./backend/src/main/layers/application/*"],
+      "@infra/*": ["./backend/src/main/layers/infra/*"],
       "@shared/*": ["./backend/src/main/shared/*"],
       "@tests/*": ["./backend/src/tests/*"],
       "@main/*": ["./backend/src/main/*"]
