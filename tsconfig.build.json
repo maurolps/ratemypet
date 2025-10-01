@@ -1,12 +1,11 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "NodeNext",
     "outDir": "./backend/dist",
     "rootDir": "./backend/src",
-    "noEmit": false
+    "noEmit": false,
+    "declaration": false,
   },
   "include": ["./backend/src/**/*"],
-  "exclude": ["./backend/tests/**/*"]
+  "exclude": ["./backend/tests/**/*", "vitest.config.ts"]
 }
