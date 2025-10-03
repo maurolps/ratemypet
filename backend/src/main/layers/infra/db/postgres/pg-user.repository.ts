@@ -2,13 +2,16 @@ import type { CreateUserRepository } from "@application/repositories/create-user
 import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
 import type { User } from "@domain/entities/user";
 import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
-import type { PgPool } from "./helpers/pg-pool";
+import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/user.sql";
 
 export class PgUserRepository
   implements CreateUserRepository, FindUserByEmailRepository
 {
-  constructor(private readonly pool: PgPool) {}
+  private readonly pool: PgPool;
+  constructor() {
+    this.pool = PgPool.getInstance();
+  }
 
   async create(userDTO: CreateUserDTO): Promise<User> {
     const { name, email, password: passwordHash } = userDTO;
