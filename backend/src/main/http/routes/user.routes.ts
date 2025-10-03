@@ -1,5 +1,7 @@
 import { Router } from "express";
+import { expressAdapter } from "../adapters/express-controller.adapter";
+import { makeCreateUserController } from "@main/composition/users/create-user.controller.factory";
 
 export const userRoutes = Router();
 
-userRoutes.get("/users", (_req, res) => res.status(200).json({ body: "ok" }));
+userRoutes.post("/users", expressAdapter(makeCreateUserController()));
