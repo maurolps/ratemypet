@@ -9,45 +9,59 @@ config:
 
 flowchart RL
 
-  subgraph Architecture[UC-001 CreateUser Architecture]
-  
+  subgraph Architecture[UC-001 CreateUser Architecture Overview]
+    %% Main
+    subgraph Main
+      Composition[Composition Root]
+      EntryPoint
+      Http
+    end
+          %% Main Relations
+          EntryPoint --> Http
+          Http --> Composition
+          Composition --> Controller
+          Composition --> UseCase
+          Composition --> Adapters
+          Composition --> RepositoryAdapter
+
     %% Presentation
     subgraph Presentation
-      CreateUserController 
+      Controller 
       ErrorPresenter
       HttpValidator
       RequestDTO   
       ResponseDTO 
     end
           %% Presentation Relations
-          CreateUserController -.-> CreateUser
-          CreateUserController --> RequestDTO
-          CreateUserController --> ResponseDTO
-          CreateUserController --> HttpValidator
-          CreateUserController --> ErrorPresenter    
+          Controller -.-> CreateUser
+          Controller --> RequestDTO
+          Controller --> ResponseDTO
+          Controller --> HttpValidator
+          Controller --> ErrorPresenter    
 
     %% Infra
     subgraph Infra
-      Adapter
+      Adapters
       RepositoryAdapter
     end
+
 
     %% Application
     subgraph Application
       UseCase
       Repository
-      Port
+      Ports
     end
           %% Application Relations
-          UseCase --> Port
+          UseCase --> Ports
           UseCase --> Repository
           UseCase -..-> CreateUser
-          Adapter -.-> Port
+          Adapters -.-> Ports
           RepositoryAdapter -.-> Repository
           
     %% Domain
     subgraph Domain
-      CreateUser --> User
+      CreateUser[UseCase Contract] --> User
     end
 
   end
@@ -66,9 +80,9 @@ flowchart RL
   classDef infra        fill:#FDFBFF,stroke:#EEE6FF,stroke-width:1.5px,color:#4B2E83;
 
   %% Apply Classes
-  class CreateUserController,RequestDTO,ResponseDTO,HttpValidator,ErrorPresenter presentation;
-  class Adapter,RepositoryAdapter infra;
-  class UseCase,Port,Repository application;
+  class Controller,RequestDTO,ResponseDTO,HttpValidator,ErrorPresenter presentation;
+  class Adapters,RepositoryAdapter infra;
+  class UseCase,Ports,Repository application;
   class CreateUser,User domain;
 
 
