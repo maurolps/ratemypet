@@ -25,6 +25,7 @@ describe("PgUserRepository", () => {
     await dbmateMigrate(pgUri);
     pgPool = PgPool.getInstance();
     pgPool.connect(pgUri);
+    await pgPool.health();
   }, 60_000);
 
   afterAll(async () => {
