@@ -13,11 +13,18 @@ flowchart RL
   
     %% Presentation
     subgraph Presentation
-      CreateUserController --> RequestDTO
-      CreateUserController --> ResponseDTO
-      CreateUserController --> HttpValidator
-      CreateUserController --> ErrorPresenter
+      CreateUserController 
+      ErrorPresenter
+      HttpValidator
+      RequestDTO   
+      ResponseDTO 
     end
+          %% Presentation Relations
+          CreateUserController -.-> CreateUser
+          CreateUserController --> RequestDTO
+          CreateUserController --> ResponseDTO
+          CreateUserController --> HttpValidator
+          CreateUserController --> ErrorPresenter    
 
     %% Infra
     subgraph Infra
@@ -27,16 +34,19 @@ flowchart RL
 
     %% Application
     subgraph Application
-      UseCase --> Port
-      UseCase --> Repository
-      Adapter -.-> Port
-      RepositoryAdapter -.-> Repository
+      UseCase
+      Repository
+      Port
     end
-
+          %% Application Relations
+          UseCase --> Port
+          UseCase --> Repository
+          UseCase -..-> CreateUser
+          Adapter -.-> Port
+          RepositoryAdapter -.-> Repository
+          
     %% Domain
     subgraph Domain
-      CreateUserController -.-> CreateUser
-      UseCase -..-> CreateUser
       CreateUser --> User
     end
 
@@ -60,5 +70,6 @@ flowchart RL
   class Adapter,RepositoryAdapter infra;
   class UseCase,Port,Repository application;
   class CreateUser,User domain;
+
 
 ```
