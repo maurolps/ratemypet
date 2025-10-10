@@ -3,7 +3,9 @@
 ## Functional Requirements
 
 - [x] The following fields are required: name, email and password
+- [x] The name must be normalized and sanitized
 - [x] The email must be validated
+- [x] The email must be normalized
 - [x] The password must be at least 6 characters long
 - [x] The email must be unique in the database
 - [x] The password must be hashed before being stored
