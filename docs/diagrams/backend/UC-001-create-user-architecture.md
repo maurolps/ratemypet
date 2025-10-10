@@ -1,67 +1,68 @@
 
 # Feature: UC-001 CreateUser Architecture
 
+
+![UC001 - Architecture Diagram](../../assets/uc001-diagram.png)
+
+<details>
+<summary>Expand Mermaid code</summary>
+
+> If the diagram don't looks like the image above, github probably don't support elk layout in mermaid preview yet.
+
 ```mermaid
 ---
 config:
   layout: elk
+  elk:
+    mergeEdges: false
+    nodePlacementStrategy: NETWORK_SIMPLEX
 ---
-
-flowchart RL
+flowchart TB
 
   subgraph Architecture[UC-001 CreateUser Architecture Overview]
-    %% Main
-    subgraph Main
-      Composition[Composition Root]
-      EntryPoint
-      Http
-    end
-          %% Main Relations
-          EntryPoint --> Http
-          Http --> Composition
-          Composition --> Controller
-          Composition --> UseCase
-          Composition --> Adapters
-          Composition --> RepositoryAdapter
 
     %% Presentation
     subgraph Presentation
-      Controller 
+      Controller[CreateUserController]
       ErrorPresenter
-      HttpValidator
-      RequestDTO   
-      ResponseDTO 
+      HttpValidator[ZodHttpValidator]
+      UserSchema:::presentation
     end
           %% Presentation Relations
           Controller -.-> CreateUser
-          Controller --> RequestDTO
-          Controller --> ResponseDTO
-          Controller --> HttpValidator
-          Controller --> ErrorPresenter    
+          Controller ---> HttpValidator
+          Controller --> ErrorPresenter
+          ErrorPresenter --> AppError
+          HttpValidator -.- UserSchema
 
     %% Infra
     subgraph Infra
-      Adapters
-      RepositoryAdapter
+      Adapters[BcryptAdapter]
+      UserRepositoryAdapter
     end
-
+          %% Infra Relations
+          Adapters --> Bcrypt
+          UserRepositoryAdapter --> DB[("Postgres<br><small>_Singleton_</small>")]
 
     %% Application
     subgraph Application
-      UseCase
-      Repository
-      Ports
+      CreateUserUseCase
+      Repository(["UserRepository<br><small>_Contract_</small>"])
+      Ports(["Hasher<br><small>_Contract_</small>"])
+      AppError
+      ErrorCode[ERROR_CODE]
     end
           %% Application Relations
-          UseCase --> Ports
-          UseCase --> Repository
-          UseCase -..-> CreateUser
+          CreateUserUseCase -.-> Ports
+          CreateUserUseCase -.-> Repository
+          CreateUserUseCase -.-> CreateUser
           Adapters -.-> Ports
-          RepositoryAdapter -.-> Repository
+          UserRepositoryAdapter -.-> Repository
+          AppError --- ErrorCode
           
     %% Domain
     subgraph Domain
-      CreateUser[UseCase Contract] --> User
+      CreateUser(["UseCase<br><small>_Contract_</small>"]) --- User
     end
 
   end
@@ -78,12 +79,15 @@ flowchart RL
   classDef application  fill:#FAFFFA,stroke:#E0F6D7,stroke-width:1.5px,color:#1E5F28;
   classDef domain       fill:#FFFDF8,stroke:#FFEAD1,stroke-width:1.5px,color:#6C4A15;
   classDef infra        fill:#FDFBFF,stroke:#EEE6FF,stroke-width:1.5px,color:#4B2E83;
+  classDef external     fill:#FBF6FF,stroke:#E4D7FF,stroke-width:2px,color:#4B2E83;
+  classDef error        fill:#FFECEC,stroke:#F0AAAA,stroke-width:1px,color:#8C2020;
 
   %% Apply Classes
   class Controller,RequestDTO,ResponseDTO,HttpValidator,ErrorPresenter presentation;
-  class Adapters,RepositoryAdapter infra;
-  class UseCase,Ports,Repository application;
+  class Adapters,RepositoryAdapter,UserRepositoryAdapter infra;
+  class CreateUserUseCase,Ports,Repository,ErrorCode application;
   class CreateUser,User domain;
-
-
+  class Bcrypt,DB external;
+  class AppError error;
 ```
+</details>
