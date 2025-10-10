@@ -21,6 +21,9 @@ export default defineConfig({
         test: {
           name: "integration",
           include: ["./backend/tests/**/*.test.ts"],
+          globalSetup: "./backend/tests/config/global-setup.ts",
+          setupFiles: "./backend/tests/config/setup-db.ts",
+          testTimeout: 60_000,
         },
       },
     ],
