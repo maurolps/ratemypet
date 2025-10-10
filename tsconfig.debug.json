@@ -3,6 +3,8 @@
   "compilerOptions": {
     "outDir": "./backend/dist",
     "rootDir": "./backend/src",
+    "sourceMap": true,
+    "inlineSources": true,
     "noEmit": false,
     "declaration": false,
   },

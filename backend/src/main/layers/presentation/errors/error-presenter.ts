@@ -29,5 +29,5 @@ export const ErrorPresenter = (error: unknown): HttpResponse => {
     const response = ErrorResponse[error.code](error.detail);
     return response;
   }
-  return serverError();
+  return serverError(error);
 };

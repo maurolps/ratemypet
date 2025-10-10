@@ -25,6 +25,7 @@ describe("PgUserRepository", () => {
     await dbmateMigrate(pgUri);
     pgPool = PgPool.getInstance();
     pgPool.connect(pgUri);
+    await pgPool.health();
   }, 60_000);
 
   afterAll(async () => {
@@ -36,7 +37,7 @@ describe("PgUserRepository", () => {
 
   describe("create", () => {
     it("Should persist and return an User on success", async () => {
-      const sut = new PgUserRepository(pgPool);
+      const sut = new PgUserRepository();
       const user = await sut.create(userDTO);
       expect(user.id).toBeTruthy();
       expect(user.name).toEqual("valid_name");
@@ -44,14 +45,14 @@ describe("PgUserRepository", () => {
   });
   describe("findByEmail", () => {
     it("Should return an User on success", async () => {
-      const sut = new PgUserRepository(pgPool);
+      const sut = new PgUserRepository();
 
       const user = await sut.findByEmail(userDTO.email);
 
       expect(user?.name).toEqual(userDTO.name);
     });
     it("Should return null on fail", async () => {
-      const sut = new PgUserRepository(pgPool);
+      const sut = new PgUserRepository();
 
       const response = await sut.findByEmail("non_exists@email.com");
 

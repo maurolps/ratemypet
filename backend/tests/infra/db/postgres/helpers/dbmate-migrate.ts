@@ -6,7 +6,7 @@ export const dbmateMigrate = async (uri: string) => {
 
   const migrationsDir = path.resolve(
     process.cwd(),
-    "backend/src/main/modules/infra/db/migrations",
+    "backend/src/main/layers/infra/db/migrations",
   );
 
   const env = {

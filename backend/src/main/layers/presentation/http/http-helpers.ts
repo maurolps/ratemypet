@@ -18,13 +18,9 @@ export const conflict = (message: string): HttpResponse => ({
   },
 });
 
-export const serverError = (): HttpResponse => ({
-  status: 500,
-  body: {
-    name: "ServerError",
-    message: "Internal server error",
-  },
-});
+export const serverError = (error: unknown): HttpResponse => {
+  throw error;
+};
 
 export const badRequest = (message: string): HttpResponse => ({
   status: 400,

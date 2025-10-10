@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:17
+    container_name: ratemypet-db
+    environment:
+      POSTGRES_USER: ratemypet
+      POSTGRES_PASSWORD: ratemypet
+      POSTGRES_DB: ratemypet_dev
+    ports:
+      - 5432:5432

@@ -23,6 +23,10 @@ export class PgPool {
     return await this.pool.query<T>(sql, params);
   }
 
+  async health() {
+    return await this.pool.query("SELECT 1");
+  }
+
   async disconnect() {
     await this.pool.end();
   }

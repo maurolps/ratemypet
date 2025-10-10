@@ -58,7 +58,7 @@ describe("CreateUserController", () => {
       });
     });
 
-    it("Should return 500 on unexpected error", async () => {
+    it("Should rethrow on unexpected error", async () => {
       const { sut, createUserSpy } = makeSut();
       createUserSpy.mockRejectedValueOnce(new Error("any_error"));
       const dummyRequest = {
@@ -69,10 +69,9 @@ describe("CreateUserController", () => {
         },
       };
 
-      const httpResponse = await sut.handle(dummyRequest);
+      const httpResponsePromise = sut.handle(dummyRequest);
 
-      expect(httpResponse.status).toBe(500);
-      expect(httpResponse.body.message).toEqual("Internal server error");
+      await expect(httpResponsePromise).rejects.toThrow();
     });
 
     it("Should return 409 when email is already in use", async () => {
