@@ -5,7 +5,12 @@ import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
 export class CreateUserRepositoryStub implements CreateUserRepository {
   create(userDTO: CreateUserDTO): Promise<User> {
     return new Promise((resolve) => {
-      resolve({ id: "any_id", ...userDTO });
+      resolve({
+        id: "any_id",
+        created_at: new Date(),
+        name: userDTO.name,
+        email: userDTO.email,
+      });
     });
   }
 }
