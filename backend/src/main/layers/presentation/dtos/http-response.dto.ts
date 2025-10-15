@@ -4,6 +4,7 @@ export type HttpResponse = {
     name: string;
     email?: string;
     message?: string;
+    created_at?: Date;
   };
   status: number;
 };
