@@ -28,11 +28,15 @@
     "test:coverage": "vitest run --coverage",
     "test:staged": "vitest related --run --project unit --silent=true",
     "test:integration": "vitest run --project integration",
-    "db:up": "docker compose -f docker-compose.dev.yml up",
+    "db:up": "docker compose -f docker-compose.dev.yml up -d db",
     "db:down": "docker compose -f docker-compose.dev.yml down",
     "db:init": "npm run db:up && npm run migrate",
     "migrate": "dbmate --env-file dbmate.env --wait up",
-    "migrate:new": "dbmate --env-file dbmate.env new"
+    "migrate:new": "dbmate --env-file dbmate.env new",
+    "docker": "docker compose -f docker-compose.dev.yml up",
+    "build:docker": "docker compose -f docker-compose.dev.yml build api",
+    "migrate:docker": "dbmate --wait --no-dump-schema up",
+    "dev:docker": "tsx --watch backend/src/main/server.ts"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
