@@ -17,9 +17,9 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "dev": "tsx --env-file=backend/.env --watch backend/src/main/server.ts",
-    "start": "node --env-file=backend/.env backend/dist/server.js",
-    "debug": "npm run build:debug && node --enable-source-maps --inspect --env-file=backend/.env backend/dist/server.js",
+    "dev": "tsx --watch backend/src/main/server.ts",
+    "start": "node backend/dist/server.js",
+    "debug": "npm run build:debug && node --enable-source-maps --inspect backend/dist/server.js",
     "typecheck": "tsc --noEmit",
     "build": "tsup backend/src/main/server.ts --format esm --target node22 --clean --tsconfig tsconfig.build.json --out-dir ./backend/dist --minify",
     "build:debug": "tsup backend/src/main/server.ts --format esm --target node22 --clean --tsconfig tsconfig.build.json --out-dir ./backend/dist --sourcemap inline --no-minify --splitting",
@@ -29,14 +29,14 @@
     "test:staged": "vitest related --run --project unit --silent=true",
     "test:integration": "vitest run --project integration",
     "db:up": "docker compose -f docker-compose.dev.yml up -d db",
-    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:down": "docker compose -f docker-compose.dev.yml down db",
     "db:init": "npm run db:up && npm run migrate",
     "migrate": "dbmate --env-file dbmate.env --wait up",
     "migrate:new": "dbmate --env-file dbmate.env new",
-    "docker": "docker compose -f docker-compose.dev.yml up",
-    "build:docker": "docker compose -f docker-compose.dev.yml build api",
-    "migrate:docker": "dbmate --wait --no-dump-schema up",
-    "dev:docker": "tsx --watch backend/src/main/server.ts"
+    "docker:start": "docker compose -f docker-compose.dev.yml up",
+    "docker:up": "docker compose -f docker-compose.dev.yml up -d",
+    "docker:down": "docker compose -f docker-compose.dev.yml down",
+    "docker:rebuild": "docker compose -f docker-compose.dev.yml up --build"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
