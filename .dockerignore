@@ -1,0 +1,9 @@
+/backend/request/
+node_modules
+dist
+coverage
+.env
+.git
+.gitignore
+docker-compose*.yml
+dockerfile.dev
