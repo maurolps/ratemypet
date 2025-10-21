@@ -21,7 +21,11 @@ services:
       context: .
       dockerfile: dockerfile.dev
     container_name: ratemypet-api
-    command: sh -c "npm ci && npm run migrate:docker && npm run dev:docker"
+    command: sh -c "
+              npm ci && 
+              npx dbmate --wait --no-dump-schema up && 
+              npm run dev
+              "
     environment:
       NODE_ENV: development
       DATABASE_URL: postgres://ratemypet:ratemypet@db:5432/ratemypet_dev?sslmode=disable
@@ -30,7 +34,7 @@ services:
       - ./backend/src/main/layers/infra/db/migrations:/usr/ratemypet/db/migrations
       - node_modules:/usr/ratemypet/node_modules
     ports:
-      - "8080:8000"
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy

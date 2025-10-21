@@ -10,4 +10,4 @@ COPY tsconfig.json tsconfig.base.json tsconfig.build.json ./
 COPY vitest.config.ts ./
 COPY biome.json ./
 
-CMD ["npm", "run", "dev:docker"]
+CMD ["npm", "run", "dev"]
