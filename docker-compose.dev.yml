@@ -22,16 +22,18 @@ services:
       dockerfile: dockerfile.dev
     container_name: ratemypet-api
     command: sh -c "
-              npx dbmate --wait --no-dump-schema up && 
+              npx dbmate --wait up && 
               npm run dev
               "
     environment:
       HUSKY: "0"
       NODE_ENV: development
       DATABASE_URL: postgres://ratemypet:ratemypet@db:5432/ratemypet_dev?sslmode=disable
+      DBMATE_URL: postgres://ratemypet:ratemypet@db:5432/ratemypet_dev?sslmode=disable
+      DBMATE_MIGRATIONS_DIR: /usr/ratemypet/backend/src/main/layers/infra/db/migrations
+      DBMATE_NO_DUMP_SCHEMA: "1"
     volumes:
-      - ./backend/src:/usr/ratemypet/backend/src
-      - ./backend/src/main/layers/infra/db/migrations:/usr/ratemypet/db/migrations
+      - .:/usr/ratemypet
       - node-modules:/usr/ratemypet/node_modules
     ports:
       - "8000:8000"
