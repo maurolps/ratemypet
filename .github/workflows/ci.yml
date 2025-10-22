@@ -19,7 +19,7 @@ jobs:
     - run: npm ci
     - run: npm run lint:ci
     - run: npm run typecheck
-    - run: npm test:coverage
+    - run: npm run test:coverage
     - name: Upload coverage
       uses: coverallsapp/github-action@v2
       with:
