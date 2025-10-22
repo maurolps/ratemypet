@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     environment: "node",
     coverage: {
-      reporter: ["text-summary", "html-spa"],
+      reporter: ["text-summary", "lcov"],
       reportsDirectory: "./backend/coverage",
       include: ["backend/src/main/layers/**/*.ts"],
     },
