@@ -31,6 +31,7 @@
     "db:up": "docker compose -f docker-compose.dev.yml up -d db",
     "db:down": "docker compose -f docker-compose.dev.yml down db",
     "db:init": "npm run db:up && npm run migrate",
+    "db:reset": "docker compose -f docker-compose.dev.yml down -v db",
     "migrate": "dbmate --env-file dbmate.env --wait up",
     "migrate:new": "dbmate --env-file dbmate.env new",
     "docker:start": "docker compose -f docker-compose.dev.yml up",
