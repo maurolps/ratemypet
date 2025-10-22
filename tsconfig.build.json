@@ -4,7 +4,7 @@
     "outDir": "./backend/dist",
     "rootDir": "./backend/src",
     "noEmit": false,
-    "declaration": false,
+    "declaration": false
   },
   "include": ["./backend/src/**/*"],
   "exclude": ["./backend/tests/**/*", "vitest.config.ts"]

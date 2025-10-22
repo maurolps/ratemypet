@@ -21,6 +21,8 @@
     "start": "node backend/dist/server.js",
     "debug": "npm run build:debug && node --enable-source-maps --inspect backend/dist/server.js",
     "typecheck": "tsc --noEmit",
+    "lint": "biome check --write",
+    "lint:ci": "biome ci",
     "build": "tsup backend/src/main/server.ts --format esm --target node22 --clean --tsconfig tsconfig.build.json --out-dir ./backend/dist --minify",
     "build:debug": "tsup backend/src/main/server.ts --format esm --target node22 --clean --tsconfig tsconfig.build.json --out-dir ./backend/dist --sourcemap inline --no-minify --splitting",
     "test": "vitest run --project unit --project integration",

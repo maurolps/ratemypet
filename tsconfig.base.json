@@ -16,5 +16,5 @@
       "@tests/*": ["./backend/src/tests/*"],
       "@main/*": ["./backend/src/main/*"]
     }
-  },
+  }
 }
