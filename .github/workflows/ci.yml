@@ -3,6 +3,7 @@ name: Ratemypet CI
 on:
   pull_request:
     branches: [ "main" ]
+    paths-ignore: ["**/*.md", "docs/**", "backend/src/docs-api/**"]
 
   workflow_dispatch:
 
@@ -16,5 +17,6 @@ jobs:
       with:
         node-version: 22.17
     - run: npm ci
+    - run: npm run lint:ci
     - run: npm run typecheck
     - run: npm test
