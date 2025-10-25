@@ -37,6 +37,7 @@ describe("CreateUserUseCase", () => {
     );
     const fakeUser = {
       id: "valid_id",
+      created_at: new Date(),
       ...userDTO,
     };
     findUserByEmailRepositorySpy.mockResolvedValueOnce(fakeUser);
@@ -68,11 +69,9 @@ describe("CreateUserUseCase", () => {
   it("Should return a User on success", async () => {
     const { sut } = makeSut();
     const result = await sut.execute(userDTO);
-    expect(result).toEqual({
-      id: "any_id",
-      ...userDTO,
-      password: `hashed_${userDTO.password}`,
-    });
+    expect(result.id).toEqual("any_id");
+    expect(result.name).toEqual(userDTO.name);
+    expect(result.email).toEqual(userDTO.email);
   });
 
   it("Should rethrow if FindUserByEmailRepository throws", async () => {

@@ -1,7 +1,7 @@
 {
   "name": "ratemypet",
   "description": "RateMyPet backend (Clean Architecture + TDD)",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "maurolps",
   "license": "MIT",
   "repository": {
@@ -17,10 +17,12 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "dev": "tsx --env-file=backend/.env --watch backend/src/main/server.ts",
-    "start": "node --env-file=backend/.env backend/dist/server.js",
-    "debug":"npm run build:debug && node --enable-source-maps --inspect --env-file=backend/.env backend/dist/server.js",
+    "dev": "tsx --watch backend/src/main/server.ts",
+    "start": "node backend/dist/server.js",
+    "debug": "npm run build:debug && node --enable-source-maps --inspect backend/dist/server.js",
     "typecheck": "tsc --noEmit",
+    "lint": "biome check --write",
+    "lint:ci": "biome ci",
     "build": "tsup backend/src/main/server.ts --format esm --target node22 --clean --tsconfig tsconfig.build.json --out-dir ./backend/dist --minify",
     "build:debug": "tsup backend/src/main/server.ts --format esm --target node22 --clean --tsconfig tsconfig.build.json --out-dir ./backend/dist --sourcemap inline --no-minify --splitting",
     "test": "vitest run --project unit --project integration",
@@ -28,11 +30,16 @@
     "test:coverage": "vitest run --coverage",
     "test:staged": "vitest related --run --project unit --silent=true",
     "test:integration": "vitest run --project integration",
-    "db:up": "docker compose -f docker-compose.dev.yml up",
-    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:up": "docker compose -f docker-compose.dev.yml up -d db",
+    "db:down": "docker compose -f docker-compose.dev.yml down db",
     "db:init": "npm run db:up && npm run migrate",
+    "db:reset": "docker compose -f docker-compose.dev.yml down -v db",
     "migrate": "dbmate --env-file dbmate.env --wait up",
-    "migrate:new": "dbmate --env-file dbmate.env new"
+    "migrate:new": "dbmate --env-file dbmate.env new",
+    "docker:start": "docker compose -f docker-compose.dev.yml up",
+    "docker:up": "docker compose -f docker-compose.dev.yml up -d",
+    "docker:down": "docker compose -f docker-compose.dev.yml down",
+    "docker:rebuild": "docker compose -f docker-compose.dev.yml up --build"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -41,6 +48,7 @@
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "pg": "^8.16.3",
+    "swagger-ui-express": "^5.0.1",
     "tsx": "^4.20.6",
     "zod": "^4.1.5"
   },
@@ -52,11 +60,14 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.1.0",
     "@types/pg": "^8.15.5",
+    "@types/supertest": "^6.0.3",
+    "@types/swagger-ui-express": "^4.1.8",
     "@vitest/coverage-v8": "^3.2.4",
     "dbmate": "^2.28.0",
     "git-commit-msg-linter": "^5.0.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
+    "supertest": "^7.1.4",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

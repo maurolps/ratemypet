@@ -1,0 +1,13 @@
+FROM node:22.17.0 
+WORKDIR /usr/ratemypet
+EXPOSE 8000
+
+
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci
+
+COPY tsconfig.json tsconfig.base.json tsconfig.build.json ./
+COPY vitest.config.ts ./
+COPY biome.json ./
+
+CMD ["npm", "run", "dev"]

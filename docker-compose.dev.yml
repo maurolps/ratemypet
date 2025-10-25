@@ -8,3 +8,39 @@ services:
       POSTGRES_DB: ratemypet_dev
     ports:
       - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ratemypet -d ratemypet_dev"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile.dev
+    container_name: ratemypet-api
+    command: sh -c "
+              npx dbmate --wait up && 
+              npm run dev
+              "
+    environment:
+      HUSKY: "0"
+      NODE_ENV: development
+      DATABASE_URL: postgres://ratemypet:ratemypet@db:5432/ratemypet_dev?sslmode=disable
+      DBMATE_URL: postgres://ratemypet:ratemypet@db:5432/ratemypet_dev?sslmode=disable
+      DBMATE_MIGRATIONS_DIR: /usr/ratemypet/backend/src/main/layers/infra/db/migrations
+      DBMATE_NO_DUMP_SCHEMA: "1"
+    volumes:
+      - .:/usr/ratemypet
+      - node-modules:/usr/ratemypet/node_modules
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  node-modules:

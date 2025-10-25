@@ -5,8 +5,9 @@ export default defineConfig({
   test: {
     environment: "node",
     coverage: {
-      reporter: ["text-summary"],
+      reporter: ["text-summary", "lcov"],
       reportsDirectory: "./backend/coverage",
+      include: ["backend/src/main/layers/**/*.ts"],
     },
     projects: [
       {
@@ -21,6 +22,9 @@ export default defineConfig({
         test: {
           name: "integration",
           include: ["./backend/tests/**/*.test.ts"],
+          globalSetup: "./backend/tests/config/global-setup.ts",
+          setupFiles: "./backend/tests/config/setup-db.ts",
+          testTimeout: 60_000,
         },
       },
     ],

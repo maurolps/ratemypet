@@ -1,0 +1,30 @@
+name: Ratemypet CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore: ["**/*.md", "docs/**", "backend/src/docs-api/**"]
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore: ["**/*.md", "docs/**", "backend/src/docs-api/**"]
+
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - uses: actions/setup-node@v6
+      with:
+        node-version: 22.17
+    - run: npm ci
+    - run: npm run lint:ci
+    - run: npm run typecheck
+    - run: npm run test:coverage
+    - name: Upload coverage
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }} 
+        file: ./backend/coverage/lcov.info   

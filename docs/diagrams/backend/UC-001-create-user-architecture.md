@@ -2,7 +2,7 @@
 # Feature: UC-001 CreateUser Architecture
 
 
-![UC001 - Architecture Diagram](../../assets/uc001-diagram.png)
+<img alt="UC001 Architecture Diagram" src="https://raw.githubusercontent.com/maurolps/ratemypet/refs/heads/main/docs/assets/uc001-diagram.png" width="650" />
 
 <details>
 <summary>Expand Mermaid code</summary>

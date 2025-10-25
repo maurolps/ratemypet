@@ -8,6 +8,7 @@ export class CreateUserStub implements CreateUser {
   async execute(user: CreateUserDTO): Promise<User> {
     return {
       id: "valid_id",
+      created_at: new Date(),
       name: user.name,
       email: user.email,
     };
