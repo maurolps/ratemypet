@@ -1,7 +1,7 @@
 export type HttpResponse = {
   body: {
     id?: string;
-    name: string;
+    name?: string;
     email?: string;
     message?: string;
     created_at?: Date;
