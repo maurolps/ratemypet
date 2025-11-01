@@ -1,12 +1,14 @@
-import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
 import { AppError } from "@application/errors/app-error";
 import { ZodHttpValidator } from "@presentation/validation/zod-http-validator";
-import { createUserSchema } from "@presentation/validation/create-user.schema";
+import {
+  type FakeDataDTO,
+  validationSchema,
+} from "../mocks/validation-schema.mock";
 import { describe, expect, it } from "vitest";
 
 describe("ZodHttpValidator", () => {
-  const sut = new ZodHttpValidator<CreateUserDTO>(createUserSchema);
-  const makeRequest = (overrides: Partial<CreateUserDTO>) => {
+  const sut = new ZodHttpValidator<FakeDataDTO>(validationSchema);
+  const makeRequest = (overrides: Partial<FakeDataDTO>) => {
     return {
       body: {
         name: "valid_name",
@@ -17,7 +19,7 @@ describe("ZodHttpValidator", () => {
     };
   };
 
-  it("Should return a UserDTO when validating a valid request body", () => {
+  it("Should return a DataDTO when validating a valid request body", () => {
     const request = makeRequest({});
     const result = sut.execute(request);
     expect(result).toEqual(request.body);
