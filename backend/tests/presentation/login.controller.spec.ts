@@ -47,4 +47,19 @@ describe("LoginController", () => {
     await sut.handle(dummyRequest);
     expect(loginValidatorSpy).toHaveBeenCalledWith(dummyRequest);
   });
+
+  it("Should return 400 if email or password is missing", async () => {
+    const { sut, loginValidatorSpy } = makeSut();
+    const dummyRequest = {
+      body: {
+        email: "valid_email@mail.com",
+      },
+    };
+    loginValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("MISSING_PARAM", "email");
+    });
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual("Missing Param: email");
+  });
 });
