@@ -1,4 +1,7 @@
-import type { CreateUser } from "@domain/usecases/create-user.contract";
+import type {
+  CreateUser,
+  CreateUserDTO,
+} from "@domain/usecases/create-user.contract";
 import type { Controller } from "@presentation/contracts/controller.contract";
 import type { HttpValidator } from "@presentation/contracts/http-validator.contract";
 import type { HttpRequest } from "@presentation/dtos/http-request.dto";
@@ -9,7 +12,7 @@ import { created } from "@presentation/http/http-helpers";
 export class CreateUserController implements Controller {
   constructor(
     private readonly createUser: CreateUser,
-    private readonly httpValidator: HttpValidator,
+    private readonly httpValidator: HttpValidator<CreateUserDTO>,
   ) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
