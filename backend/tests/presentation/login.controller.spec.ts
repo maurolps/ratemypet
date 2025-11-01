@@ -1,3 +1,4 @@
+import type { LoginDTO } from "@domain/usecases/login.contract";
 import { LoginController } from "@presentation/controllers/login.controler";
 import { describe, expect, it, vi } from "vitest";
 import { LoginValidatorStub } from "./doubles/login.validator.stub";
@@ -11,29 +12,39 @@ describe("LoginController", () => {
     return { sut, loginValidatorStub, loginValidatorSpy };
   };
 
-  it("Should return 200 on successful login", async () => {
-    const { sut } = makeSut();
-    const dummyRequest = {
+  const makeRequest = (overrides: Partial<LoginDTO>) => {
+    return {
       body: {
-        email: "valid_mail@mail.com",
+        email: "valid_email@mail.com",
         password: "valid_password",
+        ...overrides,
       },
     };
+  };
 
+  it("Should return 200 on successful login", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = makeRequest({});
     const httpResponse = await sut.handle(dummyRequest);
 
     expect(httpResponse.status).toBe(200);
   });
+
   it("Should return 400 if body is missing", async () => {
     const { sut, loginValidatorSpy } = makeSut();
     const dummyRequest = {};
     loginValidatorSpy.mockImplementationOnce(() => {
       throw new AppError("MISSING_BODY");
     });
-
     const httpResponse = await sut.handle(dummyRequest);
-
     expect(httpResponse.status).toBe(400);
     expect(httpResponse.body.message).toEqual("Missing request body");
+  });
+
+  it("Should call HttpValidator with correct values", async () => {
+    const { sut, loginValidatorSpy } = makeSut();
+    const dummyRequest = makeRequest({});
+    await sut.handle(dummyRequest);
+    expect(loginValidatorSpy).toHaveBeenCalledWith(dummyRequest);
   });
 });
