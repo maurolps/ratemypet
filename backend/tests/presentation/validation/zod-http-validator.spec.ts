@@ -5,7 +5,7 @@ import { createUserSchema } from "@presentation/validation/create-user.schema";
 import { describe, expect, it } from "vitest";
 
 describe("ZodHttpValidator", () => {
-  const sut = new ZodHttpValidator(createUserSchema);
+  const sut = new ZodHttpValidator<CreateUserDTO>(createUserSchema);
   const makeRequest = (overrides: Partial<CreateUserDTO>) => {
     return {
       body: {
