@@ -91,4 +91,12 @@ describe("LoginController", () => {
     const httpResponse = sut.handle(dummyRequest);
     await expect(httpResponse).rejects.toThrow();
   });
+
+  it("Should return an AccessToken and RefreshToken on successful login", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = makeRequest({});
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.body.tokens).toHaveProperty("accessToken");
+    expect(httpResponse.body.tokens).toHaveProperty("refreshToken");
+  });
 });
