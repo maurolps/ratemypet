@@ -15,7 +15,7 @@ export class LoginController implements Controller {
     try {
       const loginDTO = this.httpValidator.execute(request);
       const authData = await this.login.auth(loginDTO);
-      return ok(`Login successful: ${authData}`);
+      return ok({ tokens: authData });
     } catch (error) {
       return ErrorPresenter(error);
     }
