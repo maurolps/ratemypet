@@ -83,4 +83,12 @@ describe("LoginController", () => {
     expect(httpResponse.status).toBe(401);
     expect(httpResponse.body.message).toEqual("Invalid credentials");
   });
+
+  it("Should rethrow if LoginUseCase throws", async () => {
+    const { sut, loginUseCaseSpy } = makeSut();
+    const dummyRequest = makeRequest({});
+    loginUseCaseSpy.mockRejectedValueOnce(new Error("any_error"));
+    const httpResponse = sut.handle(dummyRequest);
+    await expect(httpResponse).rejects.toThrow();
+  });
 });
