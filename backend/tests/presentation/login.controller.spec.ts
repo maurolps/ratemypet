@@ -72,4 +72,15 @@ describe("LoginController", () => {
     await sut.handle(dummyRequest);
     expect(loginUseCaseSpy).toHaveBeenCalledWith(dummyRequest.body);
   });
+
+  it("Should return Unauthorized if login fails", async () => {
+    const { sut, loginUseCaseSpy } = makeSut();
+    const dummyRequest = makeRequest({});
+    loginUseCaseSpy.mockImplementationOnce(() => {
+      throw new AppError("UNAUTHORIZED");
+    });
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(401);
+    expect(httpResponse.body.message).toEqual("Invalid credentials");
+  });
 });
