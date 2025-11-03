@@ -1,11 +1,9 @@
 import type { User } from "@domain/entities/user";
 import type { HttpResponse } from "@presentation/dtos/http-response.dto";
 
-export const ok = (message: string): HttpResponse => ({
+export const ok = (body: HttpResponse["body"]): HttpResponse => ({
   status: 200,
-  body: {
-    message,
-  },
+  body,
 });
 
 export const created = (user: User): HttpResponse => ({

@@ -5,6 +5,10 @@ export type HttpResponse = {
     email?: string;
     message?: string;
     created_at?: Date;
+    tokens?: {
+      accessToken: string;
+      refreshToken: string;
+    };
   };
   status: number;
 };
