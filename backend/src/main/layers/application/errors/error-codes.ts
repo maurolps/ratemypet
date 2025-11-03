@@ -4,4 +4,5 @@ export type ERROR_CODE =
   | "MISSING_PARAM"
   | "INVALID_PARAM"
   | "WEAK_PASSWORD"
-  | "INVALID_NAME";
+  | "INVALID_NAME"
+  | "UNAUTHORIZED";

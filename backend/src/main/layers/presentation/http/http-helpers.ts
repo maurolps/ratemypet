@@ -37,3 +37,11 @@ export const badRequest = (message: string): HttpResponse => ({
     name: "BadRequestError",
   },
 });
+
+export const unauthorized = (): HttpResponse => ({
+  status: 401,
+  body: {
+    message: "Invalid credentials",
+    name: "Unauthorized",
+  },
+});
