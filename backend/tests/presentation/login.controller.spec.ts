@@ -3,13 +3,16 @@ import { LoginController } from "@presentation/controllers/login.controler";
 import { describe, expect, it, vi } from "vitest";
 import { LoginValidatorStub } from "./doubles/login.validator.stub";
 import { AppError } from "@application/errors/app-error";
+import { LoginUseCaseStub } from "./doubles/login.usecase.stub";
 
 describe("LoginController", () => {
   const makeSut = () => {
     const loginValidatorStub = new LoginValidatorStub();
-    const sut = new LoginController(loginValidatorStub);
+    const loginUseCaseStub = new LoginUseCaseStub();
+    const sut = new LoginController(loginValidatorStub, loginUseCaseStub);
     const loginValidatorSpy = vi.spyOn(loginValidatorStub, "execute");
-    return { sut, loginValidatorStub, loginValidatorSpy };
+    const loginUseCaseSpy = vi.spyOn(loginUseCaseStub, "auth");
+    return { sut, loginValidatorSpy, loginUseCaseSpy };
   };
 
   const makeRequest = (overrides: Partial<LoginDTO>) => {
@@ -61,5 +64,12 @@ describe("LoginController", () => {
     const httpResponse = await sut.handle(dummyRequest);
     expect(httpResponse.status).toBe(400);
     expect(httpResponse.body.message).toEqual("Missing Param: email");
+  });
+
+  it("Should call LoginUseCase with correct values", async () => {
+    const { sut, loginUseCaseSpy } = makeSut();
+    const dummyRequest = makeRequest({});
+    await sut.handle(dummyRequest);
+    expect(loginUseCaseSpy).toHaveBeenCalledWith(dummyRequest.body);
   });
 });
