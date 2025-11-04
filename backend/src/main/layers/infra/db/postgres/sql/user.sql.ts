@@ -5,7 +5,7 @@ export const sql = {
   RETURNING id, name, email, created_at
   `,
   FIND_BY_EMAIL: `
-  SELECT id, name, email
+  SELECT id, name, email, password_hash
   FROM users
   WHERE email = $1
   `,

@@ -18,12 +18,11 @@ describe("PgUserRepository", () => {
     });
   });
   describe("findByEmail", () => {
-    it("Should return an User on success", async () => {
+    it("Should return an User with passwordHash on success", async () => {
       const sut = new PgUserRepository();
-
       const user = await sut.findByEmail(userDTO.email);
-
       expect(user?.name).toEqual(userDTO.name);
+      expect(user?.password_hash).toEqual(userDTO.password);
     });
     it("Should return null on fail", async () => {
       const sut = new PgUserRepository();
