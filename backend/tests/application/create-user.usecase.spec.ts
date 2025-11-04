@@ -2,23 +2,23 @@ import { AppError } from "@application/errors/app-error";
 import { CreateUserUseCase } from "@application/usecases/create-user.usecase";
 import { describe, vi, it, expect } from "vitest";
 import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
-import { HashPasswordStub } from "./doubles/hash-password.stub";
+import { HasherStub } from "./doubles/hasher.stub";
 import { CreateUserRepositoryStub } from "./doubles/create-user.repository.stub";
 
 describe("CreateUserUseCase", () => {
   const makeSut = () => {
     const findUserByEmailRepositoryStub = new FindUserByEmailRepositoryStub();
-    const hashPasswordStub = new HashPasswordStub();
+    const hasherStub = new HasherStub();
     const createUserRepositoryStub = new CreateUserRepositoryStub();
     const sut = new CreateUserUseCase(
       findUserByEmailRepositoryStub,
-      hashPasswordStub,
+      hasherStub,
       createUserRepositoryStub,
     );
     return {
       sut,
       findUserByEmailRepositoryStub,
-      hashPasswordStub,
+      hasherStub,
       createUserRepositoryStub,
     };
   };
@@ -46,8 +46,8 @@ describe("CreateUserUseCase", () => {
   });
 
   it("Should call Hasher with correct password", async () => {
-    const { hashPasswordStub, sut } = makeSut();
-    const hashPasswordSpy = vi.spyOn(hashPasswordStub, "execute");
+    const { hasherStub, sut } = makeSut();
+    const hashPasswordSpy = vi.spyOn(hasherStub, "hash");
     await sut.execute(userDTO);
     expect(hashPasswordSpy).toHaveBeenCalledWith(userDTO.password);
   });

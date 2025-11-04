@@ -9,7 +9,7 @@ describe("Bcrypt Adapter", () => {
 
   it("Should call bcrypt with correct salt value", async () => {
     const hashSpy = bcryptSpy.mockImplementationOnce(() => "hashed_password");
-    await sut.execute("any_value");
+    await sut.hash("any_value");
     expect(hashSpy).toHaveBeenCalledWith("any_value", SALT_ROUNDS);
   });
 
@@ -17,7 +17,7 @@ describe("Bcrypt Adapter", () => {
     bcryptSpy.mockImplementationOnce(() => {
       throw new Error();
     });
-    const promise = sut.execute("any_value");
+    const promise = sut.hash("any_value");
     await expect(promise).rejects.toThrow();
   });
 });
