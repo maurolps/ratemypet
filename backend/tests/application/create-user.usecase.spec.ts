@@ -8,6 +8,10 @@ import { CreateUserRepositoryStub } from "./doubles/create-user.repository.stub"
 describe("CreateUserUseCase", () => {
   const makeSut = () => {
     const findUserByEmailRepositoryStub = new FindUserByEmailRepositoryStub();
+    const findUserByEmailRepositorySpy = vi.spyOn(
+      findUserByEmailRepositoryStub,
+      "findByEmail",
+    );
     const hasherStub = new HasherStub();
     const createUserRepositoryStub = new CreateUserRepositoryStub();
     const sut = new CreateUserUseCase(
@@ -17,7 +21,7 @@ describe("CreateUserUseCase", () => {
     );
     return {
       sut,
-      findUserByEmailRepositoryStub,
+      findUserByEmailRepositorySpy,
       hasherStub,
       createUserRepositoryStub,
     };
@@ -30,33 +34,30 @@ describe("CreateUserUseCase", () => {
   };
 
   it("Should throw if user already exists", async () => {
-    const { findUserByEmailRepositoryStub, sut } = makeSut();
-    const findUserByEmailRepositorySpy = vi.spyOn(
-      findUserByEmailRepositoryStub,
-      "findByEmail",
-    );
-    const fakeUser = {
-      id: "valid_id",
-      created_at: new Date(),
-      ...userDTO,
-    };
-    findUserByEmailRepositorySpy.mockResolvedValueOnce(fakeUser);
+    const { sut } = makeSut();
     const newUserPromise = sut.execute(userDTO);
     await expect(newUserPromise).rejects.toThrow(new AppError("EMAIL_TAKEN"));
   });
 
   it("Should call Hasher with correct password", async () => {
-    const { hasherStub, sut } = makeSut();
+    const { hasherStub, sut, findUserByEmailRepositorySpy } = makeSut();
     const hashPasswordSpy = vi.spyOn(hasherStub, "hash");
+    findUserByEmailRepositorySpy.mockImplementationOnce(() =>
+      Promise.resolve(null),
+    );
     await sut.execute(userDTO);
     expect(hashPasswordSpy).toHaveBeenCalledWith(userDTO.password);
   });
 
   it("Should call CreateUserRepository with correct values", async () => {
-    const { createUserRepositoryStub, sut } = makeSut();
+    const { createUserRepositoryStub, sut, findUserByEmailRepositorySpy } =
+      makeSut();
     const createUserRepositorySpy = vi.spyOn(
       createUserRepositoryStub,
       "create",
+    );
+    findUserByEmailRepositorySpy.mockImplementationOnce(() =>
+      Promise.resolve(null),
     );
     const hashedPassword = `hashed_${userDTO.password}`;
     await sut.execute(userDTO);
@@ -67,7 +68,10 @@ describe("CreateUserUseCase", () => {
   });
 
   it("Should return a User on success", async () => {
-    const { sut } = makeSut();
+    const { sut, findUserByEmailRepositorySpy } = makeSut();
+    findUserByEmailRepositorySpy.mockImplementationOnce(() =>
+      Promise.resolve(null),
+    );
     const result = await sut.execute(userDTO);
     expect(result.id).toEqual("any_id");
     expect(result.name).toEqual(userDTO.name);
@@ -75,11 +79,7 @@ describe("CreateUserUseCase", () => {
   });
 
   it("Should rethrow if FindUserByEmailRepository throws", async () => {
-    const { findUserByEmailRepositoryStub, sut } = makeSut();
-    const findUserByEmailRepositorySpy = vi.spyOn(
-      findUserByEmailRepositoryStub,
-      "findByEmail",
-    );
+    const { findUserByEmailRepositorySpy, sut } = makeSut();
     findUserByEmailRepositorySpy.mockRejectedValueOnce(new Error());
     await expect(sut.execute(userDTO)).rejects.toThrow(new Error());
   });

@@ -5,6 +5,14 @@ export class FindUserByEmailRepositoryStub
   implements FindUserByEmailRepository
 {
   findByEmail(_email: string): Promise<User | null> {
-    return new Promise((resolve) => resolve(null));
+    return new Promise((resolve) =>
+      resolve({
+        id: "valid_id",
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        created_at: new Date(),
+        password_hash: "hashed_valid_password",
+      }),
+    );
   }
 }
