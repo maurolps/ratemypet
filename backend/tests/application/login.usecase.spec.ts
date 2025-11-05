@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from "vitest";
 import { AppError } from "@application/errors/app-error";
 import { HasherStub } from "./doubles/hasher.stub";
 import { TokenGeneratorStub } from "./doubles/token-generator.stub";
-import e from "express";
 
 describe("LoginUseCase", () => {
   const makeSut = () => {
@@ -52,5 +51,18 @@ describe("LoginUseCase", () => {
       name: "valid_name",
       email: "valid_email@mail.com",
     });
+  });
+
+  it("Should reThrow if TokenGenerator throws", async () => {
+    const { sut, tokenGeneratorSpy } = makeSut();
+    tokenGeneratorSpy.mockImplementationOnce(() => {
+      throw new Error("Error");
+    });
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    const promise = sut.auth(loginDTO);
+    await expect(promise).rejects.toThrow();
   });
 });
