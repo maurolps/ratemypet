@@ -1,4 +1,4 @@
-export type TokenPayload = {
+export type AccessTokenPayload = {
   sub: string;
   name: string;
   email: string;

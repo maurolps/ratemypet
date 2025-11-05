@@ -1,5 +1,3 @@
-import type { TokenPayload } from "@domain/entities/auth";
-
-export interface TokenGenerator {
-  issue(payload: TokenPayload): Promise<string>;
+export interface TokenGenerator<T> {
+  issue(payload: T): Promise<string>;
 }
