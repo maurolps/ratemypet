@@ -1,7 +1,11 @@
-import type { AccessTokenPayload } from "@domain/entities/token";
+import type {
+  AccessTokenPayload,
+  RefreshTokenDTO,
+} from "@domain/entities/token";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { TokenGenerator } from "@application/ports/token-generator.contract";
 import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
+import type { RefreshTokenRepository } from "@application/repositories/refresh-token-repository";
 import type {
   AuthData,
   Login,
@@ -15,6 +19,7 @@ export class LoginUseCase implements Login {
     private readonly hasher: Hasher,
     private readonly accessTokenGenerator: TokenGenerator<AccessTokenPayload>,
     private readonly refreshTokenGenerator: TokenGenerator,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
   async auth(loginDTO: LoginDTO): Promise<AuthData> {
@@ -33,15 +38,22 @@ export class LoginUseCase implements Login {
     });
     const refreshTokenRaw = await this.refreshTokenGenerator.issue();
 
-    const [tokenId, tokenSecret] = refreshTokenRaw.split(".");
-    if (!tokenId || !tokenSecret) {
+    const [id, secret] = refreshTokenRaw.split(".");
+    if (!id || !secret) {
       throw new Error();
     }
 
-    const _refreshTokenHash = await this.hasher.hash(tokenSecret);
+    const refreshTokenHash = await this.hasher.hash(secret);
+    const refreshTokenDTO: RefreshTokenDTO = {
+      id,
+      user_id: user.id,
+      token_hash: refreshTokenHash,
+    };
+
+    await this.refreshTokenRepository.save(refreshTokenDTO);
 
     return {
-      accessToken: accessToken,
+      accessToken,
       refreshToken: refreshTokenRaw,
     };
   }
