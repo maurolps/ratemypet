@@ -31,11 +31,18 @@ export class LoginUseCase implements Login {
       name: user.name,
       email: user.email,
     });
-    const refreshToken = await this.refreshTokenGenerator.issue();
+    const refreshTokenRaw = await this.refreshTokenGenerator.issue();
+
+    const [tokenId, tokenSecret] = refreshTokenRaw.split(".");
+    if (!tokenId || !tokenSecret) {
+      throw new Error();
+    }
+
+    const _refreshTokenHash = await this.hasher.hash(tokenSecret);
 
     return {
       accessToken: accessToken,
-      refreshToken: refreshToken,
+      refreshToken: refreshTokenRaw,
     };
   }
 }
