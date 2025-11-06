@@ -12,18 +12,27 @@ const makeAccessTokenGeneratorSpy = () => {
   return { accessTokenGeneratorStub, accessTokenGeneratorSpy };
 };
 
+const makeRefreshTokenGeneratorSpy = () => {
+  const refreshTokenGeneratorStub = new TokenGeneratorStub();
+  const refreshTokenGeneratorSpy = vi.spyOn(refreshTokenGeneratorStub, "issue");
+  return { refreshTokenGeneratorStub, refreshTokenGeneratorSpy };
+};
+
 describe("LoginUseCase", () => {
   const makeSut = () => {
     const hasherStub = new HasherStub();
     const { accessTokenGeneratorStub, accessTokenGeneratorSpy } =
       makeAccessTokenGeneratorSpy();
+    const { refreshTokenGeneratorStub, refreshTokenGeneratorSpy } =
+      makeRefreshTokenGeneratorSpy();
     const findUserByEmailStub = new FindUserByEmailRepositoryStub();
     const sut = new LoginUseCase(
       findUserByEmailStub,
       hasherStub,
       accessTokenGeneratorStub,
+      refreshTokenGeneratorStub,
     );
-    return { sut, accessTokenGeneratorSpy };
+    return { sut, accessTokenGeneratorSpy, refreshTokenGeneratorSpy };
   };
 
   it("Should throw UNAUTHORIZED error when user is not found", async () => {
@@ -46,7 +55,7 @@ describe("LoginUseCase", () => {
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
   });
 
-  it("Should call TokenGenerator with correct values", async () => {
+  it("Should call AccessTokenGenerator with correct values", async () => {
     const { sut, accessTokenGeneratorSpy } = makeSut();
     const loginDTO = {
       email: "valid_email@mail.com",
@@ -72,5 +81,15 @@ describe("LoginUseCase", () => {
     };
     const promise = sut.auth(loginDTO);
     await expect(promise).rejects.toThrow();
+  });
+
+  it("Should call RefreshTokenGenerator to generate refreshToken", async () => {
+    const { sut, refreshTokenGeneratorSpy } = makeSut();
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    await sut.auth(loginDTO);
+    expect(refreshTokenGeneratorSpy).toHaveBeenCalledTimes(1);
   });
 });
