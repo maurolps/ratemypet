@@ -28,4 +28,11 @@ describe("JwtAdapter", () => {
     const promise = sut.issue(dummyPayload);
     await expect(promise).rejects.toThrow();
   });
+
+  it("Should return a valid access token on success", async () => {
+    signSpy.mockImplementationOnce(() => "issued_access_token");
+
+    const accessToken = await sut.issue(dummyPayload);
+    expect(accessToken).toBe("issued_access_token");
+  });
 });
