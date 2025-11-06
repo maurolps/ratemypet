@@ -14,6 +14,7 @@ export class LoginUseCase implements Login {
     private readonly findUserByEmail: FindUserByEmailRepository,
     private readonly hasher: Hasher,
     private readonly accessTokenGenerator: TokenGenerator<AccessTokenPayload>,
+    private readonly refreshTokenGenerator: TokenGenerator,
   ) {}
 
   async auth(loginDTO: LoginDTO): Promise<AuthData> {
@@ -25,15 +26,16 @@ export class LoginUseCase implements Login {
       throw new AppError("UNAUTHORIZED");
     }
 
-    const _accessToken = await this.accessTokenGenerator.issue({
+    const accessToken = await this.accessTokenGenerator.issue({
       sub: user.id,
       name: user.name,
       email: user.email,
     });
+    const refreshToken = await this.refreshTokenGenerator.issue();
 
     return {
-      accessToken: "generated_access_token",
-      refreshToken: "generated_refresh_token",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 }

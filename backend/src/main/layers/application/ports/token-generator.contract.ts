@@ -1,3 +1,3 @@
-export interface TokenGenerator<T> {
-  issue(payload: T): Promise<string>;
+export interface TokenGenerator<T = void> {
+  issue(payload?: T): Promise<string>;
 }
