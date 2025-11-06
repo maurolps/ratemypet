@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AppError } from "@application/errors/app-error";
 import { HasherStub } from "./doubles/hasher.stub";
 import { TokenGeneratorStub } from "./doubles/token-generator.stub";
+import { RefreshTokenRepositoryStub } from "./doubles/refresh-token.repository.stub";
 
 const makeAccessTokenGeneratorSpy = () => {
   const accessTokenGeneratorStub = new TokenGeneratorStub<AccessTokenPayload>();
@@ -18,25 +19,38 @@ const makeRefreshTokenGeneratorSpy = () => {
   return { refreshTokenGeneratorStub, refreshTokenGeneratorSpy };
 };
 
+const makeRefreshTokenRepositorySpy = () => {
+  const refreshTokenRepositoryStub = new RefreshTokenRepositoryStub();
+  const refreshTokenRepositorySpy = vi.spyOn(
+    refreshTokenRepositoryStub,
+    "save",
+  );
+  return { refreshTokenRepositoryStub, refreshTokenRepositorySpy };
+};
+
 describe("LoginUseCase", () => {
   const makeSut = () => {
     const hasherStub = new HasherStub();
+    const findUserByEmailStub = new FindUserByEmailRepositoryStub();
     const { accessTokenGeneratorStub, accessTokenGeneratorSpy } =
       makeAccessTokenGeneratorSpy();
     const { refreshTokenGeneratorStub, refreshTokenGeneratorSpy } =
       makeRefreshTokenGeneratorSpy();
-    const findUserByEmailStub = new FindUserByEmailRepositoryStub();
+    const { refreshTokenRepositoryStub, refreshTokenRepositorySpy } =
+      makeRefreshTokenRepositorySpy();
     const sut = new LoginUseCase(
       findUserByEmailStub,
       hasherStub,
       accessTokenGeneratorStub,
       refreshTokenGeneratorStub,
+      refreshTokenRepositoryStub,
     );
     return {
       sut,
       hasherStub,
       accessTokenGeneratorSpy,
       refreshTokenGeneratorSpy,
+      refreshTokenRepositorySpy,
     };
   };
 
@@ -106,6 +120,20 @@ describe("LoginUseCase", () => {
       password: "valid_password",
     };
     await sut.auth(loginDTO);
-    expect(hashSpy).toHaveBeenCalledWith("valid_refresh_token");
+    expect(hashSpy).toHaveBeenCalledWith("refresh_token");
+  });
+
+  it("Should call RefreshTokenRepository with correct values", async () => {
+    const { sut, refreshTokenRepositorySpy } = makeSut();
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    await sut.auth(loginDTO);
+    expect(refreshTokenRepositorySpy).toHaveBeenCalledWith({
+      id: "valid_token_id",
+      user_id: "valid_id",
+      token_hash: "hashed_refresh_token",
+    });
   });
 });
