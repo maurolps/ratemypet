@@ -32,7 +32,12 @@ describe("LoginUseCase", () => {
       accessTokenGeneratorStub,
       refreshTokenGeneratorStub,
     );
-    return { sut, accessTokenGeneratorSpy, refreshTokenGeneratorSpy };
+    return {
+      sut,
+      hasherStub,
+      accessTokenGeneratorSpy,
+      refreshTokenGeneratorSpy,
+    };
   };
 
   it("Should throw UNAUTHORIZED error when user is not found", async () => {
@@ -83,7 +88,7 @@ describe("LoginUseCase", () => {
     await expect(promise).rejects.toThrow();
   });
 
-  it("Should call RefreshTokenGenerator to generate refreshToken", async () => {
+  it("Should call TokenGenerator to issue a refreshToken", async () => {
     const { sut, refreshTokenGeneratorSpy } = makeSut();
     const loginDTO = {
       email: "valid_email@mail.com",
@@ -91,5 +96,16 @@ describe("LoginUseCase", () => {
     };
     await sut.auth(loginDTO);
     expect(refreshTokenGeneratorSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("Should call Hasher with correct refresh token secret", async () => {
+    const { sut, hasherStub } = makeSut();
+    const hashSpy = vi.spyOn(hasherStub, "hash");
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    await sut.auth(loginDTO);
+    expect(hashSpy).toHaveBeenCalledWith("valid_refresh_token");
   });
 });
