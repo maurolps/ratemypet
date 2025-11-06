@@ -7,7 +7,7 @@ export class FindUserByEmailRepositoryStub
   findByEmail(_email: string): Promise<User | null> {
     return new Promise((resolve) =>
       resolve({
-        id: "valid_id",
+        id: "valid_user_id",
         name: "valid_name",
         email: "valid_email@mail.com",
         created_at: new Date(),

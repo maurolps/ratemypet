@@ -82,7 +82,7 @@ describe("LoginUseCase", () => {
     };
     await sut.auth(loginDTO);
     expect(accessTokenGeneratorSpy).toHaveBeenCalledWith({
-      sub: "valid_id",
+      sub: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
     });
@@ -132,7 +132,7 @@ describe("LoginUseCase", () => {
     await sut.auth(loginDTO);
     expect(refreshTokenRepositorySpy).toHaveBeenCalledWith({
       id: "valid_token_id",
-      user_id: "valid_id",
+      user_id: "valid_user_id",
       token_hash: "hashed_refresh_token",
     });
   });
