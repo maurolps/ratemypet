@@ -5,11 +5,11 @@ import jwt, { type SignOptions } from "jsonwebtoken";
 
 export class JwtAdapter implements TokenGenerator<AccessTokenPayload> {
   async issue(payload: AccessTokenPayload): Promise<string> {
-    const jwtSecret = env.JWT_ACCESS_TOKEN_SECRET;
-    const jwtExpiresIn = env.JWT_ACCESS_TOKEN_TTL as SignOptions["expiresIn"];
+    const secret = env.JWT_ACCESS_TOKEN_SECRET;
+    const expiresIn = env.JWT_ACCESS_TOKEN_TTL as SignOptions["expiresIn"];
 
-    const accessToken = jwt.sign(payload, jwtSecret, {
-      expiresIn: jwtExpiresIn,
+    const accessToken = jwt.sign(payload, secret, {
+      expiresIn,
     });
     return accessToken;
   }
