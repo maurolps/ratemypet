@@ -1,6 +1,7 @@
 import { JwtAdapter } from "@infra/auth/jwt.adapter";
 import { describe, expect, it, vi } from "vitest";
 import jwt from "jsonwebtoken";
+import { env } from "@main/config/env";
 
 describe("JwtAdapter", () => {
   const sut = new JwtAdapter();
@@ -12,11 +13,14 @@ describe("JwtAdapter", () => {
   };
 
   it("Should call JWT sign with correct values", async () => {
-    const jwtSecret = expect.any(String);
+    const jwtSecret = env.JWT_ACCESS_TOKEN_SECRET;
+    const jwtExpiresIn = env.JWT_ACCESS_TOKEN_TTL;
     signSpy.mockImplementationOnce(() => "issued_access_token");
 
     await sut.issue(dummyPayload);
-    expect(signSpy).toHaveBeenCalledWith(dummyPayload, jwtSecret);
+    expect(signSpy).toHaveBeenCalledWith(dummyPayload, jwtSecret, {
+      expiresIn: jwtExpiresIn,
+    });
     expect(signSpy).toHaveBeenCalledTimes(1);
   });
 
