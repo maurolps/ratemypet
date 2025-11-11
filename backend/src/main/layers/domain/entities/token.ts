@@ -14,3 +14,8 @@ export type RefreshTokenDTO = {
   expires_at?: number;
   revoked_at?: number;
 };
+
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
