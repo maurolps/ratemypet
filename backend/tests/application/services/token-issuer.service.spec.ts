@@ -100,4 +100,13 @@ describe("TokenIssuerService", () => {
       token_hash: "hashed_refresh_token",
     });
   });
+
+  it("Should return correct tokens on success", async () => {
+    const { sut } = makeSut();
+    const tokens = await sut.execute(fakeUser);
+    expect(tokens).toEqual({
+      accessToken: "valid_access_token",
+      refreshToken: "valid_token_id.refresh_token",
+    });
+  });
 });
