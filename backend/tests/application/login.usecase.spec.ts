@@ -36,4 +36,23 @@ describe("LoginUseCase", () => {
     const promise = sut.auth(loginDTO);
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
   });
+
+  it("Should return a logged user without password on success", async () => {
+    const { sut } = makeSut();
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    const loggedUser = await sut.auth(loginDTO);
+    expect(loggedUser).toEqual({
+      id: "valid_user_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      created_at: new Date(),
+      tokens: {
+        accessToken: "access_token",
+        refreshToken: "refresh_token",
+      },
+    });
+  });
 });
