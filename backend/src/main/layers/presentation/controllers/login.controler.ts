@@ -14,8 +14,8 @@ export class LoginController implements Controller {
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
       const loginDTO = this.httpValidator.execute(request);
-      const authData = await this.login.auth(loginDTO);
-      return ok({ tokens: authData });
+      const loggedUser = await this.login.auth(loginDTO);
+      return ok(loggedUser);
     } catch (error) {
       return ErrorPresenter(error);
     }
