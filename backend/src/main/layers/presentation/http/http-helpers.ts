@@ -1,4 +1,4 @@
-import type { User } from "@domain/entities/user";
+import type { LoggedUser } from "@domain/usecases/login.contract";
 import type { HttpResponse } from "@presentation/dtos/http-response.dto";
 
 export const ok = (body: HttpResponse["body"]): HttpResponse => ({
@@ -6,14 +6,9 @@ export const ok = (body: HttpResponse["body"]): HttpResponse => ({
   body,
 });
 
-export const created = (user: User): HttpResponse => ({
+export const created = (loggedUser: LoggedUser): HttpResponse => ({
   status: 201,
-  body: {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    created_at: user.created_at,
-  },
+  body: loggedUser,
 });
 
 export const conflict = (message: string): HttpResponse => ({

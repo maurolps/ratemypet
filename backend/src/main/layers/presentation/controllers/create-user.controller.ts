@@ -27,8 +27,12 @@ export class CreateUserController implements Controller {
         email,
         password,
       });
-      const _tokens = await this.tokenIssuer.execute(user);
-      return created(user);
+      const tokens = await this.tokenIssuer.execute(user);
+      const loggedUser = {
+        ...user,
+        tokens,
+      };
+      return created(loggedUser);
     } catch (error) {
       return ErrorPresenter(error);
     }
