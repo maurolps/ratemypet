@@ -1,3 +1,4 @@
+import type { TokenIssuer } from "@domain/entities/token";
 import type {
   CreateUser,
   CreateUserDTO,
@@ -13,6 +14,7 @@ export class CreateUserController implements Controller {
   constructor(
     private readonly createUser: CreateUser,
     private readonly httpValidator: HttpValidator<CreateUserDTO>,
+    private readonly tokenIssuer: TokenIssuer,
   ) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
@@ -25,6 +27,7 @@ export class CreateUserController implements Controller {
         email,
         password,
       });
+      const _tokens = await this.tokenIssuer.execute(user);
       return created(user);
     } catch (error) {
       return ErrorPresenter(error);
