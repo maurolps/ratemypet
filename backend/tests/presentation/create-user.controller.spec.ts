@@ -118,6 +118,33 @@ describe("CreateUserController", () => {
     });
   });
 
+  it("Should return a logged user without password on success", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+
+    const response = await sut.handle(dummyRequest);
+
+    expect(response.body).toEqual({
+      id: "valid_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      created_at: new Date(),
+      tokens: {
+        accessToken: "access_token",
+        refreshToken: "refresh_token",
+      },
+    });
+    expect(
+      (response.body as { password_hash?: unknown }).password_hash,
+    ).toBeUndefined();
+  });
+
   describe("Validations", () => {
     it("Should return 400 if body is missing", async () => {
       const { sut, createUserValidatorSpy } = makeSut();
