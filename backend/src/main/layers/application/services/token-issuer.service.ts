@@ -5,10 +5,11 @@ import type { RefreshTokenRepository } from "@application/repositories/refresh-t
 import type {
   AccessTokenPayload,
   RefreshTokenDTO,
+  TokenIssuer,
   Tokens,
 } from "@domain/entities/token";
 
-export class TokenIssuerService {
+export class TokenIssuerService implements TokenIssuer {
   constructor(
     private readonly hasher: Hasher,
     private readonly accessTokenGenerator: TokenGenerator<AccessTokenPayload>,

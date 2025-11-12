@@ -1,4 +1,4 @@
-import type { TokenIssuerService } from "@application/services/token-issuer.service";
+import type { TokenIssuer } from "@domain/entities/token";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
 import type {
@@ -12,7 +12,7 @@ export class LoginUseCase implements Login {
   constructor(
     private readonly findUserByEmail: FindUserByEmailRepository,
     private readonly hasher: Hasher,
-    private readonly tokenIssuer: TokenIssuerService,
+    private readonly tokenIssuer: TokenIssuer,
   ) {}
 
   async auth(loginDTO: LoginDTO): Promise<LoggedUser> {

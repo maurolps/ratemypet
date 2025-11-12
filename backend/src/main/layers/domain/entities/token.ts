@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 export type AccessTokenPayload = {
   sub: string;
   name: string;
@@ -19,3 +21,7 @@ export type Tokens = {
   accessToken: string;
   refreshToken: string;
 };
+
+export interface TokenIssuer {
+  execute(user: User): Promise<Tokens>;
+}
