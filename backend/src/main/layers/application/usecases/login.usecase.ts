@@ -1,8 +1,8 @@
+import type { TokenIssuerService } from "@application/services/token-issuer.service";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
-import type { TokenIssuerService } from "@application/services/token-issuer.service";
 import type {
-  AuthData,
+  LoggedUser,
   Login,
   LoginDTO,
 } from "@domain/usecases/login.contract";
@@ -15,7 +15,7 @@ export class LoginUseCase implements Login {
     private readonly tokenIssuer: TokenIssuerService,
   ) {}
 
-  async auth(loginDTO: LoginDTO): Promise<AuthData> {
+  async auth(loginDTO: LoginDTO): Promise<LoggedUser> {
     const user = await this.findUserByEmail.findByEmail(loginDTO.email);
     if (!user || !user.password_hash) {
       throw new AppError("UNAUTHORIZED");
@@ -25,7 +25,12 @@ export class LoginUseCase implements Login {
     }
 
     const tokens = await this.tokenIssuer.execute(user);
+    const { password_hash: _, ...userWithoutPassword } = user;
+    const loggedUser = {
+      ...userWithoutPassword,
+      tokens,
+    };
 
-    return tokens;
+    return loggedUser;
   }
 }
