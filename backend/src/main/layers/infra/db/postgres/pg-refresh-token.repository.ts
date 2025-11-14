@@ -27,7 +27,7 @@ export class PgRefreshTokenRepository implements RefreshTokenRepository {
 
   async findById(id: string): Promise<RefreshTokenDTO | null> {
     const result = await this.pool.query<RefreshTokenDTO>(
-      "SELECT id, user_id, token_hash, created_at, expires_at, revoked_at FROM refresh_tokens WHERE id = $1",
+      sql.FIND_REFRESH_TOKEN_BY_ID,
       [id],
     );
     const refreshToken = result.rows[0] || null;
