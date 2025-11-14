@@ -23,6 +23,7 @@ describe("PgUserRepository", () => {
       const user = await sut.findByEmail(userDTO.email);
       expect(user?.name).toEqual(userDTO.name);
       expect(user?.password_hash).toEqual(userDTO.password);
+      expect(user?.created_at).toBeInstanceOf(Date);
     });
     it("Should return null on fail", async () => {
       const sut = new PgUserRepository();
