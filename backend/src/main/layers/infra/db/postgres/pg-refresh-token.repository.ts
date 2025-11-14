@@ -24,4 +24,13 @@ export class PgRefreshTokenRepository implements RefreshTokenRepository {
       expires_at,
     ]);
   }
+
+  async findById(id: string): Promise<RefreshTokenDTO | null> {
+    const result = await this.pool.query<RefreshTokenDTO>(
+      "SELECT id, user_id, token_hash, created_at, expires_at, revoked_at FROM refresh_tokens WHERE id = $1",
+      [id],
+    );
+    const refreshToken = result.rows[0] || null;
+    return refreshToken;
+  }
 }
