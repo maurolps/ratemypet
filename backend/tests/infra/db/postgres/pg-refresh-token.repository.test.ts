@@ -17,11 +17,22 @@ describe("PgRefreshTokenRepository", () => {
     };
   });
 
-  it("Should save refresh token without throwing an error", async () => {
-    const sut = new PgRefreshTokenRepository();
-    const promise = sut.save(refreshTokenDTO);
-    await expect(promise).resolves.not.toThrow();
+  describe("save", () => {
+    it("Should save refresh token without throwing an error", async () => {
+      const sut = new PgRefreshTokenRepository();
+      const promise = sut.save(refreshTokenDTO);
+      await expect(promise).resolves.not.toThrow();
+    });
   });
 
-  it;
+  describe("findById", () => {
+    it("Should return a valid refresh token on success", async () => {
+      const sut = new PgRefreshTokenRepository();
+      const refreshToken = await sut.findById(refreshTokenDTO.id);
+      expect(refreshToken).toBeTruthy();
+      expect(refreshToken?.user_id).toEqual(refreshTokenDTO.user_id);
+      expect(refreshToken?.expires_at).toBeInstanceOf(Date);
+      expect(refreshToken?.revoked_at).toBeFalsy();
+    });
+  });
 });
