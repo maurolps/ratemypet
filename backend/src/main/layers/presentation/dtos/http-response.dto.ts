@@ -7,7 +7,7 @@ export type HttpResponse = {
     created_at?: Date;
     tokens?: {
       accessToken: string;
-      refreshToken: string;
+      refreshToken?: string;
     };
   };
   status: number;
