@@ -1,4 +1,4 @@
-const userResponseSchema = {
+const userRequestSchema = {
   type: "object",
   required: ["name", "email", "password"],
   properties: {
@@ -16,4 +16,4 @@ const userResponseSchema = {
   },
 } as const;
 
-export default userResponseSchema;
+export default userRequestSchema;
