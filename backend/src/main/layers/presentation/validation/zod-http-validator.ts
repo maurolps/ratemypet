@@ -22,10 +22,8 @@ export class ZodHttpValidator<T> implements HttpValidator<T> {
       throw new AppError(error);
     }
 
-    const data = parsed.data as HttpRequest;
-    const dataDTO = {
-      ...(data.body as T),
-    };
-    return dataDTO;
+    const data = parsed.data as T;
+
+    return data;
   }
 }
