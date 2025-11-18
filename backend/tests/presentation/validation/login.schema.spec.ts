@@ -4,7 +4,7 @@ import { ZodHttpValidator } from "@presentation/validation/zod-http-validator";
 import { describe, expect, it } from "vitest";
 import { loginSchema } from "@presentation/validation/login.schema";
 
-describe("ZodHttpValidator CreateUser", () => {
+describe("ZodHttpValidator Login", () => {
   const sut = new ZodHttpValidator<LoginDTO>(loginSchema);
   const makeRequest = (overrides: Partial<LoginDTO>) => {
     return {
