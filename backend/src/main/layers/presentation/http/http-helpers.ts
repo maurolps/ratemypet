@@ -38,3 +38,11 @@ export const unauthorized = (): HttpResponse => ({
     name: "Unauthorized",
   },
 });
+
+export const tooManyRequests = (message: string): HttpResponse => ({
+  status: 429,
+  body: {
+    message,
+    name: "RateLimitExceeded",
+  },
+});
