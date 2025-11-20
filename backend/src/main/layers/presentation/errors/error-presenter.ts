@@ -5,6 +5,7 @@ import {
   badRequest,
   conflict,
   serverError,
+  tooManyRequests,
   unauthorized,
 } from "@presentation/http/http-helpers";
 
@@ -24,6 +25,8 @@ const ErrorResponse: ErrorResponseType = {
     ),
   INVALID_NAME: () =>
     badRequest("Invalid Param: <name> should be at least 3 characters long"),
+  RATE_LIMIT_EXCEEDED: () =>
+    tooManyRequests("Limit exceeded. Please try again later."),
 };
 
 export const ErrorPresenter = (error: unknown): HttpResponse => {
