@@ -9,4 +9,5 @@ export const env = {
   JWT_ACCESS_TOKEN_TTL: process.env.JWT_ACCESS_TOKEN_TTL || "10s",
   REFRESH_TOKEN_TTL:
     (process.env.REFRESH_TOKEN_TTL as unknown as number) || 20_000,
+  RATE_LIMIT_ENABLED: process.env.RATE_LIMIT_ENABLED || "true",
 };
