@@ -85,6 +85,13 @@ describe("TokenIssuerService", () => {
     expect(refreshTokenGeneratorSpy).toHaveBeenCalledTimes(1);
   });
 
+  it("Should throw if refresh token format is invalid", async () => {
+    const { sut, refreshTokenGeneratorSpy } = makeSut();
+    refreshTokenGeneratorSpy.mockResolvedValueOnce("invalid_refresh_token");
+    const promise = sut.execute(fakeUser);
+    await expect(promise).rejects.toThrow();
+  });
+
   it("Should call Hasher with correct refresh token secret", async () => {
     const { sut, hasherStub } = makeSut();
     const hashSpy = vi.spyOn(hasherStub, "hash");
