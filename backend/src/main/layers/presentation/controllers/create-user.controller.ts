@@ -1,4 +1,8 @@
-import type { CreateUser } from "@domain/usecases/create-user.contract";
+import type { TokenIssuer } from "@domain/entities/token";
+import type {
+  CreateUser,
+  CreateUserDTO,
+} from "@domain/usecases/create-user.contract";
 import type { Controller } from "@presentation/contracts/controller.contract";
 import type { HttpValidator } from "@presentation/contracts/http-validator.contract";
 import type { HttpRequest } from "@presentation/dtos/http-request.dto";
@@ -9,7 +13,8 @@ import { created } from "@presentation/http/http-helpers";
 export class CreateUserController implements Controller {
   constructor(
     private readonly createUser: CreateUser,
-    private readonly httpValidator: HttpValidator,
+    private readonly httpValidator: HttpValidator<CreateUserDTO>,
+    private readonly tokenIssuer: TokenIssuer,
   ) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
@@ -22,7 +27,12 @@ export class CreateUserController implements Controller {
         email,
         password,
       });
-      return created(user);
+      const tokens = await this.tokenIssuer.execute(user);
+      const loggedUser = {
+        ...user,
+        tokens,
+      };
+      return created(loggedUser);
     } catch (error) {
       return ErrorPresenter(error);
     }

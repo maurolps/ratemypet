@@ -3,14 +3,17 @@ import { CreateUserController } from "@presentation/controllers/create-user.cont
 import { describe, expect, it, vi } from "vitest";
 import { CreateUserStub } from "./doubles/create-user.usecase.stub";
 import { CreateUserValidatorStub } from "./doubles/create-user.validator.stub";
+import { TokenIssuerServiceStub } from "../application/doubles/token-issuer.service.stub";
 
 describe("CreateUserController", () => {
   const makeSut = () => {
     const createUserStub = new CreateUserStub();
     const createUserValidatorStub = new CreateUserValidatorStub();
+    const tokenIssuerServiceStub = new TokenIssuerServiceStub();
     const sut = new CreateUserController(
       createUserStub,
       createUserValidatorStub,
+      tokenIssuerServiceStub,
     );
     const createUserSpy = vi.spyOn(createUserStub, "execute");
     const createUserValidatorSpy = vi.spyOn(createUserValidatorStub, "execute");
@@ -20,6 +23,7 @@ describe("CreateUserController", () => {
       createUserSpy,
       createUserValidatorStub,
       createUserValidatorSpy,
+      tokenIssuerServiceStub,
     };
   };
 
@@ -90,6 +94,55 @@ describe("CreateUserController", () => {
       expect(httpResponse.status).toBe(409);
       expect(httpResponse.body.message).toEqual("Email already in use");
     });
+  });
+
+  it("Should issue login credentials after successful creation", async () => {
+    const { sut, tokenIssuerServiceStub } = makeSut();
+    const tokenIssuerSpy = vi.spyOn(tokenIssuerServiceStub, "execute");
+    const dummyRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+
+    await sut.handle(dummyRequest);
+
+    expect(tokenIssuerSpy).toHaveBeenCalledTimes(1);
+    expect(tokenIssuerSpy).toHaveBeenCalledWith({
+      id: "valid_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      created_at: new Date(),
+    });
+  });
+
+  it("Should return a logged user without password on success", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+
+    const response = await sut.handle(dummyRequest);
+
+    expect(response.body).toEqual({
+      id: "valid_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      created_at: new Date(),
+      tokens: {
+        accessToken: "access_token",
+        refreshToken: "refresh_token",
+      },
+    });
+    expect(
+      (response.body as { password_hash?: unknown }).password_hash,
+    ).toBeUndefined();
   });
 
   describe("Validations", () => {

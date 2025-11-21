@@ -1,14 +1,14 @@
-import type { User } from "@domain/entities/user";
+import type { LoggedUser } from "@domain/usecases/login.contract";
 import type { HttpResponse } from "@presentation/dtos/http-response.dto";
 
-export const created = (user: User): HttpResponse => ({
+export const ok = (body: HttpResponse["body"]): HttpResponse => ({
+  status: 200,
+  body,
+});
+
+export const created = (loggedUser: LoggedUser): HttpResponse => ({
   status: 201,
-  body: {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    created_at: user.created_at,
-  },
+  body: loggedUser,
 });
 
 export const conflict = (message: string): HttpResponse => ({
@@ -28,5 +28,21 @@ export const badRequest = (message: string): HttpResponse => ({
   body: {
     message,
     name: "BadRequestError",
+  },
+});
+
+export const unauthorized = (): HttpResponse => ({
+  status: 401,
+  body: {
+    message: "Invalid credentials",
+    name: "Unauthorized",
+  },
+});
+
+export const tooManyRequests = (message: string): HttpResponse => ({
+  status: 429,
+  body: {
+    message,
+    name: "RateLimitExceeded",
   },
 });

@@ -5,6 +5,8 @@ import {
   badRequest,
   conflict,
   serverError,
+  tooManyRequests,
+  unauthorized,
 } from "@presentation/http/http-helpers";
 
 type ErrorResponseType = {
@@ -16,12 +18,15 @@ const ErrorResponse: ErrorResponseType = {
   MISSING_BODY: () => badRequest("Missing request body"),
   MISSING_PARAM: (detail) => badRequest(`Missing Param: ${detail}`),
   INVALID_PARAM: (detail) => badRequest(`Invalid Param: ${detail}`),
+  UNAUTHORIZED: () => unauthorized(),
   WEAK_PASSWORD: () =>
     badRequest(
       "Invalid Param: <password> should be at least 6 characters long",
     ),
   INVALID_NAME: () =>
     badRequest("Invalid Param: <name> should be at least 3 characters long"),
+  RATE_LIMIT_EXCEEDED: () =>
+    tooManyRequests("Limit exceeded. Please try again later."),
 };
 
 export const ErrorPresenter = (error: unknown): HttpResponse => {
