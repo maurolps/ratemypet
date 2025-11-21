@@ -34,5 +34,11 @@ describe("PgRefreshTokenRepository", () => {
       expect(refreshToken?.expires_at).toBeInstanceOf(Date);
       expect(refreshToken?.revoked_at).toBeFalsy();
     });
+
+    it("Should return null when refresh token does not exist", async () => {
+      const sut = new PgRefreshTokenRepository();
+      const refreshToken = await sut.findById("non_existent_id");
+      expect(refreshToken).toBeNull();
+    });
   });
 });
