@@ -1,3 +1,4 @@
+import { FIXED_DATE } from "../../config/constants";
 import type { AccessTokenPayload } from "@domain/entities/token";
 import { describe, expect, it, vi } from "vitest";
 import { HasherStub } from "../doubles/hasher.stub";
@@ -54,7 +55,7 @@ describe("TokenIssuerService", () => {
     id: "valid_user_id",
     name: "valid_name",
     email: "valid_email@mail.com",
-    created_at: new Date(),
+    created_at: FIXED_DATE,
     passwordHash: "valid_password",
   };
 
@@ -82,6 +83,13 @@ describe("TokenIssuerService", () => {
     const { sut, refreshTokenGeneratorSpy } = makeSut();
     await sut.execute(fakeUser);
     expect(refreshTokenGeneratorSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("Should throw if refresh token format is invalid", async () => {
+    const { sut, refreshTokenGeneratorSpy } = makeSut();
+    refreshTokenGeneratorSpy.mockResolvedValueOnce("invalid_refresh_token");
+    const promise = sut.execute(fakeUser);
+    await expect(promise).rejects.toThrow();
   });
 
   it("Should call Hasher with correct refresh token secret", async () => {

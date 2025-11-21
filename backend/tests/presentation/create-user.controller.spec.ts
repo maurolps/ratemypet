@@ -1,3 +1,4 @@
+import { FIXED_DATE } from "../config/constants";
 import { AppError } from "@application/errors/app-error";
 import { CreateUserController } from "@presentation/controllers/create-user.controller";
 import { describe, expect, it, vi } from "vitest";
@@ -114,7 +115,7 @@ describe("CreateUserController", () => {
       id: "valid_id",
       name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: new Date(),
+      created_at: FIXED_DATE,
     });
   });
 
@@ -134,7 +135,7 @@ describe("CreateUserController", () => {
       id: "valid_id",
       name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: new Date(),
+      created_at: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",

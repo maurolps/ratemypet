@@ -1,6 +1,7 @@
+import { FIXED_DATE } from "../config/constants";
 import { LoginUseCase } from "@application/usecases/login.usecase";
 import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { AppError } from "@application/errors/app-error";
 import { HasherStub } from "./doubles/hasher.stub";
 import { TokenIssuerServiceStub } from "./doubles/token-issuer.service.stub";
@@ -14,6 +15,7 @@ describe("LoginUseCase", () => {
     return {
       sut,
       hasherStub,
+      findUserByEmailStub,
     };
   };
 
@@ -37,6 +39,23 @@ describe("LoginUseCase", () => {
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
   });
 
+  it("Should throw UNAUTHORIZED error when user has no password_hash", async () => {
+    const { sut, findUserByEmailStub } = makeSut();
+    vi.spyOn(findUserByEmailStub, "findByEmail").mockResolvedValueOnce({
+      id: "valid_user_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password_hash: undefined,
+      created_at: FIXED_DATE,
+    });
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    const promise = sut.auth(loginDTO);
+    await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
+  });
+
   it("Should return a logged user without password on success", async () => {
     const { sut } = makeSut();
     const loginDTO = {
@@ -44,11 +63,12 @@ describe("LoginUseCase", () => {
       password: "valid_password",
     };
     const loggedUser = await sut.auth(loginDTO);
+
     expect(loggedUser).toEqual({
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: new Date(),
+      created_at: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",
