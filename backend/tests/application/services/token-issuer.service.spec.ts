@@ -1,3 +1,4 @@
+import { FIXED_DATE } from "../../config/constants";
 import type { AccessTokenPayload } from "@domain/entities/token";
 import { describe, expect, it, vi } from "vitest";
 import { HasherStub } from "../doubles/hasher.stub";
@@ -54,7 +55,7 @@ describe("TokenIssuerService", () => {
     id: "valid_user_id",
     name: "valid_name",
     email: "valid_email@mail.com",
-    created_at: new Date(),
+    created_at: FIXED_DATE,
     passwordHash: "valid_password",
   };
 

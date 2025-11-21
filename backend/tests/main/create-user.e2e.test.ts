@@ -19,7 +19,7 @@ describe("[E2E] UC-001 CreateUser", () => {
     expect(response.body.name).toEqual(userDTO.name);
     expect(response.body.email).toEqual(userDTO.email);
     expect(response.body.id).toBeTruthy();
-    expect(created_at).toBeGreaterThanOrEqual(t0 - 10_000);
-    expect(created_at).toBeLessThanOrEqual(Date.now() + 10_000);
+    expect(created_at).toBeGreaterThanOrEqual(t0);
+    expect(created_at).toBeLessThanOrEqual(Date.now() + 20_000);
   });
 });

@@ -1,3 +1,4 @@
+import { FIXED_DATE } from "../config/constants";
 import { LoginUseCase } from "@application/usecases/login.usecase";
 import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
 import { describe, expect, it } from "vitest";
@@ -44,11 +45,12 @@ describe("LoginUseCase", () => {
       password: "valid_password",
     };
     const loggedUser = await sut.auth(loginDTO);
+
     expect(loggedUser).toEqual({
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: new Date(),
+      created_at: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",

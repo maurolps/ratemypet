@@ -1,3 +1,4 @@
+import { FIXED_DATE } from "../../config/constants";
 import type {
   LoggedUser,
   Login,
@@ -10,7 +11,7 @@ export class LoginUseCaseStub implements Login {
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: new Date(),
+      created_at: FIXED_DATE,
       tokens: {
         accessToken: "valid_access_token",
         refreshToken: "valid_refresh_token",
