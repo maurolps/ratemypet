@@ -2,6 +2,7 @@ import { RefreshTokenController } from "@presentation/controllers/refresh-token.
 import { RefreshTokenValidatorStub } from "./doubles/refresh-token.validator.stub";
 import { describe, expect, it, vi } from "vitest";
 import { AppError } from "@application/errors/app-error";
+import { RefreshTokenStub } from "./doubles/refresh-token.usecase.stub";
 
 describe("RefreshTokenController", () => {
   const makeSut = () => {
@@ -10,8 +11,13 @@ describe("RefreshTokenController", () => {
       refreshTokenValidatorStub,
       "execute",
     );
-    const sut = new RefreshTokenController(refreshTokenValidatorStub);
-    return { sut, refreshTokenValidatorSpy };
+    const refreshTokenStub = new RefreshTokenStub();
+    const refreshTokenSpy = vi.spyOn(refreshTokenStub, "execute");
+    const sut = new RefreshTokenController(
+      refreshTokenValidatorStub,
+      refreshTokenStub,
+    );
+    return { sut, refreshTokenValidatorSpy, refreshTokenSpy };
   };
 
   it("Should return 200 on successful token refresh", async () => {
@@ -59,5 +65,15 @@ describe("RefreshTokenController", () => {
     const httpResponse = await sut.handle(dummyRequest);
     expect(httpResponse.status).toBe(401);
     expect(httpResponse.body.message).toEqual("Invalid credentials");
+  });
+
+  it("Should call RefreshTokenUseCase with correct values", async () => {
+    const { sut, refreshTokenSpy } = makeSut();
+    const dummyRequest = {};
+    await sut.handle(dummyRequest);
+    expect(refreshTokenSpy).toHaveBeenCalledWith({
+      id: "valid_id",
+      secret: "valid_secret",
+    });
   });
 });
