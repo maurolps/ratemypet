@@ -76,4 +76,18 @@ describe("RefreshTokenController", () => {
       secret: "valid_secret",
     });
   });
+
+  it("Should return tokens on successful refresh", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {
+      cookies: {
+        refreshToken: "valid_id.valid_secret",
+      },
+    };
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.body.tokens).toEqual({
+      accessToken: "new_valid_access_token",
+      refreshToken: "new_valid_refresh_token",
+    });
+  });
 });
