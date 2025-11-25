@@ -7,6 +7,7 @@ import type { HttpValidator } from "@presentation/contracts/http-validator.contr
 import type { HttpRequest } from "@presentation/dtos/http-request.dto";
 import type { HttpResponse } from "@presentation/dtos/http-response.dto";
 import { ErrorPresenter } from "@presentation/errors/error-presenter";
+import { ok } from "@presentation/http/http-helpers";
 
 export class RefreshTokenController implements Controller {
   constructor(
@@ -16,8 +17,8 @@ export class RefreshTokenController implements Controller {
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
       const parsedToken = this.httpValidator.execute(request);
-      const _tokens = await this.refreshToken.execute(parsedToken);
-      return { status: 200, body: {} };
+      const tokens = await this.refreshToken.execute(parsedToken);
+      return ok({ tokens });
     } catch (error) {
       return ErrorPresenter(error);
     }
