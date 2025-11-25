@@ -45,4 +45,19 @@ describe("RefreshTokenController", () => {
     expect(httpResponse.status).toBe(400);
     expect(httpResponse.body.message).toEqual("Missing Param: refresh token");
   });
+
+  it("Should return 401 if refresh token is invalid", async () => {
+    const { sut, refreshTokenValidatorSpy } = makeSut();
+    const dummyRequest = {
+      cookies: {
+        refreshToken: "revoked_token",
+      },
+    };
+    refreshTokenValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("UNAUTHORIZED");
+    });
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(401);
+    expect(httpResponse.body.message).toEqual("Invalid credentials");
+  });
 });
