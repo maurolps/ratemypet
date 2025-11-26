@@ -1,3 +1,4 @@
+import { AppError } from "@application/errors/app-error";
 import type { RefreshTokenRepository } from "@application/repositories/refresh-token-repository";
 import type { Tokens } from "@domain/entities/token";
 import type {
@@ -10,9 +11,14 @@ export class RefreshTokenUseCase implements RefreshToken {
     private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
   async execute(token: RefreshTokenParsed): Promise<Tokens> {
-    const _refreshTokenDTO = await this.refreshTokenRepository.findById(
+    const refreshTokenDTO = await this.refreshTokenRepository.findById(
       token.id,
     );
+
+    if (!refreshTokenDTO) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
     return {
       accessToken: "newAccessToken",
       refreshToken: "newRefreshToken",
