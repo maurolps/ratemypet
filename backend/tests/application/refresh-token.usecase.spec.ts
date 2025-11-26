@@ -34,4 +34,20 @@ describe("RefreshTokenUseCase", () => {
     const promise = sut.execute(dummyToken);
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
   });
+
+  it("Should throw UNAUTHORIZED when token is revoked", async () => {
+    const { sut, findTokenByIdSpy } = makeSut();
+    findTokenByIdSpy.mockResolvedValueOnce({
+      id: "revoked_token_id",
+      user_id: "any_user_id",
+      token_hash: "any_hash",
+      revoked_at: Date.now(),
+    });
+    const dummyToken = {
+      id: "revoked_token_id",
+      secret: "any_secret",
+    };
+    const promise = sut.execute(dummyToken);
+    await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
+  });
 });
