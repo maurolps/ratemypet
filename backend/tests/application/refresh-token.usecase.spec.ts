@@ -3,15 +3,23 @@ import { RefreshTokenRepositoryStub } from "./doubles/refresh-token.repository.s
 import { RefreshTokenUseCase } from "@application/usecases/refresh-token.usecase";
 
 describe("RefreshTokenUseCase", () => {
-  it("Should call RefreshTokenRepository.findById with correct values", async () => {
+  const makeSut = () => {
     const refreshTokenRepositoryStub = new RefreshTokenRepositoryStub();
-    const findByIdSpy = vi.spyOn(refreshTokenRepositoryStub, "findById");
+    const findTokenByIdSpy = vi.spyOn(refreshTokenRepositoryStub, "findById");
     const sut = new RefreshTokenUseCase(refreshTokenRepositoryStub);
+    return {
+      sut,
+      findTokenByIdSpy,
+    };
+  };
+
+  it("Should call RefreshTokenRepository.findById with correct values", async () => {
+    const { sut, findTokenByIdSpy } = makeSut();
     const dummyToken = {
       id: "refresh_token_id",
       secret: "refresh_token_secret",
     };
     await sut.execute(dummyToken);
-    expect(findByIdSpy).toHaveBeenCalledWith("refresh_token_id");
+    expect(findTokenByIdSpy).toHaveBeenCalledWith("refresh_token_id");
   });
 });
