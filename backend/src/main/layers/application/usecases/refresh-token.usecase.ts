@@ -19,6 +19,10 @@ export class RefreshTokenUseCase implements RefreshToken {
       throw new AppError("UNAUTHORIZED");
     }
 
+    if (refreshTokenDTO.revoked_at) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
     return {
       accessToken: "newAccessToken",
       refreshToken: "newRefreshToken",
