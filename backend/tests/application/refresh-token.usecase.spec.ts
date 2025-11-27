@@ -19,14 +19,15 @@ describe("RefreshTokenUseCase", () => {
     };
   };
 
+  const validDummyToken = {
+    id: "refresh_token_id",
+    secret: "refresh_token_secret",
+  };
+
   it("Should call RefreshTokenRepository.findById with correct values", async () => {
     const { sut, findTokenByIdSpy } = makeSut();
-    const dummyToken = {
-      id: "refresh_token_id",
-      secret: "refresh_token_secret",
-    };
-    await sut.execute(dummyToken);
-    expect(findTokenByIdSpy).toHaveBeenCalledWith("refresh_token_id");
+    await sut.execute(validDummyToken);
+    expect(findTokenByIdSpy).toHaveBeenCalledWith(validDummyToken.id);
   });
 
   it("Should throw UNAUTHORIZED when token is not found", async () => {
@@ -58,15 +59,9 @@ describe("RefreshTokenUseCase", () => {
 
   it("Should call Hasher.compare with correct values", async () => {
     const { sut, hasherSpy } = makeSut();
-    const dummyToken = {
-      id: "valid_token_id",
-      secret: "refresh_token_secret",
-    };
-    await sut.execute(dummyToken);
-    expect(hasherSpy).toHaveBeenCalledWith(
-      "refresh_token_secret",
-      "hashed_refresh_token_secret",
-    );
+    const secret = validDummyToken.secret;
+    await sut.execute(validDummyToken);
+    expect(hasherSpy).toHaveBeenCalledWith(secret, `hashed_${secret}`);
   });
 
   describe("Expiration Handling", () => {
