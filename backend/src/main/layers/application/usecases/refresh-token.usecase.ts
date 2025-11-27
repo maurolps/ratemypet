@@ -23,6 +23,13 @@ export class RefreshTokenUseCase implements RefreshToken {
       throw new AppError("UNAUTHORIZED");
     }
 
+    if (
+      refreshTokenDTO.expires_at &&
+      refreshTokenDTO.expires_at <= Date.now()
+    ) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
     return {
       accessToken: "newAccessToken",
       refreshToken: "newRefreshToken",
