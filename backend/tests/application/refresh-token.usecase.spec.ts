@@ -26,4 +26,13 @@ describe("RefreshTokenUseCase", () => {
     await sut.execute(validDummyToken);
     expect(tokenIssuerValidateSpy).toHaveBeenCalledWith(validDummyToken);
   });
+
+  it("Should throw if TokenIssuer.validateRefreshToken throws", async () => {
+    const { sut, tokenIssuerValidateSpy } = makeSut();
+    tokenIssuerValidateSpy.mockImplementationOnce(() => {
+      throw new Error("Error");
+    });
+    const promise = sut.execute(validDummyToken);
+    await expect(promise).rejects.toThrow();
+  });
 });
