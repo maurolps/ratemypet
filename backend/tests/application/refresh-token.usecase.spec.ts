@@ -3,15 +3,19 @@ import { RefreshTokenRepositoryStub } from "./doubles/refresh-token.repository.s
 import { RefreshTokenUseCase } from "@application/usecases/refresh-token.usecase";
 import { AppError } from "@application/errors/app-error";
 import { FIXED_DATE } from "../config/constants";
+import { HasherStub } from "./doubles/hasher.stub";
 
 describe("RefreshTokenUseCase", () => {
   const makeSut = () => {
     const refreshTokenRepositoryStub = new RefreshTokenRepositoryStub();
+    const hasherStub = new HasherStub();
+    const hasherSpy = vi.spyOn(hasherStub, "compare");
     const findTokenByIdSpy = vi.spyOn(refreshTokenRepositoryStub, "findById");
-    const sut = new RefreshTokenUseCase(refreshTokenRepositoryStub);
+    const sut = new RefreshTokenUseCase(refreshTokenRepositoryStub, hasherStub);
     return {
       sut,
       findTokenByIdSpy,
+      hasherSpy,
     };
   };
 
@@ -50,6 +54,19 @@ describe("RefreshTokenUseCase", () => {
     };
     const promise = sut.execute(dummyToken);
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
+  });
+
+  it("Should call Hasher.compare with correct values", async () => {
+    const { sut, hasherSpy } = makeSut();
+    const dummyToken = {
+      id: "valid_token_id",
+      secret: "refresh_token_secret",
+    };
+    await sut.execute(dummyToken);
+    expect(hasherSpy).toHaveBeenCalledWith(
+      "refresh_token_secret",
+      "hashed_refresh_token_secret",
+    );
   });
 
   describe("Expiration Handling", () => {

@@ -11,7 +11,7 @@ export class RefreshTokenRepositoryStub implements RefreshTokenRepository {
       resolve({
         id,
         user_id: "valid_user_id",
-        token_hash: "valid_token_hash",
+        token_hash: "hashed_refresh_token_secret",
         created_at: Date.now(),
         expires_at: Date.now() + 60_000,
       }),
