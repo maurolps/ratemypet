@@ -1,3 +1,4 @@
+import type { RefreshTokenParsed } from "@domain/usecases/refresh-token.contract";
 import type { User } from "./user";
 
 export type AccessTokenPayload = {
@@ -24,4 +25,5 @@ export type Tokens = {
 
 export interface TokenIssuer {
   execute(user: User): Promise<Tokens>;
+  validateRefreshToken(token: RefreshTokenParsed): Promise<RefreshTokenDTO>;
 }
