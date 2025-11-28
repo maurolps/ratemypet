@@ -1,15 +1,17 @@
-import { AppError } from "@application/errors/app-error";
 import type { FindUserRepository } from "@application/repositories/find-user.repository";
+import type { RefreshTokenRepository } from "@application/repositories/refresh-token-repository";
 import type { TokenIssuer, Tokens } from "@domain/entities/token";
 import type {
   RefreshToken,
   RefreshTokenParsed,
 } from "@domain/usecases/refresh-token.contract";
+import { AppError } from "@application/errors/app-error";
 
 export class RefreshTokenUseCase implements RefreshToken {
   constructor(
     private readonly tokenIssuer: TokenIssuer,
     private readonly findUser: FindUserRepository,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
   async execute(token: RefreshTokenParsed): Promise<Tokens> {
     const refreshTokenDTO = await this.tokenIssuer.validateRefreshToken(token);
@@ -19,11 +21,9 @@ export class RefreshTokenUseCase implements RefreshToken {
       throw new AppError("UNAUTHORIZED");
     }
 
-    const _tokens = await this.tokenIssuer.execute(user);
+    const tokens = await this.tokenIssuer.execute(user);
+    await this.refreshTokenRepository.revoke(refreshTokenDTO.id);
 
-    return {
-      accessToken: "newAccessToken",
-      refreshToken: "newRefreshToken",
-    };
+    return tokens;
   }
 }
