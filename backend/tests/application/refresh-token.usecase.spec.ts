@@ -83,4 +83,13 @@ describe("RefreshTokenUseCase", () => {
     await sut.execute(validDummyToken);
     expect(refreshTokenRevokeSpy).toHaveBeenCalledWith("refresh_token_id");
   });
+
+  it("Should return tokens on success", async () => {
+    const { sut } = makeSut();
+    const tokens = await sut.execute(validDummyToken);
+    expect(tokens).toEqual({
+      accessToken: "access_token",
+      refreshToken: "refresh_token",
+    });
+  });
 });
