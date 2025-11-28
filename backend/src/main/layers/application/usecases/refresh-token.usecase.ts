@@ -13,10 +13,13 @@ export class RefreshTokenUseCase implements RefreshToken {
   ) {}
   async execute(token: RefreshTokenParsed): Promise<Tokens> {
     const refreshTokenDTO = await this.tokenIssuer.validateRefreshToken(token);
+
     const user = await this.findUser.findById(refreshTokenDTO.user_id);
     if (!user) {
       throw new AppError("UNAUTHORIZED");
     }
+
+    const _tokens = await this.tokenIssuer.execute(user);
 
     return {
       accessToken: "newAccessToken",
