@@ -33,4 +33,9 @@ export class PgRefreshTokenRepository implements RefreshTokenRepository {
     const refreshToken = result.rows[0] || null;
     return refreshToken;
   }
+
+  async revoke(tokenId: string): Promise<void> {
+    const revokedAt = new Date().toISOString();
+    await this.pool.query(sql.REVOKE_REFRESH_TOKEN, [revokedAt, tokenId]);
+  }
 }

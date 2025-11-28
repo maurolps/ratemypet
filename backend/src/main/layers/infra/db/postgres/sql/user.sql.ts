@@ -18,6 +18,11 @@ export const sql = {
   INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at)
   VALUES ($1, $2, $3, $4)
   `,
+  REVOKE_REFRESH_TOKEN: `
+  UPDATE refresh_tokens
+  SET revoked_at = $1
+  WHERE id = $2
+  `,
   FIND_REFRESH_TOKEN_BY_ID: `
   SELECT id, user_id, token_hash, created_at, expires_at, revoked_at
   FROM refresh_tokens
