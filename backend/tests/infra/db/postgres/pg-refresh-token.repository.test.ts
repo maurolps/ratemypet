@@ -41,4 +41,20 @@ describe("PgRefreshTokenRepository", () => {
       expect(refreshToken).toBeNull();
     });
   });
+
+  describe("revoke", () => {
+    it("Should revoke the refresh token without throwing an error", async () => {
+      const sut = new PgRefreshTokenRepository();
+      const promise = sut.revoke(refreshTokenDTO.id);
+      await expect(promise).resolves.not.toThrow();
+    });
+
+    it("Should set revoked_at when revoking a refresh token", async () => {
+      const sut = new PgRefreshTokenRepository();
+      await sut.revoke(refreshTokenDTO.id);
+      const revokedToken = await sut.findById(refreshTokenDTO.id);
+      expect(revokedToken).toBeTruthy();
+      expect(revokedToken?.revoked_at).toBeInstanceOf(Date);
+    });
+  });
 });
