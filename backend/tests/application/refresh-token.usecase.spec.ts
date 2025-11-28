@@ -3,24 +3,38 @@ import { RefreshTokenUseCase } from "@application/usecases/refresh-token.usecase
 import { TokenIssuerServiceStub } from "./doubles/token-issuer.service.stub";
 import { FindUserRepositoryStub } from "./doubles/find-user.repository.stub";
 import { AppError } from "@application/errors/app-error";
+import { RefreshTokenRepositoryStub } from "./doubles/refresh-token.repository.stub";
 
 describe("RefreshTokenUseCase", () => {
   const makeSut = () => {
     const tokenIssuerStub = new TokenIssuerServiceStub();
     const findUserStub = new FindUserRepositoryStub();
+    const refreshTokenRepositoryStub = new RefreshTokenRepositoryStub();
+
     const findUserSpy = vi.spyOn(findUserStub, "findById");
     const tokenIssuerValidateSpy = vi.spyOn(
       tokenIssuerStub,
       "validateRefreshToken",
     );
     const tokenIssuerSpy = vi.spyOn(tokenIssuerStub, "execute");
-    const sut = new RefreshTokenUseCase(tokenIssuerStub, findUserStub);
+    const refreshTokenRevokeSpy = vi.spyOn(
+      refreshTokenRepositoryStub,
+      "revoke",
+    );
+
+    const sut = new RefreshTokenUseCase(
+      tokenIssuerStub,
+      findUserStub,
+      refreshTokenRepositoryStub,
+    );
+
     return {
       sut,
       tokenIssuerValidateSpy,
       findUserSpy,
       tokenIssuerSpy,
       findUserStub,
+      refreshTokenRevokeSpy,
     };
   };
 
@@ -57,10 +71,16 @@ describe("RefreshTokenUseCase", () => {
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
   });
 
-  it("Should call TokenIssuer.generate with correct values", async () => {
+  it("Should call TokenIssuer.execute with correct values", async () => {
     const { sut, tokenIssuerSpy, findUserStub } = makeSut();
     const user = await findUserStub.findById("valid_user_id");
     await sut.execute(validDummyToken);
     expect(tokenIssuerSpy).toHaveBeenCalledWith(user);
+  });
+
+  it("Should call RefreshTokenRepository.revoke with correct values", async () => {
+    const { sut, refreshTokenRevokeSpy } = makeSut();
+    await sut.execute(validDummyToken);
+    expect(refreshTokenRevokeSpy).toHaveBeenCalledWith("refresh_token_id");
   });
 });

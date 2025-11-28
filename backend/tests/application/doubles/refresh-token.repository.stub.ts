@@ -6,6 +6,10 @@ export class RefreshTokenRepositoryStub implements RefreshTokenRepository {
     return new Promise((resolve) => resolve());
   }
 
+  revoke(_tokenId: string): Promise<void> {
+    return new Promise((resolve) => resolve());
+  }
+
   findById(id: string): Promise<RefreshTokenDTO | null> {
     return new Promise((resolve) =>
       resolve({
