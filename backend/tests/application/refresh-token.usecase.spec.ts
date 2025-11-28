@@ -13,11 +13,14 @@ describe("RefreshTokenUseCase", () => {
       tokenIssuerStub,
       "validateRefreshToken",
     );
+    const tokenIssuerSpy = vi.spyOn(tokenIssuerStub, "execute");
     const sut = new RefreshTokenUseCase(tokenIssuerStub, findUserStub);
     return {
       sut,
       tokenIssuerValidateSpy,
       findUserSpy,
+      tokenIssuerSpy,
+      findUserStub,
     };
   };
 
@@ -52,5 +55,12 @@ describe("RefreshTokenUseCase", () => {
     findUserSpy.mockResolvedValueOnce(null);
     const promise = sut.execute(validDummyToken);
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
+  });
+
+  it("Should call TokenIssuer.generate with correct values", async () => {
+    const { sut, tokenIssuerSpy, findUserStub } = makeSut();
+    const user = await findUserStub.findById("valid_user_id");
+    await sut.execute(validDummyToken);
+    expect(tokenIssuerSpy).toHaveBeenCalledWith(user);
   });
 });
