@@ -172,6 +172,13 @@ describe("TokenIssuerService", () => {
       expect(hasherSpy).toHaveBeenCalledWith(secret, `hashed_${secret}`);
     });
 
+    it("Should throw UNAUTHORIZED when token hash does not match", async () => {
+      const { sut, hasherStub } = makeSut();
+      vi.spyOn(hasherStub, "compare").mockResolvedValueOnce(false);
+      const promise = sut.validateRefreshToken(validDummyToken);
+      await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
+    });
+
     describe("Expiration Handling", () => {
       beforeAll(() => {
         vi.useFakeTimers();
