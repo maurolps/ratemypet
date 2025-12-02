@@ -6,6 +6,7 @@ export const expressAdapter = (controller: Controller) => {
   return async (request: Request, response: Response) => {
     const httpRequest = {
       body: request.body,
+      cookies: request.cookies,
     };
     const httpResponse = await controller.handle(httpRequest);
 
