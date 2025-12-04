@@ -8,8 +8,9 @@ This folder contains all functional requirements for the backend, organized by u
 | Use Case ID | Name                        | Link                          |
 |-------------|-----------------------------|-------------------------------|
 | UC-001      | Create User Account         | [UC-001-create-user.md](./UC-001-create-user.md)
-| UC-002      | User Login                  | _WIP_
-| UC-003      | Upload Pet Photo            | _WIP_
+| UC-002      | User Login                  | [UC-002-login.md](./UC-002-login.md)
+| UC-003      | Refresh Token               | [UC-003-refresh-token.md](./UC-003-refresh-token.md)
+| UC-004      | Upload Pet Photo            | _WIP_
 |
 
 Are included inside each file:
