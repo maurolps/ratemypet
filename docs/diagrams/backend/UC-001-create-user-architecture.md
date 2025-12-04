@@ -1,15 +1,17 @@
 
 # Feature: UC-001 CreateUser Architecture
 
+> Mermaid code available below.
+> You can copy the code and render it with [Mermaid Live Editor](https://mermaid.live/).
 
 <img alt="UC001 Architecture Diagram" src="https://raw.githubusercontent.com/maurolps/ratemypet/refs/heads/main/docs/assets/uc001-diagram.png" width="650" />
 
 <details>
 <summary>Expand Mermaid code</summary>
 
-> If the diagram don't looks like the image above, github probably don't support elk layout in mermaid preview yet.
+> Note: Displayed as text due to GitHub's lack of Mermaid ELK layout support.
 
-```mermaid
+```text
 ---
 config:
   layout: elk
