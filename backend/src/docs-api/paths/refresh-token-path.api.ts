@@ -9,7 +9,7 @@ const refreshTokenPath = {
           in: "cookie",
           required: true,
           description:
-            "HTTP-only cookie containing the refresh token. Note: This is just for documentation purposes, you can't actually edit an HTTP-only cookie via Swagger UI.",
+            "Note: This is just for documentation purposes. The refresh token is expected to be already present in the HTTP-only cookie after Login, and handled by the browser.",
           schema: {
             type: "string",
             example: "refreshToken={id}.{secret}",
