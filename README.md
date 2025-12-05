@@ -32,16 +32,16 @@ RateMyPet is a social web app where users can post photos of their pets ( dogs o
 
 ## Architecture 
 
-*UC-001 CreateUser - Clean Architecture based | Mermaid diagram*
-<img alt="UC001 Architecture Diagram" src="https://raw.githubusercontent.com/maurolps/ratemypet/refs/heads/main/docs/assets/uc001-diagram.png" width="650" />
+*UC-002 LoginUser - Clean Architecture based | [Mermaid diagram](./docs/diagrams/backend/UC-002-login-architecture.md)*
+<img alt="UC002 Architecture Diagram" src="https://raw.githubusercontent.com/maurolps/ratemypet/refs/heads/main/docs/assets/uc002-diagram.png" width="700" />
 
 **The layers are structured as follows:**
 
 - **Domain**: entities, contracts 
-- **Application**: usecases, app business rules, ports, repository interfaces, custom error
+- **Application**: usecases, app business rules, services, ports, repository interfaces, custom error
 - **Presentation**: controllers, validator, DTOs, error presenter
 - **Infrastructure**: libs/frameworks adapters
-- **Main**: entrypoint, composition root (dependency injection), http server setup
+- **Main**: entrypoint, composition root (dependency injection/inversion), http server setup
 
 ## Tech Stack
 
@@ -51,8 +51,8 @@ RateMyPet is a social web app where users can post photos of their pets ( dogs o
 - **Code Quality:** `Biome` (lint/format), `Conventional Commits`, `Husky`
 - **Testing:** `Vitest`, `Supertest`(e2e), `TestContainers`(integration)
 - **API Docs:** `Swagger/OpenAPI` documentation on `/docs` endpoint
-- **Security:** Server-side validator, Authentication (`JWT`), Headers (helmet, cors), Rate-limit, Hasher, .env
-- **Error Handling:** Custom AppError class, internal error logging, error codes catalog
+- **Security:** Server-side validator, Authentication (`JWT`, refresh tokens, token rotation), Headers (helmet, cors), Rate-limit, Hasher, .env
+- **Error Handling:** Custom AppError class, internal error logging, error handler middleware, error codes catalog
 - **CI/CD:** `GitHub Actions` (typecheck, lint, tests, coverage)
 
 > See more about the features and technical goals in the [Product Vision](./docs/product-vision.md)
