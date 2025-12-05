@@ -15,6 +15,15 @@ const loginPath = {
       responses: {
         200: {
           description: "OK",
+          headers: {
+            "Set-Cookie": {
+              schema: {
+                type: "string",
+                example: "refreshToken={id}.{secret}; HttpOnly; Path=/; Secure",
+              },
+              description: "Set-Cookie header containing a refresh token.",
+            },
+          },
           content: {
             "application/json": {
               schema: { $ref: "#/components/schemas/loginResponse" },
