@@ -17,6 +17,7 @@ describe("PgUserRepository", () => {
       expect(user.name).toEqual("valid_name");
     });
   });
+
   describe("findByEmail", () => {
     it("Should return an User with passwordHash on success", async () => {
       const sut = new PgUserRepository();
@@ -29,6 +30,31 @@ describe("PgUserRepository", () => {
       const sut = new PgUserRepository();
 
       const response = await sut.findByEmail("non_exists@email.com");
+
+      expect(response).toBeNull();
+    });
+  });
+
+  describe("findById", () => {
+    it("Should return an User with passwordHash on success", async () => {
+      const sut = new PgUserRepository();
+      const newUser: CreateUserDTO = {
+        name: "valid_user_name",
+        email: "valid_user_email@mail.com",
+        password: "hashed_user_password",
+      };
+      const createdUser = await sut.create(newUser);
+
+      const user = await sut.findById(createdUser.id);
+
+      expect(user?.name).toEqual(newUser.name);
+      expect(user?.password_hash).toEqual(newUser.password);
+      expect(user?.created_at).toBeInstanceOf(Date);
+    });
+    it("Should return null on fail", async () => {
+      const sut = new PgUserRepository();
+
+      const response = await sut.findById(crypto.randomUUID());
 
       expect(response).toBeNull();
     });

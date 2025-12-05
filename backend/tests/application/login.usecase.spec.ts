@@ -1,6 +1,6 @@
 import { FIXED_DATE } from "../config/constants";
 import { LoginUseCase } from "@application/usecases/login.usecase";
-import { FindUserByEmailRepositoryStub } from "./doubles/find-user-by-email.repository.stub";
+import { FindUserRepositoryStub } from "./doubles/find-user.repository.stub";
 import { describe, expect, it, vi } from "vitest";
 import { AppError } from "@application/errors/app-error";
 import { HasherStub } from "./doubles/hasher.stub";
@@ -9,13 +9,13 @@ import { TokenIssuerServiceStub } from "./doubles/token-issuer.service.stub";
 describe("LoginUseCase", () => {
   const makeSut = () => {
     const hasherStub = new HasherStub();
-    const findUserByEmailStub = new FindUserByEmailRepositoryStub();
+    const findUserStub = new FindUserRepositoryStub();
     const tokenIssuer = new TokenIssuerServiceStub();
-    const sut = new LoginUseCase(findUserByEmailStub, hasherStub, tokenIssuer);
+    const sut = new LoginUseCase(findUserStub, hasherStub, tokenIssuer);
     return {
       sut,
       hasherStub,
-      findUserByEmailStub,
+      findUserStub,
     };
   };
 
@@ -40,8 +40,8 @@ describe("LoginUseCase", () => {
   });
 
   it("Should throw UNAUTHORIZED error when user has no password_hash", async () => {
-    const { sut, findUserByEmailStub } = makeSut();
-    vi.spyOn(findUserByEmailStub, "findByEmail").mockResolvedValueOnce({
+    const { sut, findUserStub } = makeSut();
+    vi.spyOn(findUserStub, "findByEmail").mockResolvedValueOnce({
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",

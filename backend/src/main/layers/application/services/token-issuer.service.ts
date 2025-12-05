@@ -2,12 +2,14 @@ import type { User } from "@domain/entities/user";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { TokenGenerator } from "@application/ports/token-generator.contract";
 import type { RefreshTokenRepository } from "@application/repositories/refresh-token-repository";
+import type { RefreshTokenParsed } from "@domain/usecases/refresh-token.contract";
 import type {
   AccessTokenPayload,
   RefreshTokenDTO,
   TokenIssuer,
   Tokens,
 } from "@domain/entities/token";
+import { AppError } from "@application/errors/app-error";
 
 export class TokenIssuerService implements TokenIssuer {
   constructor(
@@ -42,5 +44,36 @@ export class TokenIssuerService implements TokenIssuer {
       accessToken,
       refreshToken: refreshTokenRaw,
     };
+  }
+
+  async validateRefreshToken(
+    token: RefreshTokenParsed,
+  ): Promise<RefreshTokenDTO> {
+    const refreshTokenDTO = await this.refreshTokenRepository.findById(
+      token.id,
+    );
+
+    if (!refreshTokenDTO) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
+    if (refreshTokenDTO.revoked_at) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
+    if (
+      refreshTokenDTO.expires_at &&
+      refreshTokenDTO.expires_at <= Date.now()
+    ) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
+    if (
+      !(await this.hasher.compare(token.secret, refreshTokenDTO.token_hash))
+    ) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
+    return refreshTokenDTO;
   }
 }

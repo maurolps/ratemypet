@@ -3,6 +3,6 @@
 This folder contains all technical documentation related to the RateMyPet project:
 
 - [Product Vision](./product-vision.md)
-- [Use Cases and Functional Requirements](./requirements/)
+- [Use Cases and Functional Requirements](./requirements/backend/)
 - [Branching Strategy](./branching-strategy.md)
-- [Architecture Diagrams](./diagrams/)
+- [Architecture Diagrams](./diagrams/backend/)

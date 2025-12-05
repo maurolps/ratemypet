@@ -5,4 +5,20 @@ export class RefreshTokenRepositoryStub implements RefreshTokenRepository {
   save(_refreshTokenDTO: RefreshTokenDTO): Promise<void> {
     return new Promise((resolve) => resolve());
   }
+
+  revoke(_tokenId: string): Promise<void> {
+    return new Promise((resolve) => resolve());
+  }
+
+  findById(id: string): Promise<RefreshTokenDTO | null> {
+    return new Promise((resolve) =>
+      resolve({
+        id,
+        user_id: "valid_user_id",
+        token_hash: "hashed_refresh_token_secret",
+        created_at: Date.now(),
+        expires_at: Date.now() + 60_000,
+      }),
+    );
+  }
 }

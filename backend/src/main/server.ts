@@ -10,8 +10,18 @@ const bootstrap = async () => {
 
   if (dbReady) {
     const app = makeApp();
-    app.listen(env.PORT, () => {
-      console.log("Server listening on port: ", env.PORT);
+    const server = app.listen(env.PORT, () => {
+      const address = server.address();
+      const PORT = env.PORT;
+      if (typeof address === "string") {
+        console.log(`Server running at ${address}`);
+        console.log(`Swagger docs available at ${address}/api/docs`);
+      } else {
+        console.log(`Server running at http://localhost:${PORT}`);
+        console.log(
+          `Swagger docs available at http://localhost:${PORT}/api/docs`,
+        );
+      }
     });
   }
 };

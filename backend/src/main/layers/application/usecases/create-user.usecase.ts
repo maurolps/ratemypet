@@ -1,4 +1,4 @@
-import type { FindUserByEmailRepository } from "@application/repositories/find-user-by-email.repository";
+import type { FindUserRepository } from "@application/repositories/find-user.repository";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { User } from "@domain/entities/user";
 import type { CreateUserRepository } from "@application/repositories/create-user.repository";
@@ -10,13 +10,13 @@ import { AppError } from "@application/errors/app-error";
 
 export class CreateUserUseCase implements CreateUser {
   constructor(
-    private readonly findUserByEmail: FindUserByEmailRepository,
+    private readonly findUser: FindUserRepository,
     private readonly hashPassword: Hasher,
     private readonly createUserRepository: CreateUserRepository,
   ) {}
 
   async execute(userDTO: CreateUserDTO): Promise<User> {
-    const userExists = await this.findUserByEmail.findByEmail(userDTO.email);
+    const userExists = await this.findUser.findByEmail(userDTO.email);
 
     if (userExists) {
       throw new AppError("EMAIL_TAKEN");
