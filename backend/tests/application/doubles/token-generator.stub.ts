@@ -1,9 +1,17 @@
-import type { TokenGenerator } from "@application/ports/token-generator.contract";
+import type {
+  AccessTokenGenerator,
+  RefreshTokenGenerator,
+} from "@application/ports/token-generator.contract";
+import type { AccessTokenPayload } from "@domain/entities/token";
 
-export class TokenGeneratorStub<T = void> implements TokenGenerator<T> {
-  issue(_payload?: T): Promise<string> {
-    return new Promise((resolve) =>
-      resolve(_payload ? `valid_access_token` : `valid_token_id.refresh_token`),
-    );
+export class AccessTokenGeneratorStub implements AccessTokenGenerator {
+  issue(_payload: AccessTokenPayload): Promise<string> {
+    return new Promise((resolve) => resolve(`valid_access_token`));
+  }
+}
+
+export class RefreshTokenGeneratorStub implements RefreshTokenGenerator {
+  issue(): Promise<string> {
+    return new Promise((resolve) => resolve(`valid_token_id.refresh_token`));
   }
 }

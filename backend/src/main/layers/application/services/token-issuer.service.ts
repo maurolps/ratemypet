@@ -1,10 +1,12 @@
 import type { User } from "@domain/entities/user";
 import type { Hasher } from "@application/ports/hasher.contract";
-import type { TokenGenerator } from "@application/ports/token-generator.contract";
+import type {
+  AccessTokenGenerator,
+  RefreshTokenGenerator,
+} from "@application/ports/token-generator.contract";
 import type { RefreshTokenRepository } from "@application/repositories/refresh-token-repository";
 import type { RefreshTokenParsed } from "@domain/usecases/refresh-token.contract";
 import type {
-  AccessTokenPayload,
   RefreshTokenDTO,
   TokenIssuer,
   Tokens,
@@ -14,8 +16,8 @@ import { AppError } from "@application/errors/app-error";
 export class TokenIssuerService implements TokenIssuer {
   constructor(
     private readonly hasher: Hasher,
-    private readonly accessTokenGenerator: TokenGenerator<AccessTokenPayload>,
-    private readonly refreshTokenGenerator: TokenGenerator,
+    private readonly accessTokenGenerator: AccessTokenGenerator,
+    private readonly refreshTokenGenerator: RefreshTokenGenerator,
     private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
   async execute(user: User): Promise<Tokens> {
