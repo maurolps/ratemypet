@@ -13,4 +13,10 @@ export class JwtAdapter implements AccessTokenGenerator {
     });
     return accessToken;
   }
+
+  async verify(accessToken: string): Promise<AccessTokenPayload> {
+    const secret = env.JWT_ACCESS_TOKEN_SECRET;
+    const decoded = jwt.verify(accessToken, secret) as AccessTokenPayload;
+    return decoded;
+  }
 }
