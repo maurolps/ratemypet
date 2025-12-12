@@ -42,7 +42,7 @@ describe("AuthMiddleware", () => {
     );
   });
 
-  it("Should call AccessTokenGenerator.verify with correct values", async () => {
+  it("Should call AccessTokenGenerator with correct values", async () => {
     const { sut, accessTokenGeneratorSpy } = makeSut();
     const dummyRequest = {
       headers: {
@@ -66,5 +66,22 @@ describe("AuthMiddleware", () => {
     await expect(sut.handle(dummyRequest)).rejects.toEqual(
       new AppError("UNAUTHORIZED"),
     );
+  });
+
+  it("Should return AuthenticatedRequest on success", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {
+      headers: {
+        authorization: "Bearer valid_token",
+      },
+    };
+    const authenticatedRequest = await sut.handle(dummyRequest);
+    expect(authenticatedRequest).toEqual({
+      user: {
+        sub: "valid_user_id",
+        name: "valid_name",
+        email: "valid_email@mail.com",
+      },
+    });
   });
 });
