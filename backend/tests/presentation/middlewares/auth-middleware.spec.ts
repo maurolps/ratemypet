@@ -20,4 +20,19 @@ describe("AuthMiddleware", () => {
       ),
     );
   });
+
+  it("Should throw MISSING_PARAM if authorization header is malformed", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {
+      headers: {
+        authorization: "InvalidHeader",
+      },
+    };
+    await expect(sut.handle(dummyRequest)).rejects.toEqual(
+      new AppError(
+        "MISSING_PARAM",
+        "Authorization header is missing or malformed",
+      ),
+    );
+  });
 });
