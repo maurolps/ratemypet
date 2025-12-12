@@ -18,12 +18,11 @@ export const errorHandler = (
 
   if (isAppError(error)) {
     errorResponse = ErrorPresenter(error);
-    console.log(error.code, {
+  } else {
+    console.log(error, {
       route: request.originalUrl,
       ip: request.ip,
     });
-  } else {
-    console.log(error);
   }
 
   if (!response.headersSent) {
