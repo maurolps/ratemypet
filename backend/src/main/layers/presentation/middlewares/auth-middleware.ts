@@ -21,17 +21,11 @@ export class AuthMiddleware implements Middleware {
     const accessToken = authHeader.substring(7).trim();
 
     try {
-      const _accessTokenPayload = await this.tokenGenerator.verify(accessToken);
-    } catch {
+      const accessTokenPayload = await this.tokenGenerator.verify(accessToken);
+      const { iat: _iat, exp: _exp, ...user } = accessTokenPayload;
+      return { user };
+    } catch (_error) {
       throw new AppError("UNAUTHORIZED");
     }
-
-    return {
-      user: {
-        sub: "valid_user_id",
-        name: "valid_name",
-        email: "valid_email@example.com",
-      },
-    };
   }
 }
