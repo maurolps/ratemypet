@@ -8,6 +8,7 @@ import type {
 
 export class AuthMiddleware implements Middleware {
   constructor(private readonly tokenGenerator: AccessTokenGenerator) {}
+
   async handle(request: HttpRequest): Promise<AuthenticatedRequest> {
     const authHeader = request.headers?.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -18,7 +19,12 @@ export class AuthMiddleware implements Middleware {
     }
 
     const accessToken = authHeader.substring(7).trim();
-    const _accessTokenPayload = await this.tokenGenerator.verify(accessToken);
+
+    try {
+      const _accessTokenPayload = await this.tokenGenerator.verify(accessToken);
+    } catch {
+      throw new AppError("UNAUTHORIZED");
+    }
 
     return {
       user: {
