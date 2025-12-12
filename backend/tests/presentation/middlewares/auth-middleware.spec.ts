@@ -52,4 +52,19 @@ describe("AuthMiddleware", () => {
     await sut.handle(dummyRequest);
     expect(accessTokenGeneratorSpy).toHaveBeenCalledWith("valid_token");
   });
+
+  it("Should throw UNAUTHORIZED if token is invalid", async () => {
+    const { sut, accessTokenGeneratorSpy } = makeSut();
+    const dummyRequest = {
+      headers: {
+        authorization: "Bearer invalid_token",
+      },
+    };
+    accessTokenGeneratorSpy.mockImplementationOnce(() => {
+      throw new Error();
+    });
+    await expect(sut.handle(dummyRequest)).rejects.toEqual(
+      new AppError("UNAUTHORIZED"),
+    );
+  });
 });
