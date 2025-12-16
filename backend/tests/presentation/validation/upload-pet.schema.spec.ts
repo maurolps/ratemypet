@@ -2,12 +2,13 @@ import type { UploadPetDTO } from "@domain/usecases/upload-pet.contract";
 import { describe, expect, it } from "vitest";
 import { ZodHttpValidator } from "@presentation/validation/zod-http-validator";
 import { uploadPetSchema } from "@presentation/validation/upload-pet.schema";
+import { AppError } from "@application/errors/app-error";
 
 describe("ZodHttpValidator UploadPet", () => {
   const sut = new ZodHttpValidator<UploadPetDTO>(uploadPetSchema);
   const dummyRequest = {
     body: {
-      name: "any_pet_name",
+      petName: "any_pet_name",
     },
     user: {
       sub: "authenticated_user_id",
@@ -24,7 +25,7 @@ describe("ZodHttpValidator UploadPet", () => {
   it("Should return an UploadPetDTO when validating a valid request body", () => {
     const result = sut.execute(dummyRequest);
     expect(result).toEqual({
-      name: "any_pet_name",
+      petName: "any_pet_name",
       userId: "authenticated_user_id",
       image: {
         originalName: "any_image_name",
@@ -32,5 +33,14 @@ describe("ZodHttpValidator UploadPet", () => {
         buffer: "any_image_buffer",
       },
     });
+  });
+
+  it("Should return 400 when the request is malformed", () => {
+    const malformedRequest = {
+      ...dummyRequest,
+      body: {},
+    };
+    const execute = () => sut.execute(malformedRequest);
+    expect(execute).toThrow(new AppError("MISSING_PARAM", "petName"));
   });
 });
