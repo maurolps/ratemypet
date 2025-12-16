@@ -43,4 +43,23 @@ describe("ZodHttpValidator UploadPet", () => {
     const execute = () => sut.execute(malformedRequest);
     expect(execute).toThrow(new AppError("MISSING_PARAM", "petName"));
   });
+
+  it("Should normalize textual inputs", () => {
+    const requestWithExtraSpaces = {
+      ...dummyRequest,
+      body: {
+        petName: "   any_pet_name   ",
+      },
+    };
+    const result = sut.execute(requestWithExtraSpaces);
+    expect(result).toEqual({
+      petName: "any_pet_name",
+      userId: "authenticated_user_id",
+      image: {
+        originalName: "any_image_name",
+        mimeType: "image/png",
+        buffer: "any_image_buffer",
+      },
+    });
+  });
 });
