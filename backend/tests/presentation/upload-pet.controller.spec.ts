@@ -3,6 +3,7 @@ import { UploadPetController } from "@presentation/controllers/upload-pet.contro
 import { UploadPetValidatorStub } from "./doubles/upload-pet.validator.stub";
 import { UploadPetUseCaseStub } from "./doubles/upload-pet.usecase.stub";
 import { FIXED_DATE } from "../config/constants";
+import { AppError } from "@application/errors/app-error";
 
 describe("UploadPetController", () => {
   const makeSut = () => {
@@ -65,5 +66,17 @@ describe("UploadPetController", () => {
       caption: "generated_caption",
       created_at: FIXED_DATE,
     });
+  });
+
+  it("Should return 400 if validation fails", async () => {
+    const { sut, httpValidatorSpy } = makeSut();
+    httpValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("INVALID_PARAM", "Image file is not valid");
+    });
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual(
+      "Invalid Param: Image file is not valid",
+    );
   });
 });
