@@ -39,6 +39,14 @@ export const unauthorized = (): HttpResponse => ({
   },
 });
 
+export const unprocessableEntity = (message: string): HttpResponse => ({
+  status: 422,
+  body: {
+    message,
+    name: "UnprocessableEntity",
+  },
+});
+
 export const tooManyRequests = (message: string): HttpResponse => ({
   status: 429,
   body: {
