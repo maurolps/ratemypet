@@ -20,7 +20,7 @@ describe("UploadPetController", () => {
 
   const dummyRequest = {
     body: {
-      name: "any_pet_name",
+      petName: "any_pet_name",
     },
     user: {
       sub: "authenticated_user_id",
@@ -44,7 +44,7 @@ describe("UploadPetController", () => {
     const { sut, uploadPetUseCaseSpy } = makeSut();
     await sut.handle(dummyRequest);
     expect(uploadPetUseCaseSpy).toHaveBeenCalledWith({
-      name: "valid_pet_name",
+      petName: "valid_pet_name",
       userId: "valid_user_id",
       image: {
         originalName: "valid_image_name",
@@ -60,7 +60,7 @@ describe("UploadPetController", () => {
     expect(httpResponse.status).toBe(200);
     expect(httpResponse.body).toEqual({
       id: "valid_pet_id",
-      name: "valid_pet_name",
+      petName: "valid_pet_name",
       type: "dog",
       image_url: "valid_pet_image_url",
       caption: "generated_caption",

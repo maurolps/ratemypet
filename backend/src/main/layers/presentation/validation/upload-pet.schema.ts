@@ -4,7 +4,7 @@ export const uploadPetSchema = z
   .object({
     body: z.object(
       {
-        name: z.string("MISSING_PARAM").min(3, "INVALID_PARAM"),
+        petName: z.string("MISSING_PARAM").min(3, "INVALID_PARAM"),
       },
       { error: "MISSING_PARAM" },
     ),
@@ -35,7 +35,7 @@ export const uploadPetSchema = z
   })
   .transform(({ body, user, file }) => {
     return {
-      name: body.name,
+      petName: body.petName,
       userId: user.sub,
       image: {
         originalName: file.originalname,
