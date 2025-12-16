@@ -4,7 +4,13 @@ export const uploadPetSchema = z
   .object({
     body: z.object(
       {
-        petName: z.string("MISSING_PARAM").min(3, "INVALID_PARAM"),
+        petName: z
+          .string("MISSING_PARAM")
+          .min(3, "INVALID_NAME")
+          .max(70, "INVALID_PARAM")
+          .trim()
+          .normalize("NFKC")
+          .transform((val) => val.replace(/\s+/g, " ")),
       },
       { error: "MISSING_PARAM" },
     ),
@@ -27,9 +33,9 @@ export const uploadPetSchema = z
       )
       .refine(
         (file) =>
-          ["image/jpeg", "image/png", "image/gif"].includes(file.mimetype),
+          ["image/jpeg", "image/png", "image/webp"].includes(file.mimetype),
         {
-          message: "INVALID_PARAM",
+          error: "INVALID_PARAM",
         },
       ),
   })
