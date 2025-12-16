@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { UploadPetController } from "@presentation/controllers/upload-pet.controller";
 import { UploadPetValidatorStub } from "./doubles/upload-pet.validator.stub";
 import { UploadPetUseCaseStub } from "./doubles/upload-pet.usecase.stub";
+import { FIXED_DATE } from "../config/constants";
 
 describe("UploadPetController", () => {
   const makeSut = () => {
@@ -49,6 +50,20 @@ describe("UploadPetController", () => {
         mimeType: "valid/mime-type",
         buffer: Buffer.from("any_image_buffer"),
       },
+    });
+  });
+
+  it("Should return 200 with pet data on successful upload", async () => {
+    const { sut } = makeSut();
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(200);
+    expect(httpResponse.body).toEqual({
+      id: "valid_pet_id",
+      name: "valid_pet_name",
+      type: "dog",
+      image_url: "valid_pet_image_url",
+      caption: "generated_caption",
+      created_at: FIXED_DATE,
     });
   });
 });
