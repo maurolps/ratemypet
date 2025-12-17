@@ -4,6 +4,7 @@ import { PetClassifierStub } from "./doubles/pet-classifier.stub";
 import { ImageCompressorStub } from "./doubles/image-compressor.stub";
 import { PetStorageStub } from "./doubles/pet-storage.stub";
 import { UploadPetRepositoryStub } from "./doubles/upload-pet.repository.stub";
+import { FIXED_DATE } from "../config/constants";
 
 describe("UploadPetUseCase", () => {
   const makeSut = () => {
@@ -80,6 +81,28 @@ describe("UploadPetUseCase", () => {
       type: "dog",
       image_url: "pet_image_url",
       caption: "generated_caption",
+    });
+  });
+
+  it("Should throw if any service throws", async () => {
+    const { sut, petStorageSpy } = makeSut();
+    petStorageSpy.mockImplementationOnce(() => {
+      throw new Error("Error");
+    });
+    const promise = sut.execute(validPetDTO);
+    await expect(promise).rejects.toThrow();
+  });
+
+  it("Should return a Pet on success", async () => {
+    const { sut } = makeSut();
+    const pet = await sut.execute(validPetDTO);
+    expect(pet).toEqual({
+      id: "generated_pet_uuid",
+      petName: "any_pet_name",
+      type: "dog",
+      image_url: "pet_image_url",
+      caption: "generated_caption",
+      created_at: FIXED_DATE,
     });
   });
 });
