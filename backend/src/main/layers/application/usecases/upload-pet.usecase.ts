@@ -42,15 +42,8 @@ export class UploadPetUseCase implements UploadPet {
       caption: classifiedPet.caption,
     };
 
-    const _pet = await this.petRepository.save(unsavedPet);
+    const pet = await this.petRepository.save(unsavedPet);
 
-    return {
-      id: "any_pet_uuid",
-      petName: petDTO.petName,
-      type: classifiedPet.type,
-      image_url: imageUrl,
-      caption: classifiedPet.caption,
-      created_at: new Date(),
-    };
+    return pet;
   }
 }
