@@ -1,5 +1,6 @@
 import type { ImageCompressor } from "@application/ports/image-compressor.contract";
 import type { PetClassifier } from "@application/ports/pet-classifier.contract";
+import type { PetStorage } from "@application/ports/pet-storage.contract";
 import type { Pet } from "@domain/entities/pet";
 import type {
   UploadPet,
@@ -10,6 +11,7 @@ export class UploadPetUseCase implements UploadPet {
   constructor(
     private readonly imageCompressor: ImageCompressor,
     private readonly petClassifer: PetClassifier,
+    private readonly petStorage: PetStorage,
   ) {}
 
   async execute(petDTO: UploadPetDTO): Promise<Pet> {
@@ -25,11 +27,17 @@ export class UploadPetUseCase implements UploadPet {
       },
     });
 
+    const imageUrl = await this.petStorage.upload({
+      originalName: petDTO.image.originalName,
+      buffer: compressedImageBuffer,
+      mimeType: petDTO.image.mimeType,
+    });
+
     return {
       id: "any_pet_uuid",
       petName: petDTO.petName,
       type: classifiedPet.type,
-      image_url: "any_image_url",
+      image_url: imageUrl,
       caption: classifiedPet.caption,
       created_at: new Date(),
     };
