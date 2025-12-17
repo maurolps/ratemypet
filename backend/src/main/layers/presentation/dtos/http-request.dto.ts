@@ -2,10 +2,18 @@ import type { AccessTokenPayload } from "@domain/entities/token";
 
 export type HttpRequest = {
   body?: unknown;
-  cookies?: Record<string, string>;
-  headers?: Record<string, string | undefined>;
+  cookies?: {
+    refreshToken?: string;
+  };
+  headers?: {
+    authorization?: string;
+  };
   user?: Omit<AccessTokenPayload, "exp" | "iat">;
-  file?: Record<string, string>;
+  file?: {
+    originalname: string;
+    mimetype: string;
+    buffer: Buffer;
+  };
 };
 
 export type AuthenticatedRequest = {
