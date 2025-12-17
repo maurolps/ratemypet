@@ -1,3 +1,4 @@
+import type { ImageCompressor } from "@application/ports/image-compressor.contract";
 import type { PetClassifier } from "@application/ports/pet-classifier.contract";
 import type { Pet } from "@domain/entities/pet";
 import type {
@@ -6,10 +7,23 @@ import type {
 } from "@domain/usecases/upload-pet.contract";
 
 export class UploadPetUseCase implements UploadPet {
-  constructor(private readonly petClassifer: PetClassifier) {}
+  constructor(
+    private readonly imageCompressor: ImageCompressor,
+    private readonly petClassifer: PetClassifier,
+  ) {}
 
   async execute(petDTO: UploadPetDTO): Promise<Pet> {
-    const classifiedPet = await this.petClassifer.classify(petDTO);
+    const compressedImageBuffer = await this.imageCompressor.compress(
+      petDTO.image.buffer,
+    );
+
+    const classifiedPet = await this.petClassifer.classify({
+      ...petDTO,
+      image: {
+        ...petDTO.image,
+        buffer: compressedImageBuffer,
+      },
+    });
 
     return {
       id: "any_pet_uuid",
