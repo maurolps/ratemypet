@@ -30,7 +30,7 @@ describe("UploadPetController", () => {
     file: {
       originalname: "any_image_name",
       mimetype: "valid/mime-type",
-      buffer: "any_image_buffer",
+      buffer: Buffer.from("any_image_buffer"),
     },
   };
 
@@ -71,12 +71,10 @@ describe("UploadPetController", () => {
   it("Should return 400 if validation fails", async () => {
     const { sut, httpValidatorSpy } = makeSut();
     httpValidatorSpy.mockImplementationOnce(() => {
-      throw new AppError("INVALID_PARAM", "Image file is not valid");
+      throw new AppError("INVALID_PARAM", "petName");
     });
     const httpResponse = await sut.handle(dummyRequest);
     expect(httpResponse.status).toBe(400);
-    expect(httpResponse.body.message).toEqual(
-      "Invalid Param: Image file is not valid",
-    );
+    expect(httpResponse.body.message).toEqual("Invalid Param: petName");
   });
 });

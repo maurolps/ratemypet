@@ -18,7 +18,7 @@ describe("ZodHttpValidator UploadPet", () => {
     file: {
       originalname: "any_image_name",
       mimetype: "image/png",
-      buffer: "any_image_buffer",
+      buffer: Buffer.from("any_image_buffer"),
     },
   };
 
@@ -30,12 +30,12 @@ describe("ZodHttpValidator UploadPet", () => {
       image: {
         originalName: "any_image_name",
         mimeType: "image/png",
-        buffer: "any_image_buffer",
+        buffer: Buffer.from("any_image_buffer"),
       },
     });
   });
 
-  it("Should return 400 when the request is malformed", () => {
+  it("Should throw MISSING_PARAM when the request is malformed", () => {
     const malformedRequest = {
       ...dummyRequest,
       body: {},
@@ -58,8 +58,23 @@ describe("ZodHttpValidator UploadPet", () => {
       image: {
         originalName: "any_image_name",
         mimeType: "image/png",
-        buffer: "any_image_buffer",
+        buffer: Buffer.from("any_image_buffer"),
       },
     });
+  });
+
+  it("Should throw UNPROCESSABLE_ENTITY when the image has unsupported type", () => {
+    const invalidFileRequest = {
+      ...dummyRequest,
+      file: {
+        originalname: "any_image_name",
+        mimetype: "application/pdf",
+        buffer: Buffer.from("any_image_buffer"),
+      },
+    };
+    const execute = () => sut.execute(invalidFileRequest);
+    expect(execute).toThrow(
+      new AppError("UNPROCESSABLE_ENTITY", "Invalid image type"),
+    );
   });
 });
