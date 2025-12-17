@@ -1,5 +1,3 @@
-import type { UploadPetDTO } from "@domain/usecases/upload-pet.contract";
-
 export type PetType = "dog" | "cat";
 
 export type Pet = {
@@ -9,4 +7,15 @@ export type Pet = {
   image_url: string;
   caption: string;
   created_at: Date;
+};
+
+export type ClassifiedPet = {
+  type: PetType;
+  caption: string;
+};
+
+export type PetImage = {
+  originalName: string;
+  buffer: Buffer;
+  mimeType: string;
 };
