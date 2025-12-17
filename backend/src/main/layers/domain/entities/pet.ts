@@ -9,6 +9,13 @@ export type Pet = {
   created_at: Date;
 };
 
+export type UnsavedPet = {
+  petName: string;
+  type: PetType;
+  image_url: string;
+  caption: string;
+};
+
 export type ClassifiedPet = {
   type: PetType;
   caption: string;

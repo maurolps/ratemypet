@@ -1,6 +1,7 @@
 import type { ImageCompressor } from "@application/ports/image-compressor.contract";
 import type { PetClassifier } from "@application/ports/pet-classifier.contract";
 import type { PetStorage } from "@application/ports/pet-storage.contract";
+import type { UploadPetRepository } from "@application/repositories/upload-pet.repository";
 import type { Pet } from "@domain/entities/pet";
 import type {
   UploadPet,
@@ -12,6 +13,7 @@ export class UploadPetUseCase implements UploadPet {
     private readonly imageCompressor: ImageCompressor,
     private readonly petClassifer: PetClassifier,
     private readonly petStorage: PetStorage,
+    private readonly petRepository: UploadPetRepository,
   ) {}
 
   async execute(petDTO: UploadPetDTO): Promise<Pet> {
@@ -32,6 +34,15 @@ export class UploadPetUseCase implements UploadPet {
       buffer: compressedImageBuffer,
       mimeType: petDTO.image.mimeType,
     });
+
+    const unsavedPet = {
+      petName: petDTO.petName,
+      type: classifiedPet.type,
+      image_url: imageUrl,
+      caption: classifiedPet.caption,
+    };
+
+    const _pet = await this.petRepository.save(unsavedPet);
 
     return {
       id: "any_pet_uuid",
