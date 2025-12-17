@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { UploadPetUseCase } from "@application/usecases/upload-pet.usecase";
 import { PetClassifierStub } from "./doubles/pet-classifier.stub";
 import { ImageCompressorStub } from "./doubles/image-compressor.stub";
+import { PetStorageStub } from "./doubles/pet-storage.stub";
 
 describe("UploadPetUseCase", () => {
   const makeSut = () => {
@@ -9,8 +10,14 @@ describe("UploadPetUseCase", () => {
     const petClassifierSpy = vi.spyOn(petClassifierStub, "classify");
     const imageCompressorStub = new ImageCompressorStub();
     const imageCompressorSpy = vi.spyOn(imageCompressorStub, "compress");
-    const sut = new UploadPetUseCase(imageCompressorStub, petClassifierStub);
-    return { sut, petClassifierSpy, imageCompressorSpy };
+    const petStorageStub = new PetStorageStub();
+    const petStorageSpy = vi.spyOn(petStorageStub, "upload");
+    const sut = new UploadPetUseCase(
+      imageCompressorStub,
+      petClassifierStub,
+      petStorageStub,
+    );
+    return { sut, petClassifierSpy, imageCompressorSpy, petStorageSpy };
   };
 
   const validPetDTO = {
@@ -42,6 +49,16 @@ describe("UploadPetUseCase", () => {
         mimeType: "valid/mime-type",
         buffer: Buffer.from("compressed_image_buffer"),
       },
+    });
+  });
+
+  it("Should call PetStorage with correct values", async () => {
+    const { sut, petStorageSpy } = makeSut();
+    await sut.execute(validPetDTO);
+    expect(petStorageSpy).toHaveBeenCalledWith({
+      originalName: "any_image_name",
+      mimeType: "valid/mime-type",
+      buffer: Buffer.from("compressed_image_buffer"),
     });
   });
 });
