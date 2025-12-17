@@ -3,6 +3,7 @@ import { UploadPetUseCase } from "@application/usecases/upload-pet.usecase";
 import { PetClassifierStub } from "./doubles/pet-classifier.stub";
 import { ImageCompressorStub } from "./doubles/image-compressor.stub";
 import { PetStorageStub } from "./doubles/pet-storage.stub";
+import { UploadPetRepositoryStub } from "./doubles/upload-pet.repository.stub";
 
 describe("UploadPetUseCase", () => {
   const makeSut = () => {
@@ -12,12 +13,21 @@ describe("UploadPetUseCase", () => {
     const imageCompressorSpy = vi.spyOn(imageCompressorStub, "compress");
     const petStorageStub = new PetStorageStub();
     const petStorageSpy = vi.spyOn(petStorageStub, "upload");
+    const uploadPetRepositoryStub = new UploadPetRepositoryStub();
+    const uploadPetRepositorySpy = vi.spyOn(uploadPetRepositoryStub, "save");
     const sut = new UploadPetUseCase(
       imageCompressorStub,
       petClassifierStub,
       petStorageStub,
+      uploadPetRepositoryStub,
     );
-    return { sut, petClassifierSpy, imageCompressorSpy, petStorageSpy };
+    return {
+      sut,
+      petClassifierSpy,
+      imageCompressorSpy,
+      petStorageSpy,
+      uploadPetRepositorySpy,
+    };
   };
 
   const validPetDTO = {
@@ -59,6 +69,17 @@ describe("UploadPetUseCase", () => {
       originalName: "any_image_name",
       mimeType: "valid/mime-type",
       buffer: Buffer.from("compressed_image_buffer"),
+    });
+  });
+
+  it("Should call UploadPetRepository with correct values", async () => {
+    const { sut, uploadPetRepositorySpy } = makeSut();
+    await sut.execute(validPetDTO);
+    expect(uploadPetRepositorySpy).toHaveBeenCalledWith({
+      petName: "any_pet_name",
+      type: "dog",
+      image_url: "pet_image_url",
+      caption: "generated_caption",
     });
   });
 });
