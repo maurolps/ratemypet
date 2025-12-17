@@ -25,9 +25,11 @@ export const uploadPetSchema = z
     file: z
       .object(
         {
-          originalname: z.string("MISSING_PARAM"),
-          mimetype: z.string("MISSING_PARAM"),
-          buffer: z.string("MISSING_PARAM"),
+          originalname: z.string("INVALID_PARAM").max(255, "INVALID_PARAM"),
+          mimetype: z.string("INVALID_PARAM"),
+          buffer: z.any().refine((buf) => buf instanceof Buffer, {
+            message: "INVALID_PARAM",
+          }),
         },
         { error: "MISSING_PARAM" },
       )
@@ -35,7 +37,7 @@ export const uploadPetSchema = z
         (file) =>
           ["image/jpeg", "image/png", "image/webp"].includes(file.mimetype),
         {
-          error: "INVALID_PARAM",
+          error: "UNPROCESSABLE_ENTITY",
         },
       ),
   })
