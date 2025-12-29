@@ -19,4 +19,9 @@ describe("SharpCompressor Adapter", () => {
     await sut.compress(imageBuffer);
     expect(sharp).toHaveBeenCalledWith(imageBuffer);
   });
+
+  it("Should chain and return a compressed image buffer", async () => {
+    const compressedBuffer = await sut.compress(imageBuffer);
+    expect(compressedBuffer).toEqual(Buffer.from("compressed_image"));
+  });
 });
