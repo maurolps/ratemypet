@@ -24,4 +24,12 @@ describe("SharpCompressor Adapter", () => {
     const compressedBuffer = await sut.compress(imageBuffer);
     expect(compressedBuffer).toEqual(Buffer.from("compressed_image"));
   });
+
+  it("Should rethrow if Sharp throws", async () => {
+    vi.mocked(sharp).mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const promise = sut.compress(imageBuffer);
+    await expect(promise).rejects.toThrow();
+  });
 });
