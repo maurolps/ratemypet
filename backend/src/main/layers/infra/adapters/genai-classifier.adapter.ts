@@ -41,23 +41,27 @@ Rules:
       contents: [imagePart, { text: prompt }],
     });
 
-    let aiResponse: {
-      isValidPet: boolean;
-      petType: "dog" | "cat";
-      caption: string;
-    };
+    const classifiedPet = this.parseAiResponse(response.text ?? "null");
 
+    return classifiedPet;
+  }
+
+  private parseAiResponse(responseText: string): ClassifiedPet | null {
     try {
-      aiResponse = JSON.parse(response.text ?? "{}");
+      const aiResponse = JSON.parse(responseText);
+
+      if (!aiResponse.isValidPet) {
+        return null;
+      }
+
+      const classifiedPet: ClassifiedPet = {
+        type: aiResponse.petType,
+        caption: aiResponse.caption,
+      };
+
+      return classifiedPet;
     } catch {
       throw new Error("Invalid JSON response from AI");
     }
-
-    const classifiedPet: ClassifiedPet = {
-      type: aiResponse.petType,
-      caption: aiResponse.caption,
-    };
-
-    return classifiedPet;
   }
 }
