@@ -5,6 +5,7 @@ import { ImageCompressorStub } from "./doubles/image-compressor.stub";
 import { PetStorageStub } from "./doubles/pet-storage.stub";
 import { UploadPetRepositoryStub } from "./doubles/upload-pet.repository.stub";
 import { FIXED_DATE } from "../config/constants";
+import { AppError } from "@application/errors/app-error";
 
 describe("UploadPetUseCase", () => {
   const makeSut = () => {
@@ -61,6 +62,15 @@ describe("UploadPetUseCase", () => {
         buffer: Buffer.from("compressed_image_buffer"),
       },
     });
+  });
+
+  it("Should throw an AppError if PetClassifer returns null", async () => {
+    const { sut, petClassifierSpy } = makeSut();
+    petClassifierSpy.mockResolvedValueOnce(null);
+    const promise = sut.execute(validPetDTO);
+    await expect(promise).rejects.toThrow(
+      new AppError("INVALID_PARAM", "The image does not contain a valid pet."),
+    );
   });
 
   it("Should call PetStorage with correct values", async () => {

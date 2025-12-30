@@ -3,7 +3,7 @@ import type { ClassifiedPet } from "@domain/entities/pet";
 import type { UploadPetDTO } from "@domain/usecases/upload-pet.contract";
 
 export class PetClassifierStub implements PetClassifier {
-  async classify(_petDTO: UploadPetDTO): Promise<ClassifiedPet> {
+  async classify(_petDTO: UploadPetDTO): Promise<ClassifiedPet | null> {
     return {
       type: "dog",
       caption: "generated_caption",
