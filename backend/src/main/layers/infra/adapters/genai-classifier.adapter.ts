@@ -57,17 +57,11 @@ Rules:
     if (typeof aiResponse.isValidPet !== "boolean") {
       return false;
     }
-    if (aiResponse.isValidPet) {
-      if (!validPetTypes.includes(aiResponse.petType)) {
-        return false;
-      }
-      if (typeof aiResponse.caption !== "string") {
-        return false;
-      }
-    } else {
-      if (aiResponse.petType !== null) {
-        return false;
-      }
+    if (!validPetTypes.includes(aiResponse.petType)) {
+      return false;
+    }
+    if (typeof aiResponse.caption !== "string") {
+      return false;
     }
     return true;
   }
