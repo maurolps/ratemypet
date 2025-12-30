@@ -3,6 +3,12 @@ import type { ClassifiedPet } from "@domain/entities/pet";
 import type { UploadPetDTO } from "@domain/usecases/upload-pet.contract";
 import type { GoogleGenAI } from "@google/genai";
 
+type AiResponse = {
+  isValidPet: boolean;
+  petType: "dog" | "cat" | null;
+  caption: string;
+};
+
 export class GenAiClassiferAdapter implements PetClassifier {
   constructor(private readonly ai: GoogleGenAI) {}
 
@@ -14,7 +20,7 @@ Analyze the image and return ONLY a valid JSON object with the following shape:
 
 {
   "isValidPet": boolean,
-  "petType": "DOG" | "CAT" | null,
+  "petType": "dog" | "cat" | null,
   "caption": string
 }
 
@@ -46,22 +52,50 @@ Rules:
     return classifiedPet;
   }
 
-  private parseAiResponse(responseText: string): ClassifiedPet | null {
-    try {
-      const aiResponse = JSON.parse(responseText);
-
-      if (!aiResponse.isValidPet) {
-        return null;
+  private validatePayload(aiResponse: AiResponse): boolean {
+    const validPetTypes = ["dog", "cat", null];
+    if (typeof aiResponse.isValidPet !== "boolean") {
+      return false;
+    }
+    if (aiResponse.isValidPet) {
+      if (!validPetTypes.includes(aiResponse.petType)) {
+        return false;
       }
+      if (typeof aiResponse.caption !== "string") {
+        return false;
+      }
+    } else {
+      if (aiResponse.petType !== null) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-      const classifiedPet: ClassifiedPet = {
-        type: aiResponse.petType,
-        caption: aiResponse.caption,
-      };
-
-      return classifiedPet;
+  private parseAiResponse(responseText: string): ClassifiedPet | null {
+    let aiResponse: AiResponse;
+    try {
+      aiResponse = JSON.parse(responseText);
     } catch {
       throw new Error("Invalid JSON response from AI");
     }
+    if (!this.validatePayload(aiResponse)) {
+      throw new Error("Invalid payload response from AI");
+    }
+
+    if (aiResponse.isValidPet === false) {
+      return null;
+    }
+
+    if (aiResponse.petType === null) {
+      return null;
+    }
+
+    const classifiedPet: ClassifiedPet = {
+      type: aiResponse.petType,
+      caption: aiResponse.caption,
+    };
+
+    return classifiedPet;
   }
 }
