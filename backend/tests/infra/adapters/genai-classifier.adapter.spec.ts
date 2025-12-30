@@ -31,4 +31,20 @@ describe("GenAiClassifer Adapter", () => {
     const promise = sut.classify(validPetDTO);
     await expect(promise).rejects.toThrowError("Invalid JSON response from AI");
   });
+
+  it("Should throw if AI response contains invalid payload", async () => {
+    googleGenAiSpy.mockResolvedValueOnce({
+      text: `
+        {
+          "isValidPet": true,
+          "petType": "LIZARD",
+          "caption": "A funny caption"
+        }
+      `,
+    });
+    const promise = sut.classify(validPetDTO);
+    await expect(promise).rejects.toThrowError(
+      "Invalid payload response from AI",
+    );
+  });
 });
