@@ -21,4 +21,14 @@ describe("GenAiClassifer Adapter", () => {
     await sut.classify(validPetDTO);
     expect(googleGenAiSpy).toHaveBeenCalledTimes(1);
   });
+
+  it("Should throw if GenAI returns an invalid response", async () => {
+    googleGenAiSpy.mockResolvedValueOnce({
+      text: `
+        INVALID RESPONSE
+      `,
+    });
+    const promise = sut.classify(validPetDTO);
+    await expect(promise).rejects.toThrowError("Invalid JSON response from AI");
+  });
 });
