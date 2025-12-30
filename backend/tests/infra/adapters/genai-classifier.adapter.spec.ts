@@ -47,4 +47,26 @@ describe("GenAiClassifer Adapter", () => {
       "Invalid payload response from AI",
     );
   });
+
+  it("Should return null if AI says isValidPet is false", async () => {
+    googleGenAiSpy.mockResolvedValueOnce({
+      text: `
+        {
+          "isValidPet": false,
+          "petType": null,
+          "caption": "A funny caption"
+        }
+      `,
+    });
+    const classifiedPet = await sut.classify(validPetDTO);
+    expect(classifiedPet).toBeNull();
+  });
+
+  it("Should return a ClassifiedPet on success", async () => {
+    const classifiedPet = await sut.classify(validPetDTO);
+    expect(classifiedPet).toEqual({
+      type: "dog",
+      caption: "A happy dog following the happy path.",
+    });
+  });
 });
