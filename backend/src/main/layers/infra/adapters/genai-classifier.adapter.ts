@@ -41,7 +41,17 @@ Rules:
       contents: [imagePart, { text: prompt }],
     });
 
-    const aiResponse = JSON.parse(response.text ?? "{}");
+    let aiResponse: {
+      isValidPet: boolean;
+      petType: "dog" | "cat";
+      caption: string;
+    };
+
+    try {
+      aiResponse = JSON.parse(response.text ?? "{}");
+    } catch {
+      throw new Error("Invalid JSON response from AI");
+    }
 
     const classifiedPet: ClassifiedPet = {
       type: aiResponse.petType,
