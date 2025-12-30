@@ -1,3 +1,4 @@
+import { AppError } from "@application/errors/app-error";
 import type { ImageCompressor } from "@application/ports/image-compressor.contract";
 import type { PetClassifier } from "@application/ports/pet-classifier.contract";
 import type { PetStorage } from "@application/ports/pet-storage.contract";
@@ -28,6 +29,13 @@ export class UploadPetUseCase implements UploadPet {
         buffer: compressedImageBuffer,
       },
     });
+
+    if (!classifiedPet) {
+      throw new AppError(
+        "INVALID_PARAM",
+        "The image does not contain a valid pet.",
+      );
+    }
 
     const imageUrl = await this.petStorage.upload({
       originalName: petDTO.image.originalName,
