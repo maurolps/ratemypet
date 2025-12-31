@@ -21,7 +21,7 @@ export class S3PetStorageAdapter implements PetStorage {
     try {
       await this.s3Client.send(new PutObjectCommand(uploadParams));
     } catch (error) {
-      throw new Error("S3Client Error", { cause: error });
+      throw new Error("Error while uploading image to S3", { cause: error });
     }
 
     const imageUrl = `${env.AWS_ENDPOINT}/${env.AWS_BUCKET_NAME}/${uploadParams.Key}`;
@@ -40,7 +40,7 @@ export class S3PetStorageAdapter implements PetStorage {
     try {
       await this.s3Client.send(new DeleteObjectCommand(deleteParams));
     } catch (error) {
-      throw new Error("S3Client Error", { cause: error });
+      throw new Error("Error while deleting image from S3", { cause: error });
     }
   }
 }

@@ -30,7 +30,9 @@ describe("S3PetStorage Adapter", () => {
   it("Should rethrow if S3Client throws", async () => {
     s3ClientSpy.mockRejectedValueOnce(new Error("any_error"));
     const promise = sut.upload(validPetImage);
-    await expect(promise).rejects.toThrowError("S3Client Error");
+    await expect(promise).rejects.toThrowError(
+      "Error while uploading image to S3",
+    );
     expect(promise).rejects.toHaveProperty("cause");
   });
 
