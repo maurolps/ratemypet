@@ -26,4 +26,11 @@ describe("S3PetStorage Adapter", () => {
     await sut.delete(imageUrl);
     expect(s3ClientSpy).toHaveBeenCalledTimes(1);
   });
+
+  it("Should rethrow if S3Client throws", async () => {
+    s3ClientSpy.mockRejectedValueOnce(new Error("any_error"));
+    const promise = sut.upload(validPetImage);
+    await expect(promise).rejects.toThrowError("S3Client Error");
+    expect(promise).rejects.toHaveProperty("cause");
+  });
 });
