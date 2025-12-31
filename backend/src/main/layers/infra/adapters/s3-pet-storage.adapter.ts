@@ -18,7 +18,11 @@ export class S3PetStorageAdapter implements PetStorage {
       ContentType: image.mimeType,
     };
 
-    await this.s3Client.send(new PutObjectCommand(uploadParams));
+    try {
+      await this.s3Client.send(new PutObjectCommand(uploadParams));
+    } catch (error) {
+      throw new Error("S3Client Error", { cause: error });
+    }
 
     const imageUrl = `${env.AWS_ENDPOINT}/${env.AWS_BUCKET_NAME}/${uploadParams.Key}`;
     return imageUrl;
@@ -32,6 +36,11 @@ export class S3PetStorageAdapter implements PetStorage {
       Bucket: env.AWS_BUCKET_NAME,
       Key: key,
     };
-    await this.s3Client.send(new DeleteObjectCommand(deleteParams));
+
+    try {
+      await this.s3Client.send(new DeleteObjectCommand(deleteParams));
+    } catch (error) {
+      throw new Error("S3Client Error", { cause: error });
+    }
   }
 }
