@@ -1,5 +1,5 @@
 import { s3ClientStub } from "./doubles/s3-client.stub";
-import { vi, it, describe, expect } from "vitest";
+import { vi, it, describe, expect, afterEach } from "vitest";
 import { S3PetStorageAdapter } from "@infra/adapters/s3-pet-storage.adapter";
 
 describe("S3PetStorage Adapter", () => {
@@ -12,8 +12,18 @@ describe("S3PetStorage Adapter", () => {
     buffer: Buffer.from("any_image_buffer"),
   };
 
+  afterEach(() => {
+    s3ClientSpy.mockClear();
+  });
+
   it("Should call S3Client once on upload", async () => {
     await sut.upload(validPetImage);
+    expect(s3ClientSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("Should call S3Client once on delete", async () => {
+    const imageUrl = "https://any-endpoint/any-bucket-name/any_image_name";
+    await sut.delete(imageUrl);
     expect(s3ClientSpy).toHaveBeenCalledTimes(1);
   });
 });
