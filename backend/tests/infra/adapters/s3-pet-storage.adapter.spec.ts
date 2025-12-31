@@ -33,4 +33,9 @@ describe("S3PetStorage Adapter", () => {
     await expect(promise).rejects.toThrowError("S3Client Error");
     expect(promise).rejects.toHaveProperty("cause");
   });
+
+  it("Should return a valid URL on upload", async () => {
+    const imageUrl = new URL(await sut.upload(validPetImage));
+    expect(imageUrl).toBeInstanceOf(URL);
+  });
 });
