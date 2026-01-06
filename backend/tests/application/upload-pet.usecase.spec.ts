@@ -108,7 +108,7 @@ describe("UploadPetUseCase", () => {
     const pet = await sut.execute(validPetDTO);
     expect(pet).toEqual({
       id: "generated_pet_uuid",
-      petName: "any_pet_name",
+      name: "any_pet_name",
       type: "dog",
       image_url: "pet_image_url",
       caption: "generated_caption",

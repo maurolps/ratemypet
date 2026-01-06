@@ -60,7 +60,7 @@ describe("UploadPetController", () => {
     expect(httpResponse.status).toBe(200);
     expect(httpResponse.body).toEqual({
       id: "valid_pet_id",
-      petName: "valid_pet_name",
+      name: "valid_pet_name",
       type: "dog",
       image_url: "valid_pet_image_url",
       caption: "generated_caption",
