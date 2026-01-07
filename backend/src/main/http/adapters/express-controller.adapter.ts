@@ -9,6 +9,9 @@ export const expressAdapter = (controller: Controller) => {
       cookies: {
         refreshToken: request.cookies.refreshToken,
       },
+      file: request.file,
+      // @ts-ignore
+      user: request.user,
     };
     const httpResponse = await controller.handle(httpRequest);
 
