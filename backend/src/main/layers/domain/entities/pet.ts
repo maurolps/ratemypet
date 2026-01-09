@@ -2,6 +2,7 @@ export type PetType = "dog" | "cat";
 
 export type Pet = {
   id: string;
+  owner_id: string;
   name: string;
   type: PetType;
   image_url: string;
@@ -11,6 +12,7 @@ export type Pet = {
 
 export type UnsavedPet = {
   petName: string;
+  owner_id: string;
   type: PetType;
   image_url: string;
   caption: string;

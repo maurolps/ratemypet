@@ -10,8 +10,9 @@ export class PgPetRepository implements UploadPetRepository {
   }
 
   async save(unsavedPet: UnsavedPet): Promise<Pet> {
-    const { petName: name, type, image_url, caption } = unsavedPet;
+    const { petName: name, type, image_url, caption, owner_id } = unsavedPet;
     const petRows = await this.pool.query<Pet>(sql.SAVE_PET, [
+      owner_id,
       name,
       type,
       image_url,

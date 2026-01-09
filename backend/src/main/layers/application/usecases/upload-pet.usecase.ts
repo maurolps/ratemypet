@@ -45,6 +45,7 @@ export class UploadPetUseCase implements UploadPet {
 
     const unsavedPet = {
       petName: petDTO.petName,
+      owner_id: petDTO.userId,
       type: classifiedPet.type,
       image_url: imageUrl,
       caption: classifiedPet.caption,
