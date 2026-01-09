@@ -1,16 +1,23 @@
-import { it, describe, expect } from "vitest";
+import { it, describe, expect, beforeAll } from "vitest";
 import { PgPetRepository } from "@infra/db/postgres/pg-pet.repository";
 import type { UnsavedPet } from "@domain/entities/pet";
+import { insertFakeUser } from "./helpers/fake-user";
 
 describe("PgPetRepository", () => {
   const unsavedPet: UnsavedPet = {
     petName: "valid_pet_name",
+    owner_id: "",
     type: "dog",
     image_url: "https://valid.image.url/pet.png",
     caption: "Generated caption for the pet",
   };
 
   describe("save", () => {
+    beforeAll(async () => {
+      const user = await insertFakeUser("fake_email2@mail.com");
+      unsavedPet.owner_id = user.id;
+    });
+
     it("Should persist and return a Pet on success", async () => {
       const sut = new PgPetRepository();
       const pet = await sut.save(unsavedPet);

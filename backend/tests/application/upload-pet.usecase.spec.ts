@@ -88,6 +88,7 @@ describe("UploadPetUseCase", () => {
     await sut.execute(validPetDTO);
     expect(uploadPetRepositorySpy).toHaveBeenCalledWith({
       petName: "any_pet_name",
+      owner_id: "any_user_id",
       type: "dog",
       image_url: "pet_image_url",
       caption: "generated_caption",
@@ -108,6 +109,7 @@ describe("UploadPetUseCase", () => {
     const pet = await sut.execute(validPetDTO);
     expect(pet).toEqual({
       id: "generated_pet_uuid",
+      owner_id: "any_user_id",
       name: "any_pet_name",
       type: "dog",
       image_url: "pet_image_url",

@@ -6,6 +6,7 @@ export class UploadPetRepositoryStub implements UploadPetRepository {
   async save(pet: UnsavedPet): Promise<Pet> {
     return {
       type: pet.type,
+      owner_id: pet.owner_id,
       image_url: pet.image_url,
       caption: pet.caption,
       name: pet.petName,
