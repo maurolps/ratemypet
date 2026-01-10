@@ -29,6 +29,7 @@ describe("UploadPetUseCase", () => {
       imageCompressorSpy,
       petStorageSpy,
       uploadPetRepositorySpy,
+      uploadPetRepositoryStub,
     };
   };
 
@@ -41,6 +42,22 @@ describe("UploadPetUseCase", () => {
       buffer: Buffer.from("any_image_buffer"),
     },
   };
+
+  it("Should throw an AppError if user has reached max number of pets", async () => {
+    const { sut, uploadPetRepositoryStub } = makeSut();
+    const uploadPetRepositoryCountSpy = vi.spyOn(
+      uploadPetRepositoryStub,
+      "countByOwnerId",
+    );
+    uploadPetRepositoryCountSpy.mockResolvedValueOnce(5);
+    const promise = sut.execute(validPetDTO);
+    await expect(promise).rejects.toThrow(
+      new AppError(
+        "UNPROCESSABLE_ENTITY",
+        "You have reached the maximum number of pets allowed (5).",
+      ),
+    );
+  });
 
   it("Should call ImageCompressor with correct values", async () => {
     const { sut, imageCompressorSpy } = makeSut();

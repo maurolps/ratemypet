@@ -14,4 +14,8 @@ export class UploadPetRepositoryStub implements UploadPetRepository {
       created_at: FIXED_DATE,
     };
   }
+
+  async countByOwnerId(_ownerId: string): Promise<number> {
+    return 0;
+  }
 }
