@@ -21,4 +21,13 @@ export class PgPetRepository implements UploadPetRepository {
     const pet = petRows.rows[0];
     return pet;
   }
+
+  async countByOwnerId(ownerId: string): Promise<number> {
+    const countRows = await this.pool.query<{ count: string }>(
+      sql.COUNT_PETS_BY_OWNER_ID,
+      [ownerId],
+    );
+    const count = Number(countRows.rows[0].count);
+    return count;
+  }
 }
