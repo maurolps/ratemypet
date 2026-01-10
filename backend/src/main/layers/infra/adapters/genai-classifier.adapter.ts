@@ -68,11 +68,17 @@ Rules:
 
   private parseAiResponse(responseText: string): ClassifiedPet | null {
     let aiResponse: AiResponse;
+
+    if (responseText === "null" || !responseText) {
+      throw new Error("Invalid JSON response from AI");
+    }
+
     try {
       aiResponse = JSON.parse(responseText);
     } catch {
       throw new Error("Invalid JSON response from AI");
     }
+
     if (!this.validatePayload(aiResponse)) {
       throw new Error("Invalid payload response from AI");
     }
