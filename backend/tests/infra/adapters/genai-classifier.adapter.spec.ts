@@ -32,7 +32,7 @@ describe("GenAiClassifer Adapter", () => {
     await expect(promise).rejects.toThrowError("Invalid JSON response from AI");
   });
 
-  it("Should throw if AI response contains invalid payload", async () => {
+  it("Should throw if AI response contains invalid petType", async () => {
     googleGenAiSpy.mockResolvedValueOnce({
       text: `
         {
@@ -48,11 +48,57 @@ describe("GenAiClassifer Adapter", () => {
     );
   });
 
+  it("Should throw if AI response contains invalid isValidPet", async () => {
+    googleGenAiSpy.mockResolvedValueOnce({
+      text: `
+        {
+          "isValidPet": 1,
+          "petType": "dog",
+          "caption": "A funny caption"
+        }
+      `,
+    });
+    const promise = sut.classify(validPetDTO);
+    await expect(promise).rejects.toThrowError(
+      "Invalid payload response from AI",
+    );
+  });
+
+  it("Should throw if AI response contains invalid caption", async () => {
+    googleGenAiSpy.mockResolvedValueOnce({
+      text: `
+        {
+          "isValidPet": true,
+          "petType": "dog",
+          "caption": 123
+        }
+      `,
+    });
+    const promise = sut.classify(validPetDTO);
+    await expect(promise).rejects.toThrowError(
+      "Invalid payload response from AI",
+    );
+  });
+
   it("Should return null if AI says isValidPet is false", async () => {
     googleGenAiSpy.mockResolvedValueOnce({
       text: `
         {
           "isValidPet": false,
+          "petType": null,
+          "caption": "A funny caption"
+        }
+      `,
+    });
+    const classifiedPet = await sut.classify(validPetDTO);
+    expect(classifiedPet).toBeNull();
+  });
+
+  it("Should return null if AI says petType is null", async () => {
+    googleGenAiSpy.mockResolvedValueOnce({
+      text: `
+        {
+          "isValidPet": true,
           "petType": null,
           "caption": "A funny caption"
         }
