@@ -14,6 +14,6 @@ export const env = {
   AWS_REGION: process.env.AWS_REGION || "auto",
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
-  AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME || "",
-  AWS_ENDPOINT: process.env.AWS_ENDPOINT || "",
+  AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME || "development-bucket",
+  AWS_ENDPOINT: process.env.AWS_ENDPOINT || "https://my-s3-endpoint.com",
 };
