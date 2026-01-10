@@ -27,11 +27,21 @@ describe("S3PetStorage Adapter", () => {
     expect(s3ClientSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("Should rethrow if S3Client throws", async () => {
+  it("Should rethrow if S3Client.upload throws", async () => {
     s3ClientSpy.mockRejectedValueOnce(new Error("any_error"));
     const promise = sut.upload(validPetImage);
     await expect(promise).rejects.toThrowError(
       "Error while uploading image to S3",
+    );
+    expect(promise).rejects.toHaveProperty("cause");
+  });
+
+  it("Should rethrow if S3Client.delete throws", async () => {
+    s3ClientSpy.mockRejectedValueOnce(new Error("any_error"));
+    const imageUrl = "https://any-endpoint/any-bucket-name/any_image_name";
+    const promise = sut.delete(imageUrl);
+    await expect(promise).rejects.toThrowError(
+      "Error while deleting image from S3",
     );
     expect(promise).rejects.toHaveProperty("cause");
   });
