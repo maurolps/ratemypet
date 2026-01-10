@@ -18,6 +18,16 @@ export class UploadPetUseCase implements UploadPet {
   ) {}
 
   async execute(petDTO: UploadPetDTO): Promise<Pet> {
+    const existingPetsCount = await this.petRepository.countByOwnerId(
+      petDTO.userId,
+    );
+    if (existingPetsCount >= 5) {
+      throw new AppError(
+        "UNPROCESSABLE_ENTITY",
+        "You have reached the maximum number of pets allowed (5).",
+      );
+    }
+
     const compressedImageBuffer = await this.imageCompressor.compress(
       petDTO.image.buffer,
     );
