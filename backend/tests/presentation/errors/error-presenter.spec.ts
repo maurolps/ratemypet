@@ -8,4 +8,12 @@ describe("Error Presenter", () => {
     expect(response.status).toBe(429);
     expect(response.body.name).toEqual("RateLimitExceeded");
   });
+
+  it("Should return 422 if error code is unprocessable entity", () => {
+    const response = ErrorPresenter(
+      new AppError("UNPROCESSABLE_ENTITY", "any_detail"),
+    );
+    expect(response.status).toBe(422);
+    expect(response.body.name).toEqual("UnprocessableEntity");
+  });
 });

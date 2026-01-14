@@ -1,10 +1,10 @@
-import type { TokenGenerator } from "@application/ports/token-generator.contract";
+import type { RefreshTokenGenerator } from "@application/ports/token-generator.contract";
 import { randomBytes } from "node:crypto";
 import { promisify } from "node:util";
 
 const randomBytesAsync = promisify(randomBytes);
 
-export class CryptoTokenGeneratorAdapter implements TokenGenerator {
+export class CryptoTokenGeneratorAdapter implements RefreshTokenGenerator {
   async issue(): Promise<string> {
     const ID_BUFFER_SIZE = 8;
     const SECRET_BUFFER_SIZE = 16;

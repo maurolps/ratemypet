@@ -7,6 +7,7 @@ import {
   serverError,
   tooManyRequests,
   unauthorized,
+  unprocessableEntity,
 } from "@presentation/http/http-helpers";
 
 type ErrorResponseType = {
@@ -18,6 +19,8 @@ const ErrorResponse: ErrorResponseType = {
   MISSING_BODY: () => badRequest("Missing request body"),
   MISSING_PARAM: (detail) => badRequest(`Missing Param: ${detail}`),
   INVALID_PARAM: (detail) => badRequest(`Invalid Param: ${detail}`),
+  UNPROCESSABLE_ENTITY: (detail) =>
+    unprocessableEntity(`Unprocessable Entity: ${detail}`),
   UNAUTHORIZED: () => unauthorized(),
   WEAK_PASSWORD: () =>
     badRequest(

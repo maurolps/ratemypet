@@ -19,6 +19,10 @@ export class ZodHttpValidator<T> implements HttpValidator<T> {
         throw new AppError(error, issueField);
       }
 
+      if (error === "UNPROCESSABLE_ENTITY") {
+        throw new AppError(error, "Invalid image type");
+      }
+
       throw new AppError(error);
     }
 

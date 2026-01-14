@@ -1,20 +1,22 @@
-import type { AccessTokenPayload } from "@domain/entities/token";
 import { FIXED_DATE } from "../../config/constants";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { HasherStub } from "../doubles/hasher.stub";
-import { TokenGeneratorStub } from "../doubles/token-generator.stub";
+import {
+  AccessTokenGeneratorStub,
+  RefreshTokenGeneratorStub,
+} from "../doubles/token-generator.stub";
 import { RefreshTokenRepositoryStub } from "../doubles/refresh-token.repository.stub";
 import { TokenIssuerService } from "@application/services/token-issuer.service";
 import { AppError } from "@application/errors/app-error";
 
 const makeAccessTokenGeneratorSpy = () => {
-  const accessTokenGeneratorStub = new TokenGeneratorStub<AccessTokenPayload>();
+  const accessTokenGeneratorStub = new AccessTokenGeneratorStub();
   const accessTokenGeneratorSpy = vi.spyOn(accessTokenGeneratorStub, "issue");
   return { accessTokenGeneratorStub, accessTokenGeneratorSpy };
 };
 
 const makeRefreshTokenGeneratorSpy = () => {
-  const refreshTokenGeneratorStub = new TokenGeneratorStub();
+  const refreshTokenGeneratorStub = new RefreshTokenGeneratorStub();
   const refreshTokenGeneratorSpy = vi.spyOn(refreshTokenGeneratorStub, "issue");
   return { refreshTokenGeneratorStub, refreshTokenGeneratorSpy };
 };
