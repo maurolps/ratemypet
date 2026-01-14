@@ -1,7 +1,7 @@
 {
   "name": "ratemypet",
   "description": "RateMyPet backend (Clean Architecture + TDD)",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "maurolps",
   "license": "MIT",
   "repository": {
