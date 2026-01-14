@@ -29,4 +29,10 @@ describe("PgPetRepository", () => {
       expect(pet.created_at).toBeInstanceOf(Date);
     });
   });
+
+  it("Should return the correct count of pets for a given owner ID", async () => {
+    const sut = new PgPetRepository();
+    const count = await sut.countByOwnerId(unsavedPet.owner_id);
+    expect(count).toBe(1);
+  });
 });
