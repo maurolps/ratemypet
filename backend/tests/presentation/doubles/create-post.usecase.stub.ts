@@ -12,7 +12,7 @@ export class CreatePostUseCaseStub implements CreatePost {
       pet_id: postDTO.pet_id,
       author_id: postDTO.author_id,
       caption: postDTO.caption,
-      status: "PENDING_REVIEW",
+      status: "PUBLISHED",
       created_at: FIXED_DATE,
     };
     return post;

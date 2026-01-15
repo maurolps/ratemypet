@@ -44,4 +44,18 @@ describe("CreatePostController", () => {
       caption: "valid_caption",
     });
   });
+
+  it("Should return 201 with post data on successful creation", async () => {
+    const { sut } = makeSut();
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(201);
+    expect(httpResponse.body).toEqual({
+      id: "valid_post_id",
+      pet_id: "valid_pet_id",
+      author_id: "valid_author_id",
+      caption: "valid_caption",
+      status: "PUBLISHED",
+      created_at: expect.any(Date),
+    });
+  });
 });
