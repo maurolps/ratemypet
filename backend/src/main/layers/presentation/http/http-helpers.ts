@@ -54,3 +54,11 @@ export const tooManyRequests = (message: string): HttpResponse => ({
     name: "RateLimitExceeded",
   },
 });
+
+export const forbidden = (message: string): HttpResponse => ({
+  status: 403,
+  body: {
+    message,
+    name: "Forbidden",
+  },
+});
