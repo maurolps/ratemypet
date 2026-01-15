@@ -17,7 +17,7 @@ export class CreatePostController implements Controller {
     const postDTO = this.httpValidator.execute(request);
     const post = await this.createPost.execute(postDTO);
     return {
-      status: 200,
+      status: 201,
       body: post,
     };
   }
