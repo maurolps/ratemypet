@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { CreatePostController } from "@presentation/controllers/create-post.controller";
 import { CreatePostValidatorStub } from "./doubles/create-post.validator.stub";
 import { CreatePostUseCaseStub } from "./doubles/create-post.usecase.stub";
+import { AppError } from "@application/errors/app-error";
 
 describe("CreatePostController", () => {
   const makeSut = () => {
@@ -45,10 +46,10 @@ describe("CreatePostController", () => {
     });
   });
 
-  it("Should return 201 with post data on successful creation", async () => {
+  it("Should return 200 with post data on successful creation", async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(dummyRequest);
-    expect(httpResponse.status).toBe(201);
+    expect(httpResponse.status).toBe(200);
     expect(httpResponse.body).toEqual({
       id: "valid_post_id",
       pet_id: "valid_pet_id",
@@ -57,5 +58,15 @@ describe("CreatePostController", () => {
       status: "PUBLISHED",
       created_at: expect.any(Date),
     });
+  });
+
+  it("Should return 400 if HttpValidator returns an INVALID_PARAM error", async () => {
+    const { sut, httpValidatorSpy } = makeSut();
+    httpValidatorSpy.mockImplementationOnce(() => {
+      throw new AppError("INVALID_PARAM", "caption");
+    });
+    const httpResponse = await sut.handle(dummyRequest);
+    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.body.message).toEqual("Invalid Param: caption");
   });
 });
