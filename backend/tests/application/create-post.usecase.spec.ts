@@ -26,7 +26,7 @@ describe("CreatePostUseCase", () => {
     expect(findPetRepositorySpy).toHaveBeenCalledWith("valid_pet_id");
   });
 
-  it("Should return 403 if pet does not belong to the author", async () => {
+  it("Should throw FORBIDDEN if pet does not belong to the author", async () => {
     const { sut, findPetRepositorySpy } = makeSut();
     findPetRepositorySpy.mockResolvedValueOnce({
       id: "valid_pet_id",
@@ -42,6 +42,15 @@ describe("CreatePostUseCase", () => {
         "FORBIDDEN",
         "You do not have permission to create a post for this pet.",
       ),
+    );
+  });
+
+  it("Should throw NOT_FOUND if pet is not found", async () => {
+    const { sut, findPetRepositorySpy } = makeSut();
+    findPetRepositorySpy.mockResolvedValueOnce(null);
+    const promise = sut.execute(postDTO);
+    await expect(promise).rejects.toThrow(
+      new AppError("NOT_FOUND", "The specified pet does not exist."),
     );
   });
 });
