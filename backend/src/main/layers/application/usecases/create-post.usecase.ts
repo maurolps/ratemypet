@@ -12,7 +12,11 @@ export class CreatePostUseCase implements CreatePost {
   async execute(postDTO: CreatePostDTO): Promise<Post> {
     const pet = await this.findPetRepository.findById(postDTO.pet_id);
 
-    if (!pet || pet.owner_id !== postDTO.author_id) {
+    if (!pet) {
+      throw new AppError("NOT_FOUND", "The specified pet does not exist.");
+    }
+
+    if (pet.owner_id !== postDTO.author_id) {
       throw new AppError(
         "FORBIDDEN",
         "You do not have permission to create a post for this pet.",
