@@ -1,17 +1,26 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ContentModerationService } from "@application/services/content-moderation.service";
+import { ProfanityCheckerStub } from "../doubles/profanity-checker.stub";
 
 describe("ContentModerationService", () => {
   const makeSut = () => {
-    const sut = new ContentModerationService();
-    return { sut };
+    const profanityCheckerStub = new ProfanityCheckerStub();
+    const profanityCheckerSpy = vi.spyOn(profanityCheckerStub, "perform");
+    const sut = new ContentModerationService(profanityCheckerStub);
+    return { sut, profanityCheckerSpy };
   };
+
+  const validText = "This is a clean text without any bad words.";
 
   it("Should allow clean text", async () => {
     const { sut } = makeSut();
-    const result = await sut.execute(
-      "This text contains no profanity or malicious content.",
-    );
+    const result = await sut.execute(validText);
     expect(result).toEqual({ isAllowed: true });
+  });
+
+  it("Should call ProfanityChecker.perform with correct value", async () => {
+    const { sut, profanityCheckerSpy } = makeSut();
+    await sut.execute(validText);
+    expect(profanityCheckerSpy).toHaveBeenCalledWith(validText);
   });
 });
