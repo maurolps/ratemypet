@@ -5,6 +5,7 @@ import {
   badRequest,
   conflict,
   forbidden,
+  notFound,
   serverError,
   tooManyRequests,
   unauthorized,
@@ -24,6 +25,7 @@ const ErrorResponse: ErrorResponseType = {
     unprocessableEntity(`Unprocessable Entity: ${detail}`),
   UNAUTHORIZED: () => unauthorized(),
   FORBIDDEN: (detail) => forbidden(`Forbidden: ${detail}`),
+  NOT_FOUND: (detail) => notFound(`Not Found: ${detail}`),
   WEAK_PASSWORD: () =>
     badRequest(
       "Invalid Param: <password> should be at least 6 characters long",

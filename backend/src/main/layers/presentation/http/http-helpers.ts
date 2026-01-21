@@ -62,3 +62,11 @@ export const forbidden = (message: string): HttpResponse => ({
     name: "Forbidden",
   },
 });
+
+export const notFound = (message: string): HttpResponse => ({
+  status: 404,
+  body: {
+    message,
+    name: "NotFound",
+  },
+});
