@@ -27,13 +27,16 @@ export class CreatePostUseCase implements CreatePost {
       );
     }
 
-    const caption = postDTO.caption === "" ? pet.caption : postDTO.caption;
-    const moderationResult = await this.contentModeration.execute(caption);
-    if (!moderationResult.isAllowed)
-      throw new AppError(
-        "UNPROCESSABLE_ENTITY",
-        "Caption has inappropriate content.",
-      );
+    const caption = postDTO.caption || pet.caption;
+
+    if (postDTO.caption) {
+      const moderationResult = await this.contentModeration.execute(caption);
+      if (!moderationResult.isAllowed)
+        throw new AppError(
+          "UNPROCESSABLE_ENTITY",
+          "Caption has inappropriate content.",
+        );
+    }
 
     const post: Post = {
       id: "generated_post_id",
