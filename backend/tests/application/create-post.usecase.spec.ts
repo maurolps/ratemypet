@@ -61,6 +61,17 @@ describe("CreatePostUseCase", () => {
     );
   });
 
+  it("Should use pet caption when post caption is empty", async () => {
+    const { sut, contentModerationSpy } = makeSut();
+    const emptyCaptionPostDTO = {
+      ...postDTO,
+      caption: "",
+    };
+    const post = await sut.execute(emptyCaptionPostDTO);
+    expect(contentModerationSpy).toHaveBeenCalledWith("valid_caption");
+    expect(post.caption).toBe("valid_caption");
+  });
+
   it("Should throw UNPROCESSABLE_ENTITY if caption has inappropriate content", async () => {
     const { sut, contentModerationSpy } = makeSut();
     contentModerationSpy.mockResolvedValueOnce({
