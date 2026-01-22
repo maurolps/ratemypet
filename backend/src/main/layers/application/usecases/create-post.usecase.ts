@@ -27,9 +27,8 @@ export class CreatePostUseCase implements CreatePost {
       );
     }
 
-    const moderationResult = await this.contentModeration.execute(
-      postDTO.caption,
-    );
+    const caption = postDTO.caption === "" ? pet.caption : postDTO.caption;
+    const moderationResult = await this.contentModeration.execute(caption);
     if (!moderationResult.isAllowed)
       throw new AppError(
         "UNPROCESSABLE_ENTITY",
@@ -40,7 +39,7 @@ export class CreatePostUseCase implements CreatePost {
       id: "generated_post_id",
       pet_id: postDTO.pet_id,
       author_id: postDTO.author_id,
-      caption: postDTO.caption,
+      caption,
       status: "PUBLISHED",
       created_at: new Date(),
     };
