@@ -1,7 +1,4 @@
-export type ModerationReason =
-  | "PROFANITY"
-  | "MALICIOUS_CONTENT"
-  | "UNSAFE_LINK";
+export type ModerationReason = "PROFANITY";
 
 export type ModerationResult =
   | {
