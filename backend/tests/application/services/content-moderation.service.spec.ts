@@ -7,7 +7,7 @@ describe("ContentModerationService", () => {
     const profanityCheckerStub = new ProfanityCheckerStub();
     const profanityCheckerSpy = vi.spyOn(profanityCheckerStub, "perform");
     const sut = new ContentModerationService(profanityCheckerStub);
-    return { sut, profanityCheckerSpy };
+    return { sut, profanityCheckerStub, profanityCheckerSpy };
   };
 
   const validText = "This is a clean text without any bad words.";
@@ -16,6 +16,13 @@ describe("ContentModerationService", () => {
     const { sut } = makeSut();
     const result = await sut.execute(validText);
     expect(result).toEqual({ isAllowed: true });
+  });
+
+  it("Should block text when profanity is detected", async () => {
+    const { sut, profanityCheckerStub } = makeSut();
+    vi.spyOn(profanityCheckerStub, "perform").mockResolvedValueOnce(true);
+    const result = await sut.execute(validText);
+    expect(result).toEqual({ isAllowed: false, reason: "PROFANITY" });
   });
 
   it("Should call ProfanityChecker.perform with correct value", async () => {
