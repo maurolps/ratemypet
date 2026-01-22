@@ -1,9 +1,10 @@
 import type { Pet, UnsavedPet } from "@domain/entities/pet";
 import type { UploadPetRepository } from "@application/repositories/upload-pet.repository";
+import type { FindPetRepository } from "@application/repositories/find-pet.repository";
 import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/pet.sql";
 
-export class PgPetRepository implements UploadPetRepository {
+export class PgPetRepository implements UploadPetRepository, FindPetRepository {
   private readonly pool: PgPool;
   constructor() {
     this.pool = PgPool.getInstance();
@@ -19,6 +20,12 @@ export class PgPetRepository implements UploadPetRepository {
       caption,
     ]);
     const pet = petRows.rows[0];
+    return pet;
+  }
+
+  async findById(petId: string): Promise<Pet | null> {
+    const petRows = await this.pool.query<Pet>(sql.FIND_PET_BY_ID, [petId]);
+    const pet = petRows.rows[0] || null;
     return pet;
   }
 
