@@ -5,9 +5,13 @@ import type {
 import type { Post } from "@domain/entities/post";
 import type { FindPetRepository } from "@application/repositories/find-pet.repository";
 import { AppError } from "@application/errors/app-error";
+import type { ContentModeration } from "@application/ports/content-moderation.contract";
 
 export class CreatePostUseCase implements CreatePost {
-  constructor(private readonly findPetRepository: FindPetRepository) {}
+  constructor(
+    private readonly findPetRepository: FindPetRepository,
+    private readonly contentModeration: ContentModeration,
+  ) {}
 
   async execute(postDTO: CreatePostDTO): Promise<Post> {
     const pet = await this.findPetRepository.findById(postDTO.pet_id);
@@ -22,6 +26,15 @@ export class CreatePostUseCase implements CreatePost {
         "You do not have permission to create a post for this pet.",
       );
     }
+
+    const moderationResult = await this.contentModeration.execute(
+      postDTO.caption,
+    );
+    if (!moderationResult.isAllowed)
+      throw new AppError(
+        "UNPROCESSABLE_ENTITY",
+        "Caption has inappropriate content.",
+      );
 
     const post: Post = {
       id: "generated_post_id",
