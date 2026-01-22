@@ -1,16 +1,18 @@
+import type { Post } from "@domain/entities/post";
+import type { FindPetRepository } from "@application/repositories/find-pet.repository";
+import type { ContentModeration } from "@application/ports/content-moderation.contract";
+import type { CreatePostRepository } from "@application/repositories/create-post.repository";
+import { AppError } from "@application/errors/app-error";
 import type {
   CreatePost,
   CreatePostDTO,
 } from "@domain/usecases/create-post.contract";
-import type { Post } from "@domain/entities/post";
-import type { FindPetRepository } from "@application/repositories/find-pet.repository";
-import { AppError } from "@application/errors/app-error";
-import type { ContentModeration } from "@application/ports/content-moderation.contract";
 
 export class CreatePostUseCase implements CreatePost {
   constructor(
     private readonly findPetRepository: FindPetRepository,
     private readonly contentModeration: ContentModeration,
+    private readonly createPostRepository: CreatePostRepository,
   ) {}
 
   async execute(postDTO: CreatePostDTO): Promise<Post> {
@@ -38,14 +40,12 @@ export class CreatePostUseCase implements CreatePost {
         );
     }
 
-    const post: Post = {
-      id: "generated_post_id",
+    const post = await this.createPostRepository.create({
       pet_id: postDTO.pet_id,
       author_id: postDTO.author_id,
       caption,
-      status: "PUBLISHED",
-      created_at: new Date(),
-    };
+    });
+
     return post;
   }
 }
