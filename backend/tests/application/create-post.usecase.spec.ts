@@ -113,4 +113,17 @@ describe("CreatePostUseCase", () => {
       caption: "valid_caption",
     });
   });
+
+  it("Should return a Post on success", async () => {
+    const { sut } = makeSut();
+    const post = await sut.execute(postDTO);
+    expect(post).toEqual({
+      id: "valid_post_id",
+      pet_id: "valid_pet_id",
+      author_id: "valid_owner_id",
+      caption: "valid_caption",
+      status: "PUBLISHED",
+      created_at: post.created_at,
+    });
+  });
 });
