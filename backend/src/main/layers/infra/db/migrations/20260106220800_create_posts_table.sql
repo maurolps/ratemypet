@@ -1,0 +1,12 @@
+-- migrate:up
+CREATE TABLE IF NOT EXISTS posts (
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+pet_id UUID REFERENCES pets(id) ON DELETE CASCADE,
+author_id UUID REFERENCES users(id) ON DELETE CASCADE,
+caption TEXT NOT NULL,
+status TEXT NOT NULL DEFAULT 'PUBLISHED',
+created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)
+
+-- migrate:down
+DROP TABLE IF EXISTS posts;
