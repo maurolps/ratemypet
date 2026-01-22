@@ -8,7 +8,10 @@ export class ContentModerationService implements ContentModeration {
   constructor(private readonly profanityChecker: ProfanityChecker) {}
 
   async execute(text: string): Promise<ModerationResult> {
-    const _hasProfanity = await this.profanityChecker.perform(text);
+    const hasProfanity = await this.profanityChecker.perform(text);
+    if (hasProfanity) {
+      return { isAllowed: false, reason: "PROFANITY" };
+    }
     return { isAllowed: true };
   }
 }
