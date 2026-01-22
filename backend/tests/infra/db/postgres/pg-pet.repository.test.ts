@@ -35,4 +35,17 @@ describe("PgPetRepository", () => {
     const count = await sut.countByOwnerId(unsavedPet.owner_id);
     expect(count).toBe(1);
   });
+
+  it("Should find a pet by its ID", async () => {
+    const sut = new PgPetRepository();
+    const newUnsavedPet = {
+      ...unsavedPet,
+      petName: "another_valid_pet_name",
+    };
+    const savedPet = await sut.save(newUnsavedPet);
+    const foundPet = await sut.findById(savedPet.id);
+    expect(foundPet).not.toBeNull();
+    expect(foundPet?.id).toEqual(savedPet.id);
+    expect(foundPet?.name).toEqual(newUnsavedPet.petName);
+  });
 });
