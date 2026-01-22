@@ -3,6 +3,7 @@ import { describe, vi, it, expect } from "vitest";
 import { FindPetRepositoryStub } from "./doubles/find-pet.repository.stub";
 import { AppError } from "@application/errors/app-error";
 import { ContentModerationStub } from "./doubles/content-moderation.stub";
+import { CreatePostRepositoryStub } from "./doubles/create-post.repository.stub";
 
 describe("CreatePostUseCase", () => {
   const makeSut = () => {
@@ -10,14 +11,21 @@ describe("CreatePostUseCase", () => {
     const findPetRepositorySpy = vi.spyOn(findPetRepositoryStub, "findById");
     const contentModerationStub = new ContentModerationStub();
     const contentModerationSpy = vi.spyOn(contentModerationStub, "execute");
+    const createPostRepositoryStub = new CreatePostRepositoryStub();
+    const createPostRepositorySpy = vi.spyOn(
+      createPostRepositoryStub,
+      "create",
+    );
     const sut = new CreatePostUseCase(
       findPetRepositoryStub,
       contentModerationStub,
+      createPostRepositoryStub,
     );
     return {
       sut,
       findPetRepositorySpy,
       contentModerationSpy,
+      createPostRepositorySpy,
     };
   };
 
@@ -94,5 +102,15 @@ describe("CreatePostUseCase", () => {
         "Caption has inappropriate content.",
       ),
     );
+  });
+
+  it("Should call CreatePostRepository.create with correct values", async () => {
+    const { sut, createPostRepositorySpy } = makeSut();
+    await sut.execute(postDTO);
+    expect(createPostRepositorySpy).toHaveBeenCalledWith({
+      pet_id: "valid_pet_id",
+      author_id: "valid_owner_id",
+      caption: "valid_caption",
+    });
   });
 });
