@@ -33,7 +33,7 @@ describe("S3PetStorage Adapter", () => {
     await expect(promise).rejects.toThrowError(
       "Error while uploading image to S3",
     );
-    expect(promise).rejects.toHaveProperty("cause");
+    await expect(promise).rejects.toHaveProperty("cause");
   });
 
   it("Should rethrow if S3Client.delete throws", async () => {
@@ -43,7 +43,7 @@ describe("S3PetStorage Adapter", () => {
     await expect(promise).rejects.toThrowError(
       "Error while deleting image from S3",
     );
-    expect(promise).rejects.toHaveProperty("cause");
+    await expect(promise).rejects.toHaveProperty("cause");
   });
 
   it("Should return a valid URL on upload", async () => {

@@ -1,0 +1,19 @@
+-- migrate:up
+CREATE TYPE post_status AS ENUM (
+  'PENDING_REVIEW',
+  'PUBLISHED',
+  'REJECTED'
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+pet_id UUID NOT NULL REFERENCES pets(id) ON DELETE CASCADE,
+author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+caption TEXT NOT NULL,
+status post_status NOT NULL DEFAULT 'PUBLISHED',
+created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)
+
+-- migrate:down
+DROP TABLE IF EXISTS posts;
+DROP TYPE IF EXISTS post_status;

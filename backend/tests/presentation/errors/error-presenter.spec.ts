@@ -16,4 +16,16 @@ describe("Error Presenter", () => {
     expect(response.status).toBe(422);
     expect(response.body.name).toEqual("UnprocessableEntity");
   });
+
+  it("Should return 403 if error code is forbidden", () => {
+    const response = ErrorPresenter(new AppError("FORBIDDEN"));
+    expect(response.status).toBe(403);
+    expect(response.body.name).toEqual("Forbidden");
+  });
+
+  it("Should return 404 if error code is not found", () => {
+    const response = ErrorPresenter(new AppError("NOT_FOUND"));
+    expect(response.status).toBe(404);
+    expect(response.body.name).toEqual("NotFound");
+  });
 });

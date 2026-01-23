@@ -4,6 +4,8 @@ import { isAppError } from "@application/errors/app-error";
 import {
   badRequest,
   conflict,
+  forbidden,
+  notFound,
   serverError,
   tooManyRequests,
   unauthorized,
@@ -22,6 +24,8 @@ const ErrorResponse: ErrorResponseType = {
   UNPROCESSABLE_ENTITY: (detail) =>
     unprocessableEntity(`Unprocessable Entity: ${detail}`),
   UNAUTHORIZED: () => unauthorized(),
+  FORBIDDEN: (detail) => forbidden(`Forbidden: ${detail}`),
+  NOT_FOUND: (detail) => notFound(`Not Found: ${detail}`),
   WEAK_PASSWORD: () =>
     badRequest(
       "Invalid Param: <password> should be at least 6 characters long",
