@@ -7,6 +7,7 @@ import type {
   CreatePostDTO,
 } from "@domain/usecases/create-post.contract";
 import { ErrorPresenter } from "@presentation/errors/error-presenter";
+import { postPresenter } from "@presentation/presenters/post.presenter";
 import { ok } from "@presentation/http/http-helpers";
 
 export class CreatePostController implements Controller {
@@ -19,7 +20,7 @@ export class CreatePostController implements Controller {
     try {
       const postDTO = this.httpValidator.execute(request);
       const post = await this.createPost.execute(postDTO);
-      return ok(post);
+      return ok(postPresenter(post));
     } catch (error) {
       return ErrorPresenter(error);
     }
