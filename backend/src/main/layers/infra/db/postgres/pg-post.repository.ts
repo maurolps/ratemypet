@@ -1,8 +1,18 @@
-import type { Post } from "@domain/entities/post";
+import { Post, type PostStatus } from "@domain/entities/post";
 import type { CreatePostRepository } from "@application/repositories/create-post.repository";
-import type { CreatePostDTO } from "@domain/usecases/create-post.contract";
 import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/post.sql";
+
+type PostRow = {
+  id?: string;
+  pet_id: string;
+  author_id: string;
+  caption: string;
+  status: PostStatus;
+  created_at: Date;
+  likes_count: number;
+  comments_count: number;
+};
 
 export class PgPostRepository implements CreatePostRepository {
   private readonly pool: PgPool;
@@ -10,15 +20,15 @@ export class PgPostRepository implements CreatePostRepository {
     this.pool = PgPool.getInstance();
   }
 
-  async create(postDTO: CreatePostDTO): Promise<Post> {
-    const { pet_id, author_id, caption } = postDTO;
-    const postRows = await this.pool.query<Post>(sql.CREATE_POST, [
-      pet_id,
-      author_id,
-      caption,
-      "PUBLISHED",
+  async save(post: Post): Promise<Post> {
+    const state = post.toState;
+    const postRows = await this.pool.query<PostRow>(sql.CREATE_POST, [
+      state.pet_id,
+      state.author_id,
+      state.caption,
+      state.status,
     ]);
-    const post = postRows.rows[0];
-    return post;
+    const savedPost = postRows.rows[0];
+    return Post.rehydrate(savedPost);
   }
 }
