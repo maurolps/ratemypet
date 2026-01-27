@@ -1,14 +1,4 @@
-export type HttpResponse = {
-  body: {
-    id?: string;
-    name?: string;
-    email?: string;
-    message?: string;
-    created_at?: Date;
-    tokens?: {
-      accessToken: string;
-      refreshToken?: string;
-    };
-  };
+export type HttpResponse<T = Record<string, unknown>> = {
+  body: T;
   status: number;
 };
