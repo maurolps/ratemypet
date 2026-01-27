@@ -1,17 +1,20 @@
 import type { CreatePostRepository } from "@application/repositories/create-post.repository";
-import type { CreatePostDTO } from "@domain/usecases/create-post.contract";
-import type { Post } from "@domain/entities/post";
+import { Post } from "@domain/entities/post";
 import { FIXED_DATE } from "../../config/constants";
 
 export class CreatePostRepositoryStub implements CreatePostRepository {
-  async create(postDTO: CreatePostDTO): Promise<Post> {
-    return {
+  async save(post: Post): Promise<Post> {
+    const state = post.toState;
+
+    return Post.rehydrate({
       id: "valid_post_id",
-      pet_id: postDTO.pet_id,
-      author_id: postDTO.author_id,
-      caption: postDTO.caption,
-      status: "PUBLISHED",
+      pet_id: state.pet_id,
+      author_id: state.author_id,
+      caption: state.caption,
+      status: state.status,
       created_at: FIXED_DATE,
-    };
+      likes_count: state.likes_count,
+      comments_count: state.comments_count,
+    });
   }
 }

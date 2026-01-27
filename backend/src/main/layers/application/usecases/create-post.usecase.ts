@@ -1,4 +1,4 @@
-import type { Post } from "@domain/entities/post";
+import { Post } from "@domain/entities/post";
 import type { FindPetRepository } from "@application/repositories/find-pet.repository";
 import type { ContentModeration } from "@application/ports/content-moderation.contract";
 import type { CreatePostRepository } from "@application/repositories/create-post.repository";
@@ -40,12 +40,15 @@ export class CreatePostUseCase implements CreatePost {
         );
     }
 
-    const post = await this.createPostRepository.create({
+    const post = Post.create({
       pet_id: postDTO.pet_id,
       author_id: postDTO.author_id,
+      default_caption: pet.caption,
       caption,
     });
 
-    return post;
+    const savedPost = await this.createPostRepository.save(post);
+
+    return savedPost;
   }
 }

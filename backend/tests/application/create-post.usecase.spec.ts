@@ -12,10 +12,7 @@ describe("CreatePostUseCase", () => {
     const contentModerationStub = new ContentModerationStub();
     const contentModerationSpy = vi.spyOn(contentModerationStub, "execute");
     const createPostRepositoryStub = new CreatePostRepositoryStub();
-    const createPostRepositorySpy = vi.spyOn(
-      createPostRepositoryStub,
-      "create",
-    );
+    const createPostRepositorySpy = vi.spyOn(createPostRepositoryStub, "save");
     const sut = new CreatePostUseCase(
       findPetRepositoryStub,
       contentModerationStub,
@@ -76,7 +73,7 @@ describe("CreatePostUseCase", () => {
       caption: "",
     };
     const post = await sut.execute(emptyCaptionPostDTO);
-    expect(post.caption).toBe("valid_caption");
+    expect(post.toState.caption).toBe("valid_caption");
   });
 
   it("Should not run ContentModeration if user caption is empty", async () => {
@@ -104,26 +101,30 @@ describe("CreatePostUseCase", () => {
     );
   });
 
-  it("Should call CreatePostRepository.create with correct values", async () => {
+  it("Should call CreatePostRepository.save with correct values", async () => {
     const { sut, createPostRepositorySpy } = makeSut();
     await sut.execute(postDTO);
-    expect(createPostRepositorySpy).toHaveBeenCalledWith({
-      pet_id: "valid_pet_id",
-      author_id: "valid_owner_id",
-      caption: "valid_caption",
-    });
+    const createdPost = createPostRepositorySpy.mock.calls[0][0];
+    const state = createdPost.toState;
+    expect(state.pet_id).toBe("valid_pet_id");
+    expect(state.author_id).toBe("valid_owner_id");
+    expect(state.caption).toBe("valid_caption");
+    expect(state.status).toBe("PUBLISHED");
+    expect(state.likes_count).toBe(0);
+    expect(state.comments_count).toBe(0);
   });
 
   it("Should return a Post on success", async () => {
     const { sut } = makeSut();
     const post = await sut.execute(postDTO);
-    expect(post).toEqual({
-      id: "valid_post_id",
-      pet_id: "valid_pet_id",
-      author_id: "valid_owner_id",
-      caption: "valid_caption",
-      status: "PUBLISHED",
-      created_at: post.created_at,
-    });
+    const state = post.toState;
+    expect(state.id).toBe("valid_post_id");
+    expect(state.pet_id).toBe("valid_pet_id");
+    expect(state.author_id).toBe("valid_owner_id");
+    expect(state.caption).toBe("valid_caption");
+    expect(state.status).toBe("PUBLISHED");
+    expect(state.likes_count).toBe(0);
+    expect(state.comments_count).toBe(0);
+    expect(state.created_at).toBeDefined();
   });
 });
