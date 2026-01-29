@@ -47,7 +47,6 @@ describe("LikePostController", () => {
     expect(httpResponse.status).toBe(200);
     expect(httpResponse.body).toEqual({
       like: {
-        id: "valid_like_id",
         post_id: "valid_post_id",
         user_id: "valid_user_id",
         created_at: FIXED_DATE,
