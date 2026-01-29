@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { LikePostUseCase } from "@application/usecases/like-post.usecase";
 import { FindPostRepositoryStub } from "./doubles/find-post.repository.stub";
 import { LikeRepositoryStub } from "./doubles/like.repository.stub";
-import { UpdatePostRepositoryStub } from "./doubles/update-post.repository.stub";
+import { UpdateLikesRepositoryStub } from "./doubles/update-like.repository.stub";
 import { AppError } from "@application/errors/app-error";
 import { FIXED_DATE } from "../config/constants";
 
@@ -13,22 +13,22 @@ describe("LikePostUseCase", () => {
     const likeRepositoryStub = new LikeRepositoryStub();
     const likeRepositoryExistsSpy = vi.spyOn(likeRepositoryStub, "exists");
     const likeRepositorySaveSpy = vi.spyOn(likeRepositoryStub, "save");
-    const updatePostRepositoryStub = new UpdatePostRepositoryStub();
-    const updatePostRepositorySpy = vi.spyOn(
-      updatePostRepositoryStub,
-      "update",
+    const updateLikesRepositoryStub = new UpdateLikesRepositoryStub();
+    const updateLikesRepositorySpy = vi.spyOn(
+      updateLikesRepositoryStub,
+      "updateLikesCount",
     );
     const sut = new LikePostUseCase(
       findPostRepositoryStub,
       likeRepositoryStub,
-      updatePostRepositoryStub,
+      updateLikesRepositoryStub,
     );
     return {
       sut,
       findPostRepositorySpy,
       likeRepositoryExistsSpy,
       likeRepositorySaveSpy,
-      updatePostRepositorySpy,
+      updateLikesRepositorySpy,
     };
   };
 
@@ -66,7 +66,7 @@ describe("LikePostUseCase", () => {
       sut,
       likeRepositoryExistsSpy,
       likeRepositorySaveSpy,
-      updatePostRepositorySpy,
+      updateLikesRepositorySpy,
     } = makeSut();
     likeRepositoryExistsSpy.mockResolvedValueOnce({
       post_id: "valid_post_id",
@@ -83,7 +83,7 @@ describe("LikePostUseCase", () => {
       likes_count: 0,
     });
     expect(likeRepositorySaveSpy).toHaveBeenCalledTimes(0);
-    expect(updatePostRepositorySpy).toHaveBeenCalledTimes(0);
+    expect(updateLikesRepositorySpy).toHaveBeenCalledTimes(0);
   });
 
   it("Should call LikeRepository.save with correct values", async () => {
@@ -95,10 +95,10 @@ describe("LikePostUseCase", () => {
     });
   });
 
-  it("Should call UpdatePostRepository.update with incremented likes_count", async () => {
-    const { sut, updatePostRepositorySpy } = makeSut();
+  it("Should call UpdateLikesRepository.updateLikesCount with incremented likes_count", async () => {
+    const { sut, updateLikesRepositorySpy } = makeSut();
     await sut.execute(likePostDTO);
-    const updatedPost = updatePostRepositorySpy.mock.calls[0][0];
+    const updatedPost = updateLikesRepositorySpy.mock.calls[0][0];
     expect(updatedPost.toState.likes_count).toBe(1);
   });
 

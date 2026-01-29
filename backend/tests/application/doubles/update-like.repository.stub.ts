@@ -1,9 +1,9 @@
-import type { UpdatePostRepository } from "@application/repositories/update-post.repository";
+import type { UpdateLikesRepository } from "@application/repositories/update-likes.repository";
 import { Post } from "@domain/entities/post";
 import { FIXED_DATE } from "../../config/constants";
 
-export class UpdatePostRepositoryStub implements UpdatePostRepository {
-  async update(post: Post): Promise<Post> {
+export class UpdateLikesRepositoryStub implements UpdateLikesRepository {
+  async updateLikesCount(post: Post): Promise<Post> {
     const state = post.toState;
 
     return Post.rehydrate({

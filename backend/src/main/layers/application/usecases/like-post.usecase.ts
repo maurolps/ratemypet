@@ -5,14 +5,14 @@ import type {
 } from "@domain/usecases/like-post.contract";
 import type { FindPostRepository } from "@application/repositories/find-post.repository";
 import type { LikeRepository } from "@application/repositories/like.repository";
-import type { UpdatePostRepository } from "@application/repositories/update-post.repository";
+import type { UpdateLikesRepository } from "@application/repositories/update-likes.repository";
 import { AppError } from "@application/errors/app-error";
 
 export class LikePostUseCase implements LikePost {
   constructor(
     private readonly findPostRepository: FindPostRepository,
     private readonly likeRepository: LikeRepository,
-    private readonly updatePostRepository: UpdatePostRepository,
+    private readonly updateLikesRepository: UpdateLikesRepository,
   ) {}
 
   async execute(data: LikePostDTO): Promise<LikePostResult> {
@@ -38,7 +38,8 @@ export class LikePostUseCase implements LikePost {
     });
 
     const likedPost = post.like();
-    const savedPost = await this.updatePostRepository.update(likedPost);
+    const savedPost =
+      await this.updateLikesRepository.updateLikesCount(likedPost);
 
     return {
       like: savedLike,
