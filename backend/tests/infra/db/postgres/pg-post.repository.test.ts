@@ -32,4 +32,35 @@ describe("PgPostRepository", () => {
       expect(state.created_at).toBeInstanceOf(Date);
     });
   });
+
+  describe("findById", () => {
+    it("Should return a Post when found", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const foundPost = await sut.findById(savedPost.toState.id ?? "");
+      expect(foundPost).not.toBeNull();
+      expect(foundPost?.toState.id).toEqual(savedPost.toState.id);
+      expect(foundPost?.toState.pet_id).toEqual(postDTO.pet_id);
+      expect(foundPost?.toState.author_id).toEqual(postDTO.author_id);
+    });
+
+    it("Should return null when post is not found", async () => {
+      const sut = new PgPostRepository();
+      const nonExistentId = crypto.randomUUID();
+      const foundPost = await sut.findById(nonExistentId);
+      expect(foundPost).toBeNull();
+    });
+  });
+
+  describe("updateLikesCount", () => {
+    it("Should update likes_count and return updated Post", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const updatedPost = await sut.updateLikesCount(savedPost.like());
+      const state = updatedPost.toState;
+      expect(state.id).toEqual(savedPost.toState.id);
+      expect(state.likes_count).toBe(1);
+      expect(state.comments_count).toBe(savedPost.toState.comments_count);
+    });
+  });
 });
