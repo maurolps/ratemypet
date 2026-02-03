@@ -115,6 +115,13 @@ describe("LikePostUseCase", () => {
     expect(updatedPost.toState.likes_count).toBe(1);
   });
 
+  it("Should reThrow if LikeRepository throws an unexpected error", async () => {
+    const { sut, likeRepositorySaveSpy } = makeSut();
+    likeRepositorySaveSpy.mockRejectedValueOnce(new Error("Unexpected error"));
+    const promise = sut.execute(likePostDTO);
+    await expect(promise).rejects.toThrow(new Error("Unexpected error"));
+  });
+
   it("Should return LikePostResult on success", async () => {
     const { sut } = makeSut();
     const result = await sut.execute(likePostDTO);
