@@ -5,7 +5,7 @@ const pgPool = PgPool.getInstance();
 
 beforeAll(async () => {
   const pgUri = process.env.DATABASE_TEST_URI || "";
-  pgPool.connect(pgUri);
+  pgPool.initialize(pgUri);
   await pgPool.health();
 });
 
