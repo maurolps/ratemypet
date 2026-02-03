@@ -28,6 +28,24 @@ describe("Post", () => {
     expect(sut).toThrowError("Likes count cannot be negative.");
   });
 
+  it("Should use default_caption when caption is not provided", () => {
+    const sut = Post.create({
+      ...postInput,
+      caption: undefined,
+    });
+    const state = sut.toState;
+    expect(state.caption).toBe("generated_caption");
+  });
+
+  it("Should use the user caption when provided", () => {
+    const sut = Post.create({
+      ...postInput,
+      caption: "user_provided_caption",
+    });
+    const state = sut.toState;
+    expect(state.caption).toBe("user_provided_caption");
+  });
+
   it("Should throw if comments_count is negative", () => {
     const sut = () =>
       Post.create({

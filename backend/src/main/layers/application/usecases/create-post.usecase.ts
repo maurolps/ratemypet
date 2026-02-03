@@ -29,10 +29,10 @@ export class CreatePostUseCase implements CreatePost {
       );
     }
 
-    const caption = postDTO.caption || pet.caption;
-
     if (postDTO.caption) {
-      const moderationResult = await this.contentModeration.execute(caption);
+      const moderationResult = await this.contentModeration.execute(
+        postDTO.caption,
+      );
       if (!moderationResult.isAllowed)
         throw new AppError(
           "UNPROCESSABLE_ENTITY",
@@ -44,7 +44,7 @@ export class CreatePostUseCase implements CreatePost {
       pet_id: postDTO.pet_id,
       author_id: postDTO.author_id,
       default_caption: pet.caption,
-      caption,
+      caption: postDTO.caption,
     });
 
     const savedPost = await this.createPostRepository.save(post);

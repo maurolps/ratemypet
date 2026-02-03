@@ -66,16 +66,6 @@ describe("CreatePostUseCase", () => {
     );
   });
 
-  it("Should use pet caption when post caption is empty", async () => {
-    const { sut } = makeSut();
-    const emptyCaptionPostDTO = {
-      ...postDTO,
-      caption: "",
-    };
-    const post = await sut.execute(emptyCaptionPostDTO);
-    expect(post.toState.caption).toBe("valid_caption");
-  });
-
   it("Should not run ContentModeration if user caption is empty", async () => {
     const { sut, contentModerationSpy } = makeSut();
     const emptyCaptionPostDTO = {
