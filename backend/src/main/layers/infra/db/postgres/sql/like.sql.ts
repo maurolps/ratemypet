@@ -7,6 +7,7 @@ export const sql = {
   CREATE_LIKE: `
   INSERT INTO likes (post_id, user_id)
   VALUES ($1, $2)
+  ON CONFLICT (post_id, user_id) DO NOTHING
   RETURNING post_id, user_id, created_at
   `,
 };
