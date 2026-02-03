@@ -5,6 +5,8 @@ import { LikeRepositoryStub } from "./doubles/like.repository.stub";
 import { UpdateLikesRepositoryStub } from "./doubles/update-like.repository.stub";
 import { AppError } from "@application/errors/app-error";
 import { FIXED_DATE } from "../config/constants";
+import { UnitOfWorkStub } from "./doubles/unit-of-work.stub";
+import type { Transaction } from "@application/ports/unit-of-work.contract";
 
 describe("LikePostUseCase", () => {
   const makeSut = () => {
@@ -18,10 +20,12 @@ describe("LikePostUseCase", () => {
       updateLikesRepositoryStub,
       "updateLikesCount",
     );
+    const unitOfWorkStub = new UnitOfWorkStub();
     const sut = new LikePostUseCase(
       findPostRepositoryStub,
       likeRepositoryStub,
       updateLikesRepositoryStub,
+      unitOfWorkStub,
     );
     return {
       sut,
@@ -40,7 +44,10 @@ describe("LikePostUseCase", () => {
   it("Should call FindPostRepository.findById with correct value", async () => {
     const { sut, findPostRepositorySpy } = makeSut();
     await sut.execute(likePostDTO);
-    expect(findPostRepositorySpy).toHaveBeenCalledWith("valid_post_id");
+    expect(findPostRepositorySpy).toHaveBeenCalledWith(
+      "valid_post_id",
+      {} as Transaction,
+    );
   });
 
   it("Should throw NOT_FOUND if post is not found", async () => {
@@ -55,10 +62,13 @@ describe("LikePostUseCase", () => {
   it("Should call LikeRepository.exists with correct values", async () => {
     const { sut, likeRepositoryExistsSpy } = makeSut();
     await sut.execute(likePostDTO);
-    expect(likeRepositoryExistsSpy).toHaveBeenCalledWith({
-      post_id: "valid_post_id",
-      user_id: "valid_user_id",
-    });
+    expect(likeRepositoryExistsSpy).toHaveBeenCalledWith(
+      {
+        post_id: "valid_post_id",
+        user_id: "valid_user_id",
+      },
+      {} as Transaction,
+    );
   });
 
   it("Should return existing like and avoid updates when already liked", async () => {
@@ -89,10 +99,13 @@ describe("LikePostUseCase", () => {
   it("Should call LikeRepository.save with correct values", async () => {
     const { sut, likeRepositorySaveSpy } = makeSut();
     await sut.execute(likePostDTO);
-    expect(likeRepositorySaveSpy).toHaveBeenCalledWith({
-      post_id: "valid_post_id",
-      user_id: "valid_user_id",
-    });
+    expect(likeRepositorySaveSpy).toHaveBeenCalledWith(
+      {
+        post_id: "valid_post_id",
+        user_id: "valid_user_id",
+      },
+      {} as Transaction,
+    );
   });
 
   it("Should call UpdateLikesRepository.updateLikesCount with incremented likes_count", async () => {
