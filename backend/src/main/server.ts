@@ -5,7 +5,7 @@ import { env } from "./config/env";
 const db = PgPool.getInstance();
 
 const bootstrap = async () => {
-  db.connect(env.DATABASE_URL);
+  db.initialize(env.DATABASE_URL);
   const dbReady = await db.health();
 
   if (dbReady) {
