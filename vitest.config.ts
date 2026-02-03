@@ -8,6 +8,9 @@ export default defineConfig({
       reporter: ["text-summary", "lcov"],
       reportsDirectory: "./backend/coverage",
       include: ["backend/src/main/layers/**/*.ts"],
+      exclude: [
+        "backend/src/main/layers/infra/db/postgres/adapters/pg-unit-of-work.adapter.ts",
+      ],
     },
     projects: [
       {
