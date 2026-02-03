@@ -1,8 +1,9 @@
-import { it, describe, expect, beforeAll } from "vitest";
+import { it, describe, expect, beforeAll, vi } from "vitest";
 import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
 import { Post } from "@domain/entities/post";
 import { insertFakeUser } from "./helpers/fake-user";
 import { insertFakePet } from "./helpers/fake-pet";
+import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 
 describe("PgPostRepository", () => {
   const postDTO = {
@@ -30,6 +31,23 @@ describe("PgPostRepository", () => {
       expect(state.caption).toEqual(postDTO.caption);
       expect(state.status).toEqual("PUBLISHED");
       expect(state.created_at).toBeInstanceOf(Date);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const query = vi.fn().mockResolvedValue({ rows: [] });
+      const fakePool = {};
+      const transaction = {
+        query,
+      };
+
+      const getInstanceSpy = vi
+        .spyOn(PgPool, "getInstance")
+        .mockReturnValue(fakePool as unknown as PgPool);
+      await sut.save(Post.create(postDTO), transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+      getInstanceSpy.mockReset();
     });
   });
 
