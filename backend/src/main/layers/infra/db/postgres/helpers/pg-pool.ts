@@ -13,13 +13,20 @@ export class PgPool {
     return PgPool.instance;
   }
 
-  connect(uri: string) {
+  initialize(uri: string) {
     this.pool = new Pool({
       connectionString: uri,
     });
   }
 
-  async query<T extends QueryResultRow>(sql: string, params?: unknown[]) {
+  async connect() {
+    return await this.pool.connect();
+  }
+
+  async query<T extends QueryResultRow>(
+    sql: string,
+    params?: unknown[],
+  ): Promise<{ rows: T[] }> {
     return await this.pool.query<T>(sql, params);
   }
 

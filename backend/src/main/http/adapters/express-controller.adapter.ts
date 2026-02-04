@@ -1,6 +1,12 @@
 import { env } from "@main/config/env";
 import type { Controller } from "@presentation/contracts/controller.contract";
+import type { HttpResponse } from "@presentation/dtos/http-response.dto";
 import type { Request, Response } from "express";
+
+type HttpResponseBody = {
+  tokens?: Record<string, unknown>;
+  [key: string]: unknown;
+};
 
 export const expressAdapter = (controller: Controller) => {
   return async (request: Request, response: Response) => {
@@ -13,7 +19,9 @@ export const expressAdapter = (controller: Controller) => {
       // @ts-ignore
       user: request.user,
     };
-    const httpResponse = await controller.handle(httpRequest);
+
+    const httpResponse: HttpResponse<HttpResponseBody> =
+      await controller.handle(httpRequest);
 
     if (httpResponse.body.tokens) {
       const { refreshToken, accessToken } = httpResponse.body.tokens;

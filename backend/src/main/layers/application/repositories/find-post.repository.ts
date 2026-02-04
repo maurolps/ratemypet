@@ -1,6 +1,6 @@
 import type { Transaction } from "@application/ports/unit-of-work.contract";
 import type { Post } from "@domain/entities/post";
 
-export interface CreatePostRepository {
-  save(post: Post, transaction?: Transaction): Promise<Post>;
+export interface FindPostRepository {
+  findById(id: string, transaction?: Transaction): Promise<Post | null>;
 }

@@ -56,6 +56,8 @@ describe("CreatePostController", () => {
       author_id: "valid_author_id",
       caption: "valid_caption",
       status: "PUBLISHED",
+      likes_count: 0,
+      comments_count: 0,
       created_at: expect.any(Date),
     });
   });

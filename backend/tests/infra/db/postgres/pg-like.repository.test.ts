@@ -1,0 +1,56 @@
+import { it, describe, expect, beforeAll } from "vitest";
+import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
+import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
+import { Post } from "@domain/entities/post";
+import { insertFakeUser } from "./helpers/fake-user";
+import { insertFakePet } from "./helpers/fake-pet";
+
+describe("PgLikeRepository", () => {
+  const likeDTO = {
+    post_id: "",
+    user_id: "",
+  };
+
+  beforeAll(async () => {
+    const user = await insertFakeUser("fake_like_owner@mail.com");
+    const pet = await insertFakePet(user.id);
+    const postRepository = new PgPostRepository();
+    const post = await postRepository.save(
+      Post.create({
+        pet_id: pet.id,
+        author_id: user.id,
+        default_caption: "Fake caption",
+        caption: "Fake caption",
+      }),
+    );
+    likeDTO.user_id = user.id;
+    likeDTO.post_id = post.toState.id ?? "";
+  });
+
+  describe("PgLikeRepository", () => {
+    it("Should persist and return a Like on success", async () => {
+      const sut = new PgLikeRepository();
+      const like = await sut.save(likeDTO);
+      expect(like.post_id).toEqual(likeDTO.post_id);
+      expect(like.user_id).toEqual(likeDTO.user_id);
+      expect(like.created_at).toBeInstanceOf(Date);
+    });
+
+    it("Should return a Like when it exists", async () => {
+      const sut = new PgLikeRepository();
+      const like = await sut.exists(likeDTO);
+      expect(like).not.toBeNull();
+      expect(like?.post_id).toEqual(likeDTO.post_id);
+      expect(like?.user_id).toEqual(likeDTO.user_id);
+    });
+
+    it("Should return null when like does not exist", async () => {
+      const sut = new PgLikeRepository();
+      const like = await sut.exists({
+        post_id: crypto.randomUUID(),
+        user_id: crypto.randomUUID(),
+      });
+      expect(like).toBeNull();
+    });
+  });
+});
