@@ -40,4 +40,13 @@ export class PgLikeRepository implements LikeRepository {
 
     return savedLike;
   }
+
+  async delete(like: Like, transaction?: Transaction): Promise<boolean> {
+    const client = (transaction ? transaction : this.pool) as PgPool;
+    const result = await client.query(sql.DELETE_LIKE, [
+      like.post_id,
+      like.user_id,
+    ]);
+    return (result.rowCount ?? 0) > 0;
+  }
 }
