@@ -18,7 +18,7 @@ describe("LikePostUseCase", () => {
     const updateLikesRepositoryStub = new UpdateLikesRepositoryStub();
     const updateLikesRepositorySpy = vi.spyOn(
       updateLikesRepositoryStub,
-      "updateLikesCount",
+      "incrementLikesCount",
     );
     const unitOfWorkStub = new UnitOfWorkStub();
     const sut = new LikePostUseCase(
@@ -108,7 +108,7 @@ describe("LikePostUseCase", () => {
     );
   });
 
-  it("Should call UpdateLikesRepository.updateLikesCount with incremented likes_count", async () => {
+  it("Should call UpdateLikesRepository.incrementLikesCount with incremented likes_count", async () => {
     const { sut, updateLikesRepositorySpy } = makeSut();
     await sut.execute(likePostDTO);
     const updatedPost = updateLikesRepositorySpy.mock.calls[0][0];

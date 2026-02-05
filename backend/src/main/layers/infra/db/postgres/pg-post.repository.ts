@@ -48,7 +48,10 @@ export class PgPostRepository
     return post ? Post.rehydrate(post) : null;
   }
 
-  async updateLikesCount(post: Post, transaction?: Transaction): Promise<Post> {
+  async incrementLikesCount(
+    post: Post,
+    transaction?: Transaction,
+  ): Promise<Post> {
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     const state = post.toState;
     const postRows = await client.query<PostRow>(sql.UPDATE_LIKES_COUNT, [

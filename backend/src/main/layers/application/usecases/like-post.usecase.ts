@@ -63,7 +63,7 @@ export class LikePostUseCase implements LikePost {
       }
 
       const likedPost = post.like();
-      const savedPost = await this.updateLikesRepository.updateLikesCount(
+      const savedPost = await this.updateLikesRepository.incrementLikesCount(
         likedPost,
         transactionClient,
       );

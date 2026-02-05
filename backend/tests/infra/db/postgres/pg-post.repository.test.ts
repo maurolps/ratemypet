@@ -70,11 +70,11 @@ describe("PgPostRepository", () => {
     });
   });
 
-  describe("updateLikesCount", () => {
+  describe("incrementLikesCount", () => {
     it("Should update likes_count and return updated Post", async () => {
       const sut = new PgPostRepository();
       const savedPost = await sut.save(Post.create(postDTO));
-      const updatedPost = await sut.updateLikesCount(savedPost.like());
+      const updatedPost = await sut.incrementLikesCount(savedPost.like());
       const state = updatedPost.toState;
       expect(state.id).toEqual(savedPost.toState.id);
       expect(state.likes_count).toBe(1);
