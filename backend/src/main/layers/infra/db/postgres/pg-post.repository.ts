@@ -57,4 +57,17 @@ export class PgPostRepository
     const updatedPost = postRows.rows[0];
     return Post.rehydrate(updatedPost);
   }
+
+  async decrementLikesCount(
+    post: Post,
+    transaction?: Transaction,
+  ): Promise<Post> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    const state = post.toState;
+    const postRows = await client.query<PostRow>(sql.DECREMENT_LIKES_COUNT, [
+      state.id,
+    ]);
+    const updatedPost = postRows.rows[0];
+    return Post.rehydrate(updatedPost);
+  }
 }
