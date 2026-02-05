@@ -14,4 +14,8 @@ export class LikeRepositoryStub implements LikeRepository {
       created_at: FIXED_DATE,
     };
   }
+
+  async delete(_: Like): Promise<boolean> {
+    return true;
+  }
 }
