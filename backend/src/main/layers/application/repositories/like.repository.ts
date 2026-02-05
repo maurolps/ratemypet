@@ -4,4 +4,5 @@ import type { Transaction } from "@application/ports/unit-of-work.contract";
 export interface LikeRepository {
   exists(like: Like, transaction?: Transaction): Promise<Like | null>;
   save(like: Like, transaction?: Transaction): Promise<Like>;
+  delete(like: Like, transaction?: Transaction): Promise<boolean>;
 }
