@@ -71,7 +71,7 @@ describe("PgPostRepository", () => {
   });
 
   describe("incrementLikesCount", () => {
-    it("Should update likes_count and return updated Post", async () => {
+    it("Should increment likes_count and return updated Post", async () => {
       const sut = new PgPostRepository();
       const savedPost = await sut.save(Post.create(postDTO));
       const updatedPost = await sut.incrementLikesCount(savedPost.like());
@@ -79,6 +79,19 @@ describe("PgPostRepository", () => {
       expect(state.id).toEqual(savedPost.toState.id);
       expect(state.likes_count).toBe(1);
       expect(state.comments_count).toBe(savedPost.toState.comments_count);
+    });
+  });
+
+  describe("decrementLikesCount", () => {
+    it("Should decrement likes_count and return updated Post", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const likedPost = savedPost.like();
+      const incrementedPost = await sut.incrementLikesCount(likedPost);
+      const decrementedPost = await sut.decrementLikesCount(incrementedPost);
+      const state = decrementedPost.toState;
+      expect(state.id).toEqual(savedPost.toState.id);
+      expect(state.likes_count).toBe(0);
     });
   });
 });
