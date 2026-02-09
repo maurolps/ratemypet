@@ -23,11 +23,10 @@ export class PgPool {
     return await this.pool.connect();
   }
 
-  async query<T extends QueryResultRow>(
-    sql: string,
-    params?: unknown[],
-  ): Promise<{ rows: T[] }> {
-    return await this.pool.query<T>(sql, params);
+  async query<T extends QueryResultRow>(sql: string, params?: unknown[]) {
+    const result = await this.pool.query<T>(sql, params);
+    const { rows, rowCount } = result;
+    return { rows, rowCount };
   }
 
   async health() {

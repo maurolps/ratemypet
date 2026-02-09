@@ -10,4 +10,8 @@ export const sql = {
   ON CONFLICT (post_id, user_id) DO NOTHING
   RETURNING post_id, user_id, created_at
   `,
+  DELETE_LIKE: `
+  DELETE FROM likes
+  WHERE post_id = $1 AND user_id = $2
+  `,
 };

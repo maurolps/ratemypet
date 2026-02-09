@@ -4,11 +4,13 @@ import { makeRateLimiter } from "../middlewares/rate-limit";
 import { authMiddleware } from "../middlewares/authenticate";
 import { makeCreatePostController } from "@main/composition/posts/create-post.controller.factory";
 import { makeLikePostController } from "@main/composition/posts/like-post.controller.factory";
+import { makeUnlikePostController } from "@main/composition/posts/unlike-post.controller.factory";
 
 export const postRoutes = Router();
 
 const createPostRateLimit = makeRateLimiter({ limit: 5 });
 const likePostRateLimit = makeRateLimiter({ limit: 10 });
+const unlikePostRateLimit = makeRateLimiter({ limit: 10 });
 
 postRoutes.post(
   "/posts",
@@ -21,12 +23,12 @@ postRoutes.post(
   "/posts/:id/likes",
   authMiddleware(),
   likePostRateLimit,
-  (request, _response, next) => {
-    request.body = {
-      ...request.body,
-      post_id: request.params.id,
-    };
-    next();
-  },
   expressAdapter(makeLikePostController()),
+);
+
+postRoutes.delete(
+  "/posts/:id/likes",
+  authMiddleware(),
+  unlikePostRateLimit,
+  expressAdapter(makeUnlikePostController()),
 );

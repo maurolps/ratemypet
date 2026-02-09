@@ -64,6 +64,17 @@ export class Post {
     return Post.rehydrate(updatedState);
   }
 
+  unlike(): Post {
+    const state = this.toState;
+    const newLikesCount = Math.max(0, state.likes_count - 1);
+    const updatedState: PostState = {
+      ...state,
+      likes_count: newLikesCount,
+    };
+
+    return Post.rehydrate(updatedState);
+  }
+
   private static ensureValid(data: CreatePostInput) {
     if ((data.likes_count ?? 0) < 0) {
       throw new Error("Likes count cannot be negative.");

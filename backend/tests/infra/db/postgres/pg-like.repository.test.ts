@@ -1,4 +1,4 @@
-import { it, describe, expect, beforeAll } from "vitest";
+import { it, describe, expect, beforeAll, vi } from "vitest";
 import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
 import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
 import { Post } from "@domain/entities/post";
@@ -51,6 +51,51 @@ describe("PgLikeRepository", () => {
         user_id: crypto.randomUUID(),
       });
       expect(like).toBeNull();
+    });
+
+    it("Should delete an existing like and return true", async () => {
+      const sut = new PgLikeRepository();
+      const deleteDTO = {
+        post_id: likeDTO.post_id,
+        user_id: likeDTO.user_id,
+      };
+      const result = await sut.delete(deleteDTO);
+      expect(result).toBe(true);
+      const deletedLike = await sut.exists(deleteDTO);
+      expect(deletedLike).toBeNull();
+    });
+
+    it("Should return false when deleting a non-existent like", async () => {
+      const sut = new PgLikeRepository();
+      const result = await sut.delete({
+        post_id: crypto.randomUUID(),
+        user_id: crypto.randomUUID(),
+      });
+      expect(result).toBe(false);
+    });
+
+    it("Should use a transaction when deleting a like", async () => {
+      const sut = new PgLikeRepository();
+      const query = vi.fn().mockResolvedValue({ rowCount: 1 });
+      const transaction = {
+        query,
+      };
+
+      const result = await sut.delete(likeDTO, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
+
+    it("Should return false when transaction delete returns undefined rowCount", async () => {
+      const sut = new PgLikeRepository();
+      const transaction = {
+        query: vi.fn().mockResolvedValue({ rowCount: undefined }),
+      };
+
+      const result = await sut.delete(likeDTO, transaction);
+
+      expect(result).toBe(false);
     });
   });
 });

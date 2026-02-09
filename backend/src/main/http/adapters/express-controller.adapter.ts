@@ -16,7 +16,7 @@ export const expressAdapter = (controller: Controller) => {
         refreshToken: request.cookies.refreshToken,
       },
       file: request.file,
-      // @ts-ignore
+      params: request.params,
       user: request.user,
     };
 

@@ -70,15 +70,43 @@ describe("PgPostRepository", () => {
     });
   });
 
-  describe("updateLikesCount", () => {
-    it("Should update likes_count and return updated Post", async () => {
+  describe("incrementLikesCount", () => {
+    it("Should increment likes_count and return updated Post", async () => {
       const sut = new PgPostRepository();
       const savedPost = await sut.save(Post.create(postDTO));
-      const updatedPost = await sut.updateLikesCount(savedPost.like());
+      const updatedPost = await sut.incrementLikesCount(savedPost.like());
       const state = updatedPost.toState;
       expect(state.id).toEqual(savedPost.toState.id);
       expect(state.likes_count).toBe(1);
       expect(state.comments_count).toBe(savedPost.toState.comments_count);
+    });
+  });
+
+  describe("decrementLikesCount", () => {
+    it("Should decrement likes_count and return updated Post", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const likedPost = savedPost.like();
+      const incrementedPost = await sut.incrementLikesCount(likedPost);
+      const decrementedPost = await sut.decrementLikesCount(incrementedPost);
+      const state = decrementedPost.toState;
+      expect(state.id).toEqual(savedPost.toState.id);
+      expect(state.likes_count).toBe(0);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [{}],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.decrementLikesCount(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
     });
   });
 });

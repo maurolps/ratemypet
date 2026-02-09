@@ -1,17 +1,15 @@
-import type { Like } from "@domain/entities/like";
 import type {
-  LikePost,
-  LikePostDTO,
-  LikePostResult,
-} from "@domain/usecases/like-post.contract";
+  UnlikePost,
+  UnlikePostDTO,
+  UnlikePostResult,
+} from "@domain/usecases/unlike-post.contract";
 import type { FindPostRepository } from "@application/repositories/find-post.repository";
 import type { LikeRepository } from "@application/repositories/like.repository";
 import type { UpdateLikesRepository } from "@application/repositories/update-likes.repository";
 import type { UnitOfWork } from "@application/ports/unit-of-work.contract";
 import { AppError } from "@application/errors/app-error";
-import { isCustomError } from "@application/errors/custom-error";
 
-export class LikePostUseCase implements LikePost {
+export class UnlikePostUseCase implements UnlikePost {
   constructor(
     private readonly findPostRepository: FindPostRepository,
     private readonly likeRepository: LikeRepository,
@@ -19,7 +17,7 @@ export class LikePostUseCase implements LikePost {
     private readonly unitOfWork: UnitOfWork,
   ) {}
 
-  async execute(data: LikePostDTO): Promise<LikePostResult> {
+  async execute(data: UnlikePostDTO): Promise<UnlikePostResult> {
     return await this.unitOfWork.execute(async (transactionClient) => {
       const post = await this.findPostRepository.findById(
         data.post_id,
@@ -36,40 +34,23 @@ export class LikePostUseCase implements LikePost {
         transactionClient,
       );
 
-      if (existingLike) {
+      if (!existingLike) {
         return {
-          like: existingLike,
+          post_id: data.post_id,
           likes_count: post.toState.likes_count,
         };
       }
 
-      let savedLike: Like;
-      try {
-        savedLike = await this.likeRepository.save(
-          {
-            post_id: data.post_id,
-            user_id: data.user_id,
-          },
-          transactionClient,
-        );
-      } catch (error) {
-        if (isCustomError(error))
-          return {
-            like,
-            likes_count: post.toState.likes_count,
-          };
+      await this.likeRepository.delete(like, transactionClient);
 
-        throw error;
-      }
-
-      const likedPost = post.like();
-      const savedPost = await this.updateLikesRepository.incrementLikesCount(
-        likedPost,
+      const unlikedPost = post.unlike();
+      const savedPost = await this.updateLikesRepository.decrementLikesCount(
+        unlikedPost,
         transactionClient,
       );
 
       return {
-        like: savedLike,
+        post_id: data.post_id,
         likes_count: savedPost.toState.likes_count,
       };
     });
