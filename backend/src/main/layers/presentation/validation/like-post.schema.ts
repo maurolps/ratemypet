@@ -2,11 +2,11 @@ import { z } from "zod";
 
 export const likePostSchema = z
   .object({
-    body: z.object(
+    params: z.object(
       {
-        post_id: z.string("MISSING_PARAM").trim().min(1, "INVALID_PARAM"),
+        id: z.string("MISSING_PARAM").trim().min(1, "INVALID_PARAM"),
       },
-      { error: "MISSING_BODY" },
+      { error: "MISSING_PARAM" },
     ),
     user: z.object(
       {
@@ -15,9 +15,10 @@ export const likePostSchema = z
       { error: "MISSING_PARAM" },
     ),
   })
-  .transform(({ body, user }) => {
+
+  .transform(({ params, user }) => {
     return {
-      post_id: body.post_id,
+      post_id: params.id,
       user_id: user.sub,
     };
   });
