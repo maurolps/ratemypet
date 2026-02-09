@@ -9,14 +9,10 @@ export type HttpRequest = {
     authorization?: string;
   };
   params?: Record<string, string>;
-  user?: Omit<AccessTokenPayload, "exp" | "iat">;
+  user?: AccessTokenPayload;
   file?: {
     originalname: string;
     mimetype: string;
     buffer: Buffer;
   };
-};
-
-export type AuthenticatedRequest = {
-  user: Omit<AccessTokenPayload, "exp" | "iat">;
 };
