@@ -93,5 +93,20 @@ describe("PgPostRepository", () => {
       expect(state.id).toEqual(savedPost.toState.id);
       expect(state.likes_count).toBe(0);
     });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [{}],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.decrementLikesCount(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
   });
 });
