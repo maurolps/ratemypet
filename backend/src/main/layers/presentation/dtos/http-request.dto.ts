@@ -8,6 +8,7 @@ export type HttpRequest = {
   headers?: {
     authorization?: string;
   };
+  params?: Record<string, string>;
   user?: Omit<AccessTokenPayload, "exp" | "iat">;
   file?: {
     originalname: string;

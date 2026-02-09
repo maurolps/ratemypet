@@ -23,13 +23,6 @@ postRoutes.post(
   "/posts/:id/likes",
   authMiddleware(),
   likePostRateLimit,
-  (request, _response, next) => {
-    request.body = {
-      ...request.body,
-      post_id: request.params.id,
-    };
-    next();
-  },
   expressAdapter(makeLikePostController()),
 );
 
@@ -37,12 +30,5 @@ postRoutes.delete(
   "/posts/:id/likes",
   authMiddleware(),
   unlikePostRateLimit,
-  (request, _response, next) => {
-    request.body = {
-      ...request.body,
-      post_id: request.params.id,
-    };
-    next();
-  },
   expressAdapter(makeUnlikePostController()),
 );
