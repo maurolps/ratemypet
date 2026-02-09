@@ -17,7 +17,6 @@ export const expressAdapter = (controller: Controller) => {
       },
       file: request.file,
       params: request.params,
-      // @ts-ignore
       user: request.user,
     };
 

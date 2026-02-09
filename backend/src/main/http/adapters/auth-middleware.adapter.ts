@@ -9,7 +9,6 @@ export const authMiddlewareAdapter = (middleware: Middleware) => {
       },
     };
     const authenticatedRequest = await middleware.handle(httpRequest);
-    // @ts-ignore
     request.user = authenticatedRequest.user;
     return next();
   };
