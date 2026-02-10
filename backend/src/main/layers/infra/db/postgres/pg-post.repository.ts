@@ -2,6 +2,7 @@ import { Post, type PostStatus } from "@domain/entities/post";
 import type { CreatePostRepository } from "@application/repositories/create-post.repository";
 import type { FindPostRepository } from "@application/repositories/find-post.repository";
 import type { UpdateLikesRepository } from "@application/repositories/update-likes.repository";
+import type { UpdateCommentsRepository } from "@application/repositories/update-comments.repository";
 import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/post.sql";
 import type { Transaction } from "@application/ports/unit-of-work.contract";
@@ -18,7 +19,11 @@ type PostRow = {
 };
 
 export class PgPostRepository
-  implements CreatePostRepository, FindPostRepository, UpdateLikesRepository
+  implements
+    CreatePostRepository,
+    FindPostRepository,
+    UpdateLikesRepository,
+    UpdateCommentsRepository
 {
   private readonly pool: PgPool;
   constructor() {
@@ -68,6 +73,19 @@ export class PgPostRepository
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     const state = post.toState;
     const postRows = await client.query<PostRow>(sql.DECREMENT_LIKES_COUNT, [
+      state.id,
+    ]);
+    const updatedPost = postRows.rows[0];
+    return Post.rehydrate(updatedPost);
+  }
+
+  async incrementCommentsCount(
+    post: Post,
+    transaction?: Transaction,
+  ): Promise<Post> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    const state = post.toState;
+    const postRows = await client.query<PostRow>(sql.UPDATE_COMMENTS_COUNT, [
       state.id,
     ]);
     const updatedPost = postRows.rows[0];
