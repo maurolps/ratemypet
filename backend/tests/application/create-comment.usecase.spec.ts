@@ -54,6 +54,15 @@ describe("CreateCommentUseCase", () => {
     idempotency_key: "valid_idempotency_key",
   };
 
+  const fakeComment = {
+    id: "valid_comment_id",
+    post_id: "valid_post_id",
+    author_id: "valid_user_id",
+    content: "valid_comment_content",
+    idempotency_key: "valid_idempotency_key",
+    created_at: FIXED_DATE,
+  };
+
   it("Should call FindPostRepository.findById with correct values", async () => {
     const { sut, findPostRepositorySpy } = makeSut();
     await sut.execute(createCommentDTO);
@@ -98,25 +107,15 @@ describe("CreateCommentUseCase", () => {
       updateCommentsRepositorySpy,
     } = makeSut();
     commentFindByIdempotencyKeySpy.mockResolvedValueOnce({
+      ...createCommentDTO,
       id: "valid_comment_id",
-      post_id: "valid_post_id",
-      author_id: "valid_user_id",
-      content: "valid_comment_content",
-      idempotency_key: "valid_idempotency_key",
       created_at: FIXED_DATE,
     });
 
     const result = await sut.execute(createCommentDTO);
 
     expect(result).toEqual({
-      comment: {
-        id: "valid_comment_id",
-        post_id: "valid_post_id",
-        author_id: "valid_user_id",
-        content: "valid_comment_content",
-        idempotency_key: "valid_idempotency_key",
-        created_at: FIXED_DATE,
-      },
+      comment: fakeComment,
       comments_count: 0,
     });
     expect(contentModerationSpy).toHaveBeenCalledTimes(0);
@@ -127,12 +126,8 @@ describe("CreateCommentUseCase", () => {
   it("Should throw INVALID_PARAM when idempotency key is reused with a different payload", async () => {
     const { sut, commentFindByIdempotencyKeySpy } = makeSut();
     commentFindByIdempotencyKeySpy.mockResolvedValueOnce({
-      id: "valid_comment_id",
-      post_id: "valid_post_id",
-      author_id: "valid_user_id",
+      ...fakeComment,
       content: "different_content",
-      idempotency_key: "valid_idempotency_key",
-      created_at: FIXED_DATE,
     });
 
     const promise = sut.execute(createCommentDTO);
@@ -199,26 +194,12 @@ describe("CreateCommentUseCase", () => {
     );
     commentFindByIdempotencyKeySpy
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({
-        id: "valid_comment_id",
-        post_id: "valid_post_id",
-        author_id: "valid_user_id",
-        content: "valid_comment_content",
-        idempotency_key: "valid_idempotency_key",
-        created_at: FIXED_DATE,
-      });
+      .mockResolvedValueOnce(fakeComment);
 
     const result = await sut.execute(createCommentDTO);
 
     expect(result).toEqual({
-      comment: {
-        id: "valid_comment_id",
-        post_id: "valid_post_id",
-        author_id: "valid_user_id",
-        content: "valid_comment_content",
-        idempotency_key: "valid_idempotency_key",
-        created_at: FIXED_DATE,
-      },
+      comment: fakeComment,
       comments_count: 0,
     });
   });
@@ -231,12 +212,8 @@ describe("CreateCommentUseCase", () => {
     commentFindByIdempotencyKeySpy
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce({
-        id: "valid_comment_id",
-        post_id: "valid_post_id",
-        author_id: "valid_user_id",
+        ...fakeComment,
         content: "different_content",
-        idempotency_key: "valid_idempotency_key",
-        created_at: FIXED_DATE,
       });
 
     const promise = sut.execute(createCommentDTO);
@@ -263,14 +240,7 @@ describe("CreateCommentUseCase", () => {
     const result = await sut.execute(createCommentDTO);
 
     expect(result).toEqual({
-      comment: {
-        id: "valid_comment_id",
-        post_id: "valid_post_id",
-        author_id: "valid_user_id",
-        content: "valid_comment_content",
-        idempotency_key: "valid_idempotency_key",
-        created_at: FIXED_DATE,
-      },
+      comment: fakeComment,
       comments_count: 1,
     });
   });
