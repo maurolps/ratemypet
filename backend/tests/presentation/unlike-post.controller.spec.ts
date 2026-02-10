@@ -18,8 +18,8 @@ describe("UnlikePostController", () => {
   };
 
   const dummyRequest = {
-    body: {
-      post_id: "valid_post_id",
+    params: {
+      id: "valid_post_id",
     },
     user: {
       sub: "authenticated_user_id",
