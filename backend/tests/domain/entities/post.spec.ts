@@ -55,7 +55,7 @@ describe("Post", () => {
     expect(sut).toThrowError("Comments count cannot be negative.");
   });
 
-  describe("unlike", () => {
+  describe("counters", () => {
     it("Should decrement likes_count by 1", () => {
       const post = Post.create({ ...postInput, likes_count: 5 });
       const unlikedPost = post.unlike();
@@ -66,6 +66,12 @@ describe("Post", () => {
       const post = Post.create({ ...postInput, likes_count: 0 });
       const unlikedPost = post.unlike();
       expect(unlikedPost.toState.likes_count).toBe(0);
+    });
+
+    it("Should increment comments_count by 1", () => {
+      const post = Post.create({ ...postInput, comments_count: 2 });
+      const commentedPost = post.comment();
+      expect(commentedPost.toState.comments_count).toBe(3);
     });
   });
 });
