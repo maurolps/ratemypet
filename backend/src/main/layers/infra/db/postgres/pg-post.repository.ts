@@ -59,7 +59,7 @@ export class PgPostRepository
   ): Promise<Post> {
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     const state = post.toState;
-    const postRows = await client.query<PostRow>(sql.UPDATE_LIKES_COUNT, [
+    const postRows = await client.query<PostRow>(sql.INCREMENT_LIKES_COUNT, [
       state.id,
     ]);
     const updatedPost = postRows.rows[0];
@@ -85,7 +85,7 @@ export class PgPostRepository
   ): Promise<Post> {
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     const state = post.toState;
-    const postRows = await client.query<PostRow>(sql.UPDATE_COMMENTS_COUNT, [
+    const postRows = await client.query<PostRow>(sql.INCREMENT_COMMENTS_COUNT, [
       state.id,
     ]);
     const updatedPost = postRows.rows[0];
