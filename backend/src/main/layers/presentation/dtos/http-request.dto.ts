@@ -7,6 +7,7 @@ export type HttpRequest = {
   };
   headers?: {
     authorization?: string;
+    idempotency_key?: string;
   };
   params?: Record<string, string>;
   user?: AccessTokenPayload;
