@@ -4,16 +4,11 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
 import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
 import { insertFakePet } from "../infra/db/postgres/helpers/fake-pet";
+import { createAndLoginUser } from "./helpers/create-and-login-user";
 import { makeApp } from "@main/http/app";
 import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 import { Post } from "@domain/entities/post";
 import request from "supertest";
-
-const userDTO = {
-  name: "any_name",
-  email: `like_post_${Date.now()}@example.com`,
-  password: "any_password",
-};
 
 const makeSut = () => {
   const app = makeApp();
@@ -43,23 +38,6 @@ const createPost = async (
   );
 };
 
-const createAndLoginUser = async (app: Express, nameSuffix: string) => {
-  const dto = {
-    name: `user_${nameSuffix}`,
-    email: `atomicity_${nameSuffix}_${Date.now()}@example.com`,
-    password: "password123",
-  };
-  const createResponse = await request(app).post("/api/users").send(dto);
-  if (createResponse.status !== 201) {
-    throw new Error(`Failed to create user: ${createResponse.status}`);
-  }
-  const loginResponse = await request(app).post("/api/users/login").send({
-    email: dto.email,
-    password: dto.password,
-  });
-  return loginResponse.body.tokens.accessToken as string;
-};
-
 describe("[E2E] UC-006 LikePost", () => {
   let app: Express;
   let postRepository: PgPostRepository;
@@ -74,17 +52,9 @@ describe("[E2E] UC-006 LikePost", () => {
     postRepository = sut.postRepository;
     likeRepository = sut.likeRepository;
 
-    const createdUserResponse = await request(app)
-      .post("/api/users")
-      .send(userDTO);
-    userId = createdUserResponse.body.id as string;
-
-    const loginResponse = await request(app).post("/api/users/login").send({
-      email: userDTO.email,
-      password: userDTO.password,
-    });
-
-    accessToken = loginResponse.body.tokens.accessToken as string;
+    const loggedUser = await createAndLoginUser(app);
+    userId = loggedUser.userId;
+    accessToken = loggedUser.accessToken;
     pet = await insertFakePet(userId);
   });
 
@@ -116,17 +86,15 @@ describe("[E2E] UC-006 LikePost", () => {
     );
     const numberOfUsers = 3;
 
-    const tokens = await Promise.all(
-      Array.from({ length: numberOfUsers }).map((_, i) =>
-        createAndLoginUser(app, i.toString()),
-      ),
+    const loggedUsers = await Promise.all(
+      Array.from({ length: numberOfUsers }).map((_) => createAndLoginUser(app)),
     );
 
     const responses = await Promise.all(
-      tokens.map((token) =>
+      loggedUsers.map((user) =>
         request(app)
           .post(`/api/posts/${post.toState.id}/likes`)
-          .set("Authorization", `Bearer ${token}`),
+          .set("Authorization", `Bearer ${user.accessToken}`),
       ),
     );
 
