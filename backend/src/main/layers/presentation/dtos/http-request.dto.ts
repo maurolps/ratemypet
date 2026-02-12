@@ -7,16 +7,13 @@ export type HttpRequest = {
   };
   headers?: {
     authorization?: string;
+    idempotency_key?: string;
   };
   params?: Record<string, string>;
-  user?: Omit<AccessTokenPayload, "exp" | "iat">;
+  user?: AccessTokenPayload;
   file?: {
     originalname: string;
     mimetype: string;
     buffer: Buffer;
   };
-};
-
-export type AuthenticatedRequest = {
-  user: Omit<AccessTokenPayload, "exp" | "iat">;
 };

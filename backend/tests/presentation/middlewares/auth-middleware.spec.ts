@@ -68,7 +68,7 @@ describe("AuthMiddleware", () => {
     );
   });
 
-  it("Should return AuthenticatedRequest on success", async () => {
+  it("Should return authenticatedUser on success", async () => {
     const { sut } = makeSut();
     const dummyRequest = {
       headers: {
@@ -77,11 +77,9 @@ describe("AuthMiddleware", () => {
     };
     const authenticatedRequest = await sut.handle(dummyRequest);
     expect(authenticatedRequest).toEqual({
-      user: {
-        sub: "valid_user_id",
-        name: "valid_name",
-        email: "valid_email@mail.com",
-      },
+      sub: "valid_user_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
     });
   });
 });

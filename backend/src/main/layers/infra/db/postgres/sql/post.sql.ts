@@ -9,7 +9,7 @@ export const sql = {
   FROM posts
   WHERE id = $1
   `,
-  UPDATE_LIKES_COUNT: `
+  INCREMENT_LIKES_COUNT: `
   UPDATE posts
   SET likes_count = likes_count + 1
   WHERE id = $1
@@ -18,6 +18,12 @@ export const sql = {
   DECREMENT_LIKES_COUNT: `
   UPDATE posts
   SET likes_count = GREATEST(0, likes_count - 1)
+  WHERE id = $1
+  RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
+  `,
+  INCREMENT_COMMENTS_COUNT: `
+  UPDATE posts
+  SET comments_count = comments_count + 1
   WHERE id = $1
   RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
   `,

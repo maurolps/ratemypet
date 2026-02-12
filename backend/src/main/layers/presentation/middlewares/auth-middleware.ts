@@ -1,15 +1,15 @@
 import { AppError } from "@application/errors/app-error";
-import type { Middleware } from "@presentation/contracts/middleware.contract";
-import type { AccessTokenGenerator } from "@application/ports/token-generator.contract";
 import type {
-  AuthenticatedRequest,
-  HttpRequest,
-} from "@presentation/dtos/http-request.dto";
+  AuthenticatedUser,
+  AuthenticateMiddleware,
+} from "@presentation/contracts/middleware.contract";
+import type { AccessTokenGenerator } from "@application/ports/token-generator.contract";
+import type { HttpRequest } from "@presentation/dtos/http-request.dto";
 
-export class AuthMiddleware implements Middleware {
+export class AuthMiddleware implements AuthenticateMiddleware {
   constructor(private readonly tokenGenerator: AccessTokenGenerator) {}
 
-  async handle(request: HttpRequest): Promise<AuthenticatedRequest> {
+  async handle(request: HttpRequest): Promise<AuthenticatedUser> {
     const authHeader = request.headers?.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new AppError(
@@ -22,8 +22,8 @@ export class AuthMiddleware implements Middleware {
 
     try {
       const accessTokenPayload = await this.tokenGenerator.verify(accessToken);
-      const { iat: _iat, exp: _exp, ...user } = accessTokenPayload;
-      return { user };
+      const { iat: _iat, exp: _exp, ...authenticatedUser } = accessTokenPayload;
+      return authenticatedUser;
     } catch (_error) {
       throw new AppError("UNAUTHORIZED");
     }

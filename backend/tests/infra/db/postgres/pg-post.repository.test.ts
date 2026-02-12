@@ -109,4 +109,30 @@ describe("PgPostRepository", () => {
       expect(transaction.query).toHaveBeenCalled();
     });
   });
+
+  describe("incrementCommentsCount", () => {
+    it("Should increment comments_count and return updated Post", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const updatedPost = await sut.incrementCommentsCount(savedPost.comment());
+      const state = updatedPost.toState;
+      expect(state.id).toEqual(savedPost.toState.id);
+      expect(state.comments_count).toBe(1);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [{}],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.incrementCommentsCount(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
 });
