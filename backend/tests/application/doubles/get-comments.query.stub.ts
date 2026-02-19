@@ -1,7 +1,7 @@
 import type {
   FindPostCommentsInput,
   GetCommentsQuery,
-} from "@application/queries/get-post.query";
+} from "@application/queries/get-comments.query";
 import type { GetPostComment } from "@domain/usecases/get-post.contract";
 import { FIXED_DATE } from "../../config/constants";
 

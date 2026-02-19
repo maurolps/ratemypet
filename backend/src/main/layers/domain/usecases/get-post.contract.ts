@@ -24,8 +24,8 @@ export type GetPostData = {
 export interface GetPostDTO {
   post_id: string;
   viewer_id?: string;
-  cursor?: string;
-  limit?: number;
+  cursor?: { created_at: Date; id: string };
+  limit: number;
 }
 
 export type GetPostResult = {

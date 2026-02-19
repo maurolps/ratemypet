@@ -1,8 +1,6 @@
 import { AppError } from "@application/errors/app-error";
-import type {
-  GetCommentsQuery,
-  GetPostQuery,
-} from "@application/queries/get-post.query";
+import type { GetPostQuery } from "@application/queries/get-post.query";
+import type { GetCommentsQuery } from "@application/queries/get-comments.query";
 import type {
   GetPost,
   GetPostComment,
