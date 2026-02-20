@@ -7,18 +7,37 @@ import type { AccessTokenGenerator } from "@application/ports/token-generator.co
 import type { HttpRequest } from "@presentation/dtos/http-request.dto";
 
 export class AuthMiddleware implements AuthenticateMiddleware {
-  constructor(private readonly tokenGenerator: AccessTokenGenerator) {}
+  constructor(
+    private readonly tokenGenerator: AccessTokenGenerator,
+    private readonly optional = false,
+  ) {}
 
-  async handle(request: HttpRequest): Promise<AuthenticatedUser> {
+  async handle(request: HttpRequest): Promise<AuthenticatedUser | undefined> {
     const authHeader = request.headers?.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader) {
+      if (this.optional) {
+        return undefined;
+      }
+
       throw new AppError(
         "MISSING_PARAM",
         "Authorization header is missing or malformed",
       );
     }
 
+    if (!authHeader.startsWith("Bearer ")) {
+      throw new AppError(
+        this.optional ? "UNAUTHORIZED" : "MISSING_PARAM",
+        this.optional
+          ? undefined
+          : "Authorization header is missing or malformed",
+      );
+    }
+
     const accessToken = authHeader.substring(7).trim();
+    if (!accessToken) {
+      throw new AppError("UNAUTHORIZED");
+    }
 
     try {
       const accessTokenPayload = await this.tokenGenerator.verify(accessToken);
