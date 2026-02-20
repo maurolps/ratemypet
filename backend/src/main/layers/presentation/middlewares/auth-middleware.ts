@@ -27,10 +27,8 @@ export class AuthMiddleware implements AuthenticateMiddleware {
 
     if (!authHeader.startsWith("Bearer ")) {
       throw new AppError(
-        this.optional ? "UNAUTHORIZED" : "MISSING_PARAM",
-        this.optional
-          ? undefined
-          : "Authorization header is missing or malformed",
+        "MISSING_PARAM",
+        "Authorization header is missing or malformed",
       );
     }
 
