@@ -28,6 +28,7 @@ export const expressAdapter = (controller: Controller) => {
       },
       file: request.file,
       params: request.params,
+      query: request.query,
       user: request.user,
     };
 

@@ -5,6 +5,7 @@ export type HttpRequest = {
   cookies?: {
     refreshToken?: string;
   };
+  query?: Record<string, unknown>;
   headers?: {
     authorization?: string;
     idempotency_key?: string;
