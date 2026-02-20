@@ -5,9 +5,9 @@ import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
 import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
 import { insertFakePet } from "../infra/db/postgres/helpers/fake-pet";
 import { createAndLoginUser } from "./helpers/create-and-login-user";
+import { createPost } from "./helpers/create-post";
 import { makeApp } from "@main/http/app";
 import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
-import { Post } from "@domain/entities/post";
 import request from "supertest";
 
 const makeSut = () => {
@@ -20,22 +20,6 @@ const makeSut = () => {
     postRepository,
     likeRepository,
   };
-};
-
-const createPost = async (
-  postRepository: PgPostRepository,
-  petId: string,
-  authorId: string,
-  caption = "A valid caption",
-) => {
-  return postRepository.save(
-    Post.create({
-      pet_id: petId,
-      author_id: authorId,
-      default_caption: "A default caption",
-      caption,
-    }),
-  );
 };
 
 describe("[E2E] UC-006 LikePost", () => {

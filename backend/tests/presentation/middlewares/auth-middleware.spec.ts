@@ -68,6 +68,18 @@ describe("AuthMiddleware", () => {
     );
   });
 
+  it("Should throw UNAUTHORIZED if token is empty", async () => {
+    const { sut } = makeSut();
+    const dummyRequest = {
+      headers: {
+        authorization: "Bearer ",
+      },
+    };
+    await expect(sut.handle(dummyRequest)).rejects.toEqual(
+      new AppError("UNAUTHORIZED"),
+    );
+  });
+
   it("Should return authenticatedUser on success", async () => {
     const { sut } = makeSut();
     const dummyRequest = {
