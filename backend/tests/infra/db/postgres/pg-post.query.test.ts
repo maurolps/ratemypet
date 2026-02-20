@@ -1,69 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { Post } from "@domain/entities/post";
-import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 import { PgPostQuery } from "@infra/db/postgres/queries/pg-post.query";
-import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
 import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
-import { insertFakePet } from "./helpers/fake-pet";
+import { insertComment } from "./helpers/fake-comment";
+import { generateFakeEmail } from "./helpers/fake-email";
+import { insertFakePost } from "./helpers/fake-post";
 import { insertFakeUser } from "./helpers/fake-user";
 
-type InsertCommentDTO = {
-  id: string;
-  post_id: string;
-  author_id: string;
-  content: string;
-  idempotency_key: string;
-  created_at: Date;
-};
-
 describe("PgPostQuery", () => {
-  const pool = PgPool.getInstance();
-  const postRepository = new PgPostRepository();
   const likeRepository = new PgLikeRepository();
   const sut = new PgPostQuery();
-
-  const generateFakeEmail = (prefix: string): string =>
-    `${prefix}_${Date.now()}_${crypto.randomUUID()}@mail.com`;
-
-  const insertComment = async (comment: InsertCommentDTO): Promise<void> => {
-    await pool.query(
-      `
-      INSERT INTO comments (id, post_id, author_id, content, idempotency_key, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      `,
-      [
-        comment.id,
-        comment.post_id,
-        comment.author_id,
-        comment.content,
-        comment.idempotency_key,
-        comment.created_at,
-      ],
-    );
-  };
-
-  const insertFakePost = async (): Promise<{
-    post_id: string;
-    owner_id: string;
-  }> => {
-    const owner = await insertFakeUser(
-      generateFakeEmail("pg_post_query_owner"),
-    );
-    const pet = await insertFakePet(owner.id);
-    const post = await postRepository.save(
-      Post.create({
-        pet_id: pet.id,
-        author_id: owner.id,
-        default_caption: "Default caption",
-        caption: "Post caption",
-      }),
-    );
-
-    return {
-      post_id: post.toState.id ?? "",
-      owner_id: owner.id,
-    };
-  };
 
   describe("findPostDetailsById", () => {
     it("Should return null when post does not exist", async () => {
