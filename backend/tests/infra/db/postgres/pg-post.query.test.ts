@@ -50,12 +50,28 @@ describe("PgPostQuery", () => {
     });
   });
 
+  describe("existsById", () => {
+    it("Should return false when post does not exist", async () => {
+      const result = await sut.existsById(crypto.randomUUID());
+
+      expect(result).toBe(false);
+    });
+
+    it("Should return true when post exists", async () => {
+      const { post_id } = await insertFakePost();
+
+      const result = await sut.existsById(post_id);
+
+      expect(result).toBe(true);
+    });
+  });
+
   describe("findCommentsByPostId", () => {
     it("Should return comments ordered by created_at DESC and id DESC with the requested limit", async () => {
       const { post_id, owner_id } = await insertFakePost();
-      const commentDateA = new Date("2026-01-01T00:00:00.000Z");
-      const commentDateB = new Date("2026-01-02T00:00:00.000Z");
-      const commentDateC = new Date("2026-01-03T00:00:00.000Z");
+      const commentDateA = new Date(0);
+      const commentDateB = new Date(1);
+      const commentDateC = new Date(2);
 
       await insertComment({
         id: "00000000-0000-0000-0000-000000000001",
@@ -99,9 +115,9 @@ describe("PgPostQuery", () => {
 
     it("Should filter comments by cursor using created_at and id tie-breaker", async () => {
       const { post_id, owner_id } = await insertFakePost();
-      const newestDate = new Date("2026-02-03T00:00:00.000Z");
-      const cursorDate = new Date("2026-02-02T00:00:00.000Z");
-      const olderDate = new Date("2026-02-01T00:00:00.000Z");
+      const newestDate = new Date(2);
+      const cursorDate = new Date(1);
+      const olderDate = new Date(0);
 
       await insertComment({
         id: "00000000-0000-0000-0000-0000000000d4",
