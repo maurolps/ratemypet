@@ -3,6 +3,7 @@ import type {
   FindPostCommentsInput,
   GetCommentsQuery,
 } from "@application/queries/get-comments.query";
+import type { PostExistsQuery } from "@application/queries/post-exists.query";
 import type {
   GetPostComment,
   GetPostData,
@@ -31,11 +32,26 @@ type PostCommentRow = {
   created_at: Date;
 };
 
-export class PgPostQuery implements GetPostQuery, GetCommentsQuery {
+type PostExistsRow = {
+  post_exists: boolean;
+};
+
+export class PgPostQuery
+  implements GetPostQuery, GetCommentsQuery, PostExistsQuery
+{
   private readonly pool: PgPool;
 
   constructor() {
     this.pool = PgPool.getInstance();
+  }
+
+  async existsById(post_id: string): Promise<boolean> {
+    const postRows = await this.pool.query<PostExistsRow>(
+      sql.POST_EXISTS_BY_ID,
+      [post_id],
+    );
+
+    return postRows.rows[0]?.post_exists ?? false;
   }
 
   async findPostDetailsById(
