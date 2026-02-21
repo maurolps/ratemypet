@@ -1,4 +1,11 @@
 export const sql = {
+  POST_EXISTS_BY_ID: `
+  SELECT EXISTS (
+    SELECT 1
+    FROM posts p
+    WHERE p.id = $1
+  ) AS post_exists
+  `,
   FIND_POST_DETAILS_BY_ID: `
   SELECT
     p.id,
