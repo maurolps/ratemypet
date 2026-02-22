@@ -51,7 +51,7 @@ export class PgPostQuery
       [post_id],
     );
 
-    return postRows.rows[0]?.post_exists ?? false;
+    return postRows.rows[0].post_exists;
   }
 
   async findPostDetailsById(
