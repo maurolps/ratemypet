@@ -57,5 +57,19 @@ describe("PgFeedQuery", () => {
       expect(result[1].id).toBe("00000000-0000-0000-0000-000000000004");
       expect(result[1].caption).toBe("older_post");
     });
+
+    it("Should return feed when no pagination parameters are provided", async () => {
+      await insertFeedPost({
+        id: crypto.randomUUID(),
+        caption: "any_post_caption",
+        status: "PUBLISHED",
+        likes_count: 0,
+        comments_count: 0,
+        created_at: new Date(0),
+      });
+
+      const result = await sut.getFeed({ limit: 1 });
+      expect(result).toHaveLength(1);
+    });
   });
 });
