@@ -51,7 +51,6 @@ describe("PgFeedQuery", () => {
           id: "00000000-0000-0000-0000-000000000003",
         },
       });
-      console.log(result);
       expect(result).toHaveLength(2);
       expect(result[0].id).toBe("00000000-0000-0000-0000-000000000002");
       expect(result[0].caption).toBe("same_cursor_timestamp_smaller_id");
