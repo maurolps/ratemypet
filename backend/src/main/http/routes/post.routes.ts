@@ -11,6 +11,7 @@ import { makeGetPostController } from "@main/composition/posts/get-post.controll
 import { makeLikePostController } from "@main/composition/posts/like-post.controller.factory";
 import { makeUnlikePostController } from "@main/composition/posts/unlike-post.controller.factory";
 import { makeListCommentsController } from "@main/composition/posts/list-comments.controller.factory";
+import { makeDeletePostController } from "@main/composition/posts/delete-post.controller.factory";
 
 export const postRoutes = Router();
 
@@ -20,6 +21,7 @@ const listCommentsRateLimit = makeRateLimiter({ limit: 30 });
 const createCommentRateLimit = makeRateLimiter({ limit: 10 });
 const likePostRateLimit = makeRateLimiter({ limit: 10 });
 const unlikePostRateLimit = makeRateLimiter({ limit: 10 });
+const deletePostRateLimit = makeRateLimiter({ limit: 10 });
 
 postRoutes.post(
   "/posts",
@@ -53,6 +55,13 @@ postRoutes.get(
   "/posts/:id/comments",
   listCommentsRateLimit,
   expressAdapter(makeListCommentsController()),
+);
+
+postRoutes.delete(
+  "/posts/:id",
+  authMiddleware(),
+  deletePostRateLimit,
+  expressAdapter(makeDeletePostController()),
 );
 
 postRoutes.delete(
