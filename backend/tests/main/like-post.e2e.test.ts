@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import type { Pet } from "@domain/entities/pet";
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
 import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
 import { insertFakePet } from "../infra/db/postgres/helpers/fake-pet";
@@ -91,6 +91,7 @@ describe("[E2E] UC-006 LikePost", () => {
   });
 
   it("Should rollback transaction when update fails", async () => {
+    const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     const post = await createPost(
       postRepository,
       pet.id,
@@ -98,15 +99,16 @@ describe("[E2E] UC-006 LikePost", () => {
       "Rollback Test",
     );
 
-    const db = PgPool.getInstance();
-    await db.query(`
+    try {
+      const db = PgPool.getInstance();
+      await db.query(`
       CREATE OR REPLACE FUNCTION fail_transaction() RETURNS TRIGGER AS $$
       BEGIN
         RAISE EXCEPTION 'Forced failure for testing';
       END;
       $$ LANGUAGE plpgsql;
      `);
-    await db.query(`
+      await db.query(`
       CREATE TRIGGER fail_on_update
       BEFORE UPDATE ON posts
       FOR EACH ROW
@@ -114,20 +116,23 @@ describe("[E2E] UC-006 LikePost", () => {
       EXECUTE FUNCTION fail_transaction();
      `);
 
-    const response = await request(app)
-      .post(`/api/posts/${post.toState.id}/likes`)
-      .set("Authorization", `Bearer ${accessToken}`);
+      const response = await request(app)
+        .post(`/api/posts/${post.toState.id}/likes`)
+        .set("Authorization", `Bearer ${accessToken}`);
 
-    expect(response.status).toBe(500);
+      expect(response.status).toBe(500);
 
-    const likeExists = await likeRepository.exists({
-      post_id: post.toState.id || "",
-      user_id: userId,
-    });
-    expect(likeExists).toBeNull();
+      const likeExists = await likeRepository.exists({
+        post_id: post.toState.id || "",
+        user_id: userId,
+      });
+      expect(likeExists).toBeNull();
 
-    await db.query("DROP TRIGGER IF EXISTS fail_on_update ON posts");
-    await db.query("DROP FUNCTION IF EXISTS fail_transaction");
+      await db.query("DROP TRIGGER IF EXISTS fail_on_update ON posts");
+      await db.query("DROP FUNCTION IF EXISTS fail_transaction");
+    } finally {
+      consoleLogSpy.mockRestore();
+    }
   });
 
   it("Should ensure idempotency when liking the same post at the same time", async () => {
