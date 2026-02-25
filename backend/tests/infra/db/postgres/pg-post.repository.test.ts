@@ -135,4 +135,36 @@ describe("PgPostRepository", () => {
       expect(transaction.query).toHaveBeenCalled();
     });
   });
+
+  describe("deletePost", () => {
+    it("Should soft delete a post by updating status to DELETED", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+
+      await sut.deletePost(savedPost.delete());
+
+      const deletedPost = await sut.findById(savedPost.toState.id ?? "");
+      const state = deletedPost?.toState;
+
+      expect(state?.id).toEqual(savedPost.toState.id);
+      expect(state?.status).toEqual("DELETED");
+      expect(state?.pet_id).toEqual(savedPost.toState.pet_id);
+      expect(state?.author_id).toEqual(savedPost.toState.author_id);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.deletePost(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
 });
