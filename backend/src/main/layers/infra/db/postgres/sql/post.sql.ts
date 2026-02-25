@@ -27,4 +27,10 @@ export const sql = {
   WHERE id = $1
   RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
   `,
+  SOFT_DELETE_POST: `
+  UPDATE posts
+  SET status = 'DELETED'
+  WHERE id = $1
+    AND status = 'PUBLISHED'
+  `,
 };
