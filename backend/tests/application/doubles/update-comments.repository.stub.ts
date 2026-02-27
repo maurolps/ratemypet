@@ -12,4 +12,14 @@ export class UpdateCommentsRepositoryStub implements UpdateCommentsRepository {
       created_at: FIXED_DATE,
     });
   }
+
+  async decrementCommentsCount(post: Post): Promise<Post> {
+    const state = post.toState;
+
+    return Post.rehydrate({
+      ...state,
+      id: state.id ?? "valid_post_id",
+      created_at: FIXED_DATE,
+    });
+  }
 }
