@@ -27,6 +27,12 @@ export const sql = {
   WHERE id = $1
   RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
   `,
+  DECREMENT_COMMENTS_COUNT: `
+  UPDATE posts
+  SET comments_count = GREATEST(0, comments_count - 1)
+  WHERE id = $1
+  RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
+  `,
   SOFT_DELETE_POST: `
   UPDATE posts
   SET status = 'DELETED'
