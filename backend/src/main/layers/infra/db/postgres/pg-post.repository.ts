@@ -94,6 +94,19 @@ export class PgPostRepository
     return Post.rehydrate(updatedPost);
   }
 
+  async decrementCommentsCount(
+    post: Post,
+    transaction?: Transaction,
+  ): Promise<Post> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    const state = post.toState;
+    const postRows = await client.query<PostRow>(sql.DECREMENT_COMMENTS_COUNT, [
+      state.id,
+    ]);
+    const updatedPost = postRows.rows[0];
+    return Post.rehydrate(updatedPost);
+  }
+
   async deletePost(post: Post, transaction?: Transaction): Promise<void> {
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     const state = post.toState;
