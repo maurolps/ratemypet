@@ -136,6 +136,37 @@ describe("PgPostRepository", () => {
     });
   });
 
+  describe("decrementCommentsCount", () => {
+    it("Should decrement comments_count and return updated Post", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const incrementedPost = await sut.incrementCommentsCount(
+        savedPost.comment(),
+      );
+      const decrementedPost = await sut.decrementCommentsCount(
+        incrementedPost.uncomment(),
+      );
+      const state = decrementedPost.toState;
+      expect(state.id).toEqual(savedPost.toState.id);
+      expect(state.comments_count).toBe(0);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [{}],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.decrementCommentsCount(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
+
   describe("deletePost", () => {
     it("Should soft delete a post by updating status to DELETED", async () => {
       const sut = new PgPostRepository();
