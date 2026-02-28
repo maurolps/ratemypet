@@ -55,6 +55,14 @@ describe("Post", () => {
     expect(sut).toThrowError("Comments count cannot be negative.");
   });
 
+  it("Should not change state if post is already deleted", () => {
+    const post = Post.create(postInput);
+    const deletedPost = post.delete();
+    const deletedPostAgain = deletedPost.delete();
+
+    expect(deletedPostAgain.toState).toEqual(deletedPost.toState);
+  });
+
   describe("counters", () => {
     it("Should decrement likes_count by 1", () => {
       const post = Post.create({ ...postInput, likes_count: 5 });
@@ -72,6 +80,18 @@ describe("Post", () => {
       const post = Post.create({ ...postInput, comments_count: 2 });
       const commentedPost = post.comment();
       expect(commentedPost.toState.comments_count).toBe(3);
+    });
+
+    it("Should decrement comments_count by 1", () => {
+      const post = Post.create({ ...postInput, comments_count: 3 });
+      const uncommentedPost = post.uncomment();
+      expect(uncommentedPost.toState.comments_count).toBe(2);
+    });
+
+    it("Should not decrement comments_count below zero", () => {
+      const post = Post.create({ ...postInput, comments_count: 0 });
+      const uncommentedPost = post.uncomment();
+      expect(uncommentedPost.toState.comments_count).toBe(0);
     });
   });
 });
