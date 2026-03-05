@@ -70,6 +70,39 @@ describe("PgPostRepository", () => {
     });
   });
 
+  describe("findPublishedByPetId", () => {
+    it("Should return only published posts for a given pet", async () => {
+      const sut = new PgPostRepository();
+      const publishedPost = await sut.save(Post.create(postDTO));
+      const toDeletePost = await sut.save(Post.create(postDTO));
+      await sut.deletePost(toDeletePost.delete());
+
+      const posts = await sut.findPublishedByPetId(postDTO.pet_id);
+
+      expect(posts.length).toBeGreaterThan(0);
+      expect(
+        posts.some((post) => post.toState.id === publishedPost.toState.id),
+      ).toBe(true);
+      expect(
+        posts.some((post) => post.toState.id === toDeletePost.toState.id),
+      ).toBe(false);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const query = vi.fn().mockResolvedValue({
+        rows: [],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.findPublishedByPetId(postDTO.pet_id, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
+
   describe("incrementLikesCount", () => {
     it("Should increment likes_count and return updated Post", async () => {
       const sut = new PgPostRepository();
