@@ -27,6 +27,7 @@ describe("PgPetRepository", () => {
       expect(pet.image_url).toEqual(unsavedPet.image_url);
       expect(pet.caption).toEqual(unsavedPet.caption);
       expect(pet.created_at).toBeInstanceOf(Date);
+      expect(pet.deleted_at).toBeNull();
     });
   });
 
@@ -57,6 +58,38 @@ describe("PgPetRepository", () => {
       const non_existent_id = crypto.randomUUID();
       const foundPet = await sut.findById(non_existent_id);
       expect(foundPet).toBeNull();
+    });
+  });
+
+  describe("findByIdIncludingDeleted", () => {
+    it("Should find a soft-deleted pet", async () => {
+      const sut = new PgPetRepository();
+      const savedPet = await sut.save({
+        ...unsavedPet,
+        petName: "find_deleted_pet_name",
+      });
+
+      await sut.softDeleteById(savedPet.id);
+
+      const foundPet = await sut.findByIdIncludingDeleted(savedPet.id);
+      expect(foundPet).not.toBeNull();
+      expect(foundPet?.id).toBe(savedPet.id);
+      expect(foundPet?.deleted_at).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("softDeleteById", () => {
+    it("Should soft-delete pet by setting deleted_at", async () => {
+      const sut = new PgPetRepository();
+      const savedPet = await sut.save({
+        ...unsavedPet,
+        petName: "soft_delete_pet_name",
+      });
+
+      await sut.softDeleteById(savedPet.id);
+
+      const foundPet = await sut.findByIdIncludingDeleted(savedPet.id);
+      expect(foundPet?.deleted_at).toBeInstanceOf(Date);
     });
   });
 });
