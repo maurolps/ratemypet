@@ -11,6 +11,7 @@ export class FindPetRepositoryStub implements FindPetRepository {
       image_url: "valid_pet_image_url",
       caption: "valid_caption",
       created_at: new Date(),
+      deleted_at: null,
     };
   }
 }

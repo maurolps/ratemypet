@@ -132,6 +132,7 @@ describe("UploadPetUseCase", () => {
       image_url: "pet_image_url",
       caption: "generated_caption",
       created_at: FIXED_DATE,
+      deleted_at: null,
     });
   });
 });
