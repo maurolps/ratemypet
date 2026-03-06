@@ -24,7 +24,7 @@
 
 ## TDD
 
-- [ ] Test Coverage: 100% across all layers (domain, application, presentation, infrastructure).
+- [x] Test Coverage: 100% across all layers (domain, application, presentation, infrastructure).
 
 ## Error Handling
 
