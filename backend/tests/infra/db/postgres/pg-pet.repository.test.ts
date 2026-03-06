@@ -76,6 +76,13 @@ describe("PgPetRepository", () => {
       expect(foundPet?.id).toBe(savedPet.id);
       expect(foundPet?.deleted_at).toBeInstanceOf(Date);
     });
+
+    it("Should return null when searching for a non-existent pet ID", async () => {
+      const sut = new PgPetRepository();
+      const non_existent_id = crypto.randomUUID();
+      const foundPet = await sut.findByIdIncludingDeleted(non_existent_id);
+      expect(foundPet).toBeNull();
+    });
   });
 
   describe("softDeleteById", () => {
