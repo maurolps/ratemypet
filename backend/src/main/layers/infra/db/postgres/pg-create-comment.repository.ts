@@ -2,6 +2,11 @@ import type {
   CommentIdempotencyKey,
   CommentRepository,
 } from "@application/repositories/comment.repository";
+import type {
+  CommentDeleteTarget,
+  DeleteCommentRepository,
+} from "@application/repositories/delete-comment.repository";
+import type { FindCommentRepository } from "@application/repositories/find-comment.repository";
 import type { Transaction } from "@application/ports/unit-of-work.contract";
 import type { Comment } from "@domain/entities/comment";
 import { CustomError } from "@application/errors/custom-error";
@@ -17,7 +22,9 @@ type CommentRow = {
   created_at: Date;
 };
 
-export class PgCreateCommentRepository implements CommentRepository {
+export class PgCreateCommentRepository
+  implements CommentRepository, FindCommentRepository, DeleteCommentRepository
+{
   private readonly pool: PgPool;
   constructor() {
     this.pool = PgPool.getInstance();
@@ -58,5 +65,31 @@ export class PgCreateCommentRepository implements CommentRepository {
     }
 
     return savedComment;
+  }
+
+  async findByIdAndPostId(
+    commentId: string,
+    postId: string,
+    transaction?: Transaction,
+  ): Promise<Comment | null> {
+    const client = (transaction ? transaction : this.pool) as PgPool;
+    const commentRows = await client.query<CommentRow>(
+      sql.FIND_COMMENT_BY_ID_AND_POST_ID,
+      [commentId, postId],
+    );
+
+    return commentRows.rows[0] ?? null;
+  }
+
+  async delete(
+    comment: CommentDeleteTarget,
+    transaction?: Transaction,
+  ): Promise<boolean> {
+    const client = (transaction ? transaction : this.pool) as PgPool;
+    const result = await client.query(sql.DELETE_COMMENT, [
+      comment.id,
+      comment.post_id,
+    ]);
+    return (result.rowCount ?? 0) > 0;
   }
 }

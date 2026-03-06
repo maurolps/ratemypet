@@ -48,6 +48,7 @@ describe("CreatePostUseCase", () => {
       image_url: "valid_pet_image_url",
       caption: "valid_caption",
       created_at: new Date(),
+      deleted_at: null,
     });
     await expect(sut.execute(postDTO)).rejects.toThrow(
       new AppError(

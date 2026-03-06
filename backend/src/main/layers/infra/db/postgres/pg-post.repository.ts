@@ -3,6 +3,8 @@ import type { CreatePostRepository } from "@application/repositories/create-post
 import type { FindPostRepository } from "@application/repositories/find-post.repository";
 import type { UpdateLikesRepository } from "@application/repositories/update-likes.repository";
 import type { UpdateCommentsRepository } from "@application/repositories/update-comments.repository";
+import type { DeletePostRepository } from "@application/repositories/delete-post.repository";
+import type { FindPublishedPostsRepository } from "@application/repositories/find-published-posts.repository";
 import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/post.sql";
 import type { Transaction } from "@application/ports/unit-of-work.contract";
@@ -22,8 +24,10 @@ export class PgPostRepository
   implements
     CreatePostRepository,
     FindPostRepository,
+    FindPublishedPostsRepository,
     UpdateLikesRepository,
-    UpdateCommentsRepository
+    UpdateCommentsRepository,
+    DeletePostRepository
 {
   private readonly pool: PgPool;
   constructor() {
@@ -51,6 +55,18 @@ export class PgPostRepository
     const postRows = await client.query<PostRow>(sql.FIND_POST_BY_ID, [postId]);
     const post = postRows.rows[0] || null;
     return post ? Post.rehydrate(post) : null;
+  }
+
+  async findPublishedByPetId(
+    petId: string,
+    transaction?: Transaction,
+  ): Promise<Post[]> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    const postRows = await client.query<PostRow>(
+      sql.FIND_PUBLISHED_POSTS_BY_PET_ID,
+      [petId],
+    );
+    return postRows.rows.map((post) => Post.rehydrate(post));
   }
 
   async incrementLikesCount(
@@ -90,5 +106,24 @@ export class PgPostRepository
     ]);
     const updatedPost = postRows.rows[0];
     return Post.rehydrate(updatedPost);
+  }
+
+  async decrementCommentsCount(
+    post: Post,
+    transaction?: Transaction,
+  ): Promise<Post> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    const state = post.toState;
+    const postRows = await client.query<PostRow>(sql.DECREMENT_COMMENTS_COUNT, [
+      state.id,
+    ]);
+    const updatedPost = postRows.rows[0];
+    return Post.rehydrate(updatedPost);
+  }
+
+  async deletePost(post: Post, transaction?: Transaction): Promise<void> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    const state = post.toState;
+    await client.query(sql.SOFT_DELETE_POST, [state.id]);
   }
 }

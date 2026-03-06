@@ -4,6 +4,7 @@ export const sql = {
     SELECT 1
     FROM posts p
     WHERE p.id = $1
+      AND p.status = 'PUBLISHED'
   ) AS post_exists
   `,
   FIND_POST_DETAILS_BY_ID: `
@@ -27,6 +28,7 @@ export const sql = {
     ) AS viewer_has_liked
   FROM posts p
   WHERE p.id = $1
+    AND p.status = 'PUBLISHED'
   `,
   FIND_POST_COMMENTS: `
   SELECT

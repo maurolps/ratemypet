@@ -11,6 +11,11 @@ export const created = (loggedUser: LoggedUser): HttpResponse => ({
   body: loggedUser,
 });
 
+export const noContent = (): HttpResponse => ({
+  status: 204,
+  body: {},
+});
+
 export const conflict = (message: string): HttpResponse => ({
   status: 409,
   body: {

@@ -66,6 +66,7 @@ describe("UploadPetController", () => {
       image_url: "valid_pet_image_url",
       caption: "generated_caption",
       created_at: FIXED_DATE,
+      deleted_at: null,
     });
   });
 

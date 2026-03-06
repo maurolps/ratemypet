@@ -1,4 +1,8 @@
-export type PostStatus = "PENDING_REVIEW" | "PUBLISHED" | "REJECTED";
+export type PostStatus =
+  | "PENDING_REVIEW"
+  | "PUBLISHED"
+  | "REJECTED"
+  | "DELETED";
 
 export type PostState = {
   id?: string;
@@ -75,11 +79,35 @@ export class Post {
     return Post.rehydrate(updatedState);
   }
 
+  delete(): Post {
+    const state = this.toState;
+
+    if (state.status === "DELETED") {
+      return this;
+    }
+
+    return Post.rehydrate({
+      ...state,
+      status: "DELETED",
+    });
+  }
+
   comment(): Post {
     const state = this.toState;
     const updatedState: PostState = {
       ...state,
       comments_count: state.comments_count + 1,
+    };
+
+    return Post.rehydrate(updatedState);
+  }
+
+  uncomment(): Post {
+    const state = this.toState;
+    const newCommentsCount = Math.max(0, state.comments_count - 1);
+    const updatedState: PostState = {
+      ...state,
+      comments_count: newCommentsCount,
     };
 
     return Post.rehydrate(updatedState);

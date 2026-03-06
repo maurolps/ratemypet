@@ -70,6 +70,39 @@ describe("PgPostRepository", () => {
     });
   });
 
+  describe("findPublishedByPetId", () => {
+    it("Should return only published posts for a given pet", async () => {
+      const sut = new PgPostRepository();
+      const publishedPost = await sut.save(Post.create(postDTO));
+      const toDeletePost = await sut.save(Post.create(postDTO));
+      await sut.deletePost(toDeletePost.delete());
+
+      const posts = await sut.findPublishedByPetId(postDTO.pet_id);
+
+      expect(posts.length).toBeGreaterThan(0);
+      expect(
+        posts.some((post) => post.toState.id === publishedPost.toState.id),
+      ).toBe(true);
+      expect(
+        posts.some((post) => post.toState.id === toDeletePost.toState.id),
+      ).toBe(false);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const query = vi.fn().mockResolvedValue({
+        rows: [],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.findPublishedByPetId(postDTO.pet_id, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
+
   describe("incrementLikesCount", () => {
     it("Should increment likes_count and return updated Post", async () => {
       const sut = new PgPostRepository();
@@ -131,6 +164,69 @@ describe("PgPostRepository", () => {
       };
 
       await sut.incrementCommentsCount(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
+
+  describe("decrementCommentsCount", () => {
+    it("Should decrement comments_count and return updated Post", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+      const incrementedPost = await sut.incrementCommentsCount(
+        savedPost.comment(),
+      );
+      const decrementedPost = await sut.decrementCommentsCount(
+        incrementedPost.uncomment(),
+      );
+      const state = decrementedPost.toState;
+      expect(state.id).toEqual(savedPost.toState.id);
+      expect(state.comments_count).toBe(0);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [{}],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.decrementCommentsCount(post, transaction);
+
+      expect(transaction.query).toHaveBeenCalled();
+    });
+  });
+
+  describe("deletePost", () => {
+    it("Should soft delete a post by updating status to DELETED", async () => {
+      const sut = new PgPostRepository();
+      const savedPost = await sut.save(Post.create(postDTO));
+
+      await sut.deletePost(savedPost.delete());
+
+      const deletedPost = await sut.findById(savedPost.toState.id ?? "");
+      const state = deletedPost?.toState;
+
+      expect(state?.id).toEqual(savedPost.toState.id);
+      expect(state?.status).toEqual("DELETED");
+      expect(state?.pet_id).toEqual(savedPost.toState.pet_id);
+      expect(state?.author_id).toEqual(savedPost.toState.author_id);
+    });
+
+    it("Should use a transaction if provided", async () => {
+      const sut = new PgPostRepository();
+      const post = Post.create(postDTO);
+      const query = vi.fn().mockResolvedValue({
+        rows: [],
+      });
+      const transaction = {
+        query,
+      };
+
+      await sut.deletePost(post, transaction);
 
       expect(transaction.query).toHaveBeenCalled();
     });

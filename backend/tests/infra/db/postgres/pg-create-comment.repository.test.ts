@@ -85,6 +85,76 @@ describe("PgCreateCommentRepository", () => {
     });
   });
 
+  it("Should return a Comment when it exists by id and post_id", async () => {
+    const sut = new PgCreateCommentRepository();
+    const savedComment = await sut.save({
+      post_id: commentDTO.post_id,
+      author_id: commentDTO.author_id,
+      content: "find by id comment",
+      idempotency_key: crypto.randomUUID(),
+    });
+
+    const comment = await sut.findByIdAndPostId(
+      savedComment.id || "",
+      commentDTO.post_id,
+    );
+
+    expect(comment).not.toBeNull();
+    expect(comment?.id).toEqual(savedComment.id);
+    expect(comment?.post_id).toEqual(commentDTO.post_id);
+  });
+
+  it("Should return null when searching by id with wrong post_id", async () => {
+    const sut = new PgCreateCommentRepository();
+    const savedComment = await sut.save({
+      post_id: commentDTO.post_id,
+      author_id: commentDTO.author_id,
+      content: "wrong post lookup comment",
+      idempotency_key: crypto.randomUUID(),
+    });
+
+    const comment = await sut.findByIdAndPostId(
+      savedComment.id || "",
+      crypto.randomUUID(),
+    );
+
+    expect(comment).toBeNull();
+  });
+
+  it("Should delete an existing comment and return true", async () => {
+    const sut = new PgCreateCommentRepository();
+    const savedComment = await sut.save({
+      post_id: commentDTO.post_id,
+      author_id: commentDTO.author_id,
+      content: "deletable comment",
+      idempotency_key: crypto.randomUUID(),
+    });
+
+    const result = await sut.delete({
+      id: savedComment.id || "",
+      post_id: commentDTO.post_id,
+    });
+
+    expect(result).toBe(true);
+
+    const deletedComment = await sut.findByIdAndPostId(
+      savedComment.id || "",
+      commentDTO.post_id,
+    );
+    expect(deletedComment).toBeNull();
+  });
+
+  it("Should return false when deleting a non-existent comment", async () => {
+    const sut = new PgCreateCommentRepository();
+
+    const result = await sut.delete({
+      id: crypto.randomUUID(),
+      post_id: commentDTO.post_id,
+    });
+
+    expect(result).toBe(false);
+  });
+
   it("Should use a transaction when saving a comment", async () => {
     const sut = new PgCreateCommentRepository();
     const transaction = {
@@ -134,5 +204,67 @@ describe("PgCreateCommentRepository", () => {
     );
 
     expect(transaction.query).toHaveBeenCalled();
+  });
+
+  it("Should use a transaction when finding a comment by id and post_id", async () => {
+    const sut = new PgCreateCommentRepository();
+    const transaction = {
+      query: vi.fn().mockResolvedValue({
+        rows: [
+          {
+            id: "valid_comment_id",
+            post_id: commentDTO.post_id,
+            author_id: commentDTO.author_id,
+            content: commentDTO.content,
+            idempotency_key: commentDTO.idempotency_key,
+            created_at: new Date(),
+          },
+        ],
+      }),
+    };
+
+    await sut.findByIdAndPostId(
+      "valid_comment_id",
+      commentDTO.post_id,
+      transaction,
+    );
+
+    expect(transaction.query).toHaveBeenCalled();
+  });
+
+  it("Should use a transaction when deleting a comment", async () => {
+    const sut = new PgCreateCommentRepository();
+    const transaction = {
+      query: vi.fn().mockResolvedValue({ rowCount: 1 }),
+    };
+
+    const result = await sut.delete(
+      {
+        id: "valid_comment_id",
+        post_id: commentDTO.post_id,
+      },
+      transaction,
+    );
+
+    expect(transaction.query).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it("Should return false when transaction delete returns undefined rowCount", async () => {
+    const sut = new PgCreateCommentRepository();
+    const transaction = {
+      query: vi.fn().mockResolvedValue({ rowCount: undefined }),
+    };
+
+    const result = await sut.delete(
+      {
+        id: "valid_comment_id",
+        post_id: commentDTO.post_id,
+      },
+      transaction,
+    );
+
+    expect(transaction.query).toHaveBeenCalled();
+    expect(result).toBe(false);
   });
 });

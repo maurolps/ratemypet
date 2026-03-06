@@ -9,6 +9,12 @@ export const sql = {
   FROM posts
   WHERE id = $1
   `,
+  FIND_PUBLISHED_POSTS_BY_PET_ID: `
+  SELECT id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
+  FROM posts
+  WHERE pet_id = $1
+    AND status = 'PUBLISHED'
+  `,
   INCREMENT_LIKES_COUNT: `
   UPDATE posts
   SET likes_count = likes_count + 1
@@ -26,5 +32,17 @@ export const sql = {
   SET comments_count = comments_count + 1
   WHERE id = $1
   RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
+  `,
+  DECREMENT_COMMENTS_COUNT: `
+  UPDATE posts
+  SET comments_count = GREATEST(0, comments_count - 1)
+  WHERE id = $1
+  RETURNING id, pet_id, author_id, caption, status, created_at, likes_count, comments_count
+  `,
+  SOFT_DELETE_POST: `
+  UPDATE posts
+  SET status = 'DELETED'
+  WHERE id = $1
+    AND status = 'PUBLISHED'
   `,
 };

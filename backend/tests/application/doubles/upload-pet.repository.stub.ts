@@ -12,6 +12,7 @@ export class UploadPetRepositoryStub implements UploadPetRepository {
       name: pet.petName,
       id: "generated_pet_uuid",
       created_at: FIXED_DATE,
+      deleted_at: null,
     };
   }
 

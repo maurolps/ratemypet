@@ -27,6 +27,7 @@ export default defineConfig({
           include: ["./backend/tests/**/*.test.ts"],
           globalSetup: "./backend/tests/config/global-setup.ts",
           setupFiles: "./backend/tests/config/setup-db.ts",
+          hookTimeout: 30_000,
           testTimeout: 60_000,
         },
       },

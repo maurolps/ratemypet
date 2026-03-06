@@ -8,6 +8,7 @@ export type Pet = {
   image_url: string;
   caption: string;
   created_at: Date;
+  deleted_at: Date | null;
 };
 
 export type UnsavedPet = {
