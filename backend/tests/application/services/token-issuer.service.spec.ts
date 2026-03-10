@@ -63,7 +63,6 @@ describe("TokenIssuerService", () => {
     name: "valid_name",
     email: "valid_email@mail.com",
     created_at: FIXED_DATE,
-    passwordHash: "valid_password",
   };
 
   describe("execute", () => {

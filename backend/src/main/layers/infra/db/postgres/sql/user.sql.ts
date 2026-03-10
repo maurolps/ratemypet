@@ -1,16 +1,16 @@
 export const sql = {
   CREATE_USER: `
-  INSERT INTO users (name, email, password_hash)
-  VALUES ($1, $2, $3)
+  INSERT INTO users (name, email)
+  VALUES ($1, $2)
   RETURNING id, name, email, created_at
   `,
   FIND_BY_EMAIL: `
-  SELECT id, name, email, created_at, password_hash
+  SELECT id, name, email, created_at
   FROM users
   WHERE email = $1
   `,
   FIND_BY_ID: `
-  SELECT id, name, email, created_at, password_hash
+  SELECT id, name, email, created_at
   FROM users
   WHERE id = $1
   `,

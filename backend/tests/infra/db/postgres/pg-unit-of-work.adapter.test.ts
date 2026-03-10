@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import type { User } from "@domain/entities/user";
 import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 import { PgUnitOfWorkAdapter } from "@infra/db/postgres/adapters/pg-unit-of-work.adapter";
 import { sql } from "@infra/db/postgres/sql/user.sql";
+import type { UserRow } from "@infra/mappers/user-mapper";
 
 const makeUniqueEmail = () => `uow_${Date.now()}_${Math.random()}@example.com`;
 
@@ -13,10 +13,9 @@ describe("PgUnitOfWorkAdapter", () => {
 
     const result = await sut.execute(async (transactionClient) => {
       const client = transactionClient as PgPool;
-      const inserted = await client.query<User>(sql.CREATE_USER, [
+      const inserted = await client.query<UserRow>(sql.CREATE_USER, [
         "any_name",
         email,
-        "hashed_password",
       ]);
       return inserted.rows[0];
     });
@@ -24,7 +23,7 @@ describe("PgUnitOfWorkAdapter", () => {
     expect(result.id).toBeTruthy();
 
     const pool = PgPool.getInstance();
-    const persisted = await pool.query<User>(sql.FIND_BY_EMAIL, [email]);
+    const persisted = await pool.query<UserRow>(sql.FIND_BY_EMAIL, [email]);
     expect(persisted.rows).toHaveLength(1);
   });
 
@@ -35,17 +34,13 @@ describe("PgUnitOfWorkAdapter", () => {
     await expect(
       sut.execute(async (transactionClient) => {
         const client = transactionClient as PgPool;
-        await client.query<User>(sql.CREATE_USER, [
-          "any_name",
-          email,
-          "hashed_password",
-        ]);
+        await client.query<UserRow>(sql.CREATE_USER, ["any_name", email]);
         throw new Error("forced failure");
       }),
     ).rejects.toThrow("forced failure");
 
     const pool = PgPool.getInstance();
-    const persisted = await pool.query<User>(sql.FIND_BY_EMAIL, [email]);
+    const persisted = await pool.query<UserRow>(sql.FIND_BY_EMAIL, [email]);
     expect(persisted.rows).toHaveLength(0);
   });
 
