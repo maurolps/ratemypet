@@ -1,6 +1,8 @@
+import type { Transaction } from "@application/ports/unit-of-work.contract";
 import type { User } from "@domain/entities/user";
-import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
+
+export type CreateUserData = Pick<User, "name" | "email">;
 
 export interface CreateUserRepository {
-  create(userDTO: CreateUserDTO): Promise<User>;
+  create(userDTO: CreateUserData, transaction?: Transaction): Promise<User>;
 }
