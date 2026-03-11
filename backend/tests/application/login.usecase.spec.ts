@@ -29,7 +29,7 @@ describe("LoginUseCase", () => {
 
   it("Should throw UNAUTHORIZED error when user is not found", async () => {
     const { sut, findUserStub } = makeSut();
-    vi.spyOn(findUserStub, "findByEmail").mockResolvedValueOnce(null);
+    vi.spyOn(findUserStub, "findById").mockResolvedValueOnce(null);
     const loginDTO = {
       email: "non_exists@mail.com",
       password: "any_password",
@@ -52,7 +52,7 @@ describe("LoginUseCase", () => {
     const { sut, authIdentityRepositoryStub } = makeSut();
     vi.spyOn(
       authIdentityRepositoryStub,
-      "findByUserIdAndProvider",
+      "findByProviderAndIdentifier",
     ).mockResolvedValueOnce(null);
     const loginDTO = {
       email: "valid_email@mail.com",
@@ -66,11 +66,12 @@ describe("LoginUseCase", () => {
     const { sut, authIdentityRepositoryStub } = makeSut();
     vi.spyOn(
       authIdentityRepositoryStub,
-      "findByUserIdAndProvider",
+      "findByProviderAndIdentifier",
     ).mockResolvedValueOnce({
       id: "valid_auth_identity_id",
       user_id: "valid_user_id",
       provider: "local",
+      identifier: "valid_email@mail.com",
       password_hash: null,
       provider_user_id: null,
       created_at: FIXED_DATE,
@@ -83,8 +84,49 @@ describe("LoginUseCase", () => {
     await expect(promise).rejects.toThrow(new AppError("UNAUTHORIZED"));
   });
 
+  it("Should lookup local auth identity by provider and identifier", async () => {
+    const { sut, authIdentityRepositoryStub } = makeSut();
+    const findByProviderAndIdentifierSpy = vi.spyOn(
+      authIdentityRepositoryStub,
+      "findByProviderAndIdentifier",
+    );
+    findByProviderAndIdentifierSpy.mockResolvedValueOnce({
+      id: "valid_auth_identity_id",
+      user_id: "valid_user_id",
+      provider: "local",
+      identifier: "valid_email@mail.com",
+      password_hash: "hashed_valid_password",
+      provider_user_id: null,
+      created_at: FIXED_DATE,
+    });
+    const loginDTO = {
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+
+    await sut.auth(loginDTO);
+
+    expect(findByProviderAndIdentifierSpy).toHaveBeenCalledWith(
+      "local",
+      loginDTO.email,
+    );
+  });
+
   it("Should return a logged user without password on success", async () => {
-    const { sut } = makeSut();
+    const { sut, authIdentityRepositoryStub } = makeSut();
+    const findByProviderAndIdentifierSpy = vi.spyOn(
+      authIdentityRepositoryStub,
+      "findByProviderAndIdentifier",
+    );
+    findByProviderAndIdentifierSpy.mockResolvedValueOnce({
+      id: "valid_auth_identity_id",
+      user_id: "valid_user_id",
+      provider: "local",
+      identifier: "valid_email@mail.com",
+      password_hash: "hashed_valid_password",
+      provider_user_id: null,
+      created_at: FIXED_DATE,
+    });
     const loginDTO = {
       email: "valid_email@mail.com",
       password: "valid_password",
