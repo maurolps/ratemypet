@@ -18,15 +18,10 @@ export class LoginUseCase implements Login {
   ) {}
 
   async auth(loginDTO: LoginDTO): Promise<LoggedUser> {
-    const user = await this.findUser.findByEmail(loginDTO.email);
-    if (!user) {
-      throw new AppError("UNAUTHORIZED");
-    }
-
     const authIdentity =
-      await this.authIdentityRepository.findByUserIdAndProvider(
-        user.id,
+      await this.authIdentityRepository.findByProviderAndIdentifier(
         "local",
+        loginDTO.email,
       );
 
     if (!authIdentity?.password_hash) {
@@ -39,6 +34,11 @@ export class LoginUseCase implements Login {
         authIdentity.password_hash,
       ))
     ) {
+      throw new AppError("UNAUTHORIZED");
+    }
+
+    const user = await this.findUser.findById(authIdentity.user_id);
+    if (!user) {
       throw new AppError("UNAUTHORIZED");
     }
 

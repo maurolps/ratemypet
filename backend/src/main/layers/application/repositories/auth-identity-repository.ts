@@ -10,6 +10,14 @@ export interface AuthIdentityRepository {
     userId: string,
     provider: AuthProvider,
   ): Promise<AuthIdentity | null>;
+  findByProviderAndIdentifier(
+    provider: AuthProvider,
+    identifier: string,
+  ): Promise<AuthIdentity | null>;
+  findByProviderUserId(
+    provider: AuthProvider,
+    providerUserId: string,
+  ): Promise<AuthIdentity | null>;
   create(
     authIdentity: CreateAuthIdentityData,
     transaction?: Transaction,
