@@ -4,6 +4,8 @@ import { describe, vi, it, expect } from "vitest";
 import { FindUserRepositoryStub } from "./doubles/find-user.repository.stub";
 import { HasherStub } from "./doubles/hasher.stub";
 import { CreateUserRepositoryStub } from "./doubles/create-user.repository.stub";
+import { AuthIdentityRepositoryStub } from "./doubles/auth-identity.repository.stub";
+import { UnitOfWorkStub } from "./doubles/unit-of-work.stub";
 
 describe("CreateUserUseCase", () => {
   const makeSut = () => {
@@ -14,16 +16,27 @@ describe("CreateUserUseCase", () => {
     );
     const hasherStub = new HasherStub();
     const createUserRepositoryStub = new CreateUserRepositoryStub();
+    const authIdentityRepositoryStub = new AuthIdentityRepositoryStub();
+    const unitOfWorkStub = new UnitOfWorkStub();
     const sut = new CreateUserUseCase(
       findUserRepositoryStub,
       hasherStub,
       createUserRepositoryStub,
+      authIdentityRepositoryStub,
+      unitOfWorkStub,
     );
+    const authIdentityRepositorySpy = vi.spyOn(
+      authIdentityRepositoryStub,
+      "create",
+    );
+    const unitOfWorkExecuteSpy = vi.spyOn(unitOfWorkStub, "execute");
     return {
       sut,
       findUserRepositorySpy,
       hasherStub,
       createUserRepositoryStub,
+      authIdentityRepositorySpy,
+      unitOfWorkExecuteSpy,
     };
   };
 
@@ -54,12 +67,36 @@ describe("CreateUserUseCase", () => {
       "create",
     );
     findUserRepositorySpy.mockImplementationOnce(() => Promise.resolve(null));
-    const hashedPassword = `hashed_${userDTO.password}`;
     await sut.execute(userDTO);
-    expect(createUserRepositorySpy).toHaveBeenCalledWith({
-      ...userDTO,
-      password: hashedPassword,
-    });
+    expect(createUserRepositorySpy).toHaveBeenCalledWith(
+      {
+        name: userDTO.name,
+        email: userDTO.email,
+      },
+      expect.any(Object),
+    );
+  });
+
+  it("Should call AuthIdentityRepository with correct values", async () => {
+    const { sut, findUserRepositorySpy, authIdentityRepositorySpy } = makeSut();
+    findUserRepositorySpy.mockImplementationOnce(() => Promise.resolve(null));
+    await sut.execute(userDTO);
+    expect(authIdentityRepositorySpy).toHaveBeenCalledWith(
+      {
+        user_id: "any_id",
+        provider: "local",
+        password_hash: "hashed_valid_password",
+        provider_user_id: null,
+      },
+      expect.any(Object),
+    );
+  });
+
+  it("Should execute user creation inside an UnitOfWork", async () => {
+    const { sut, findUserRepositorySpy, unitOfWorkExecuteSpy } = makeSut();
+    findUserRepositorySpy.mockImplementationOnce(() => Promise.resolve(null));
+    await sut.execute(userDTO);
+    expect(unitOfWorkExecuteSpy).toHaveBeenCalledTimes(1);
   });
 
   it("Should return a User on success", async () => {
@@ -75,5 +112,12 @@ describe("CreateUserUseCase", () => {
     const { findUserRepositorySpy, sut } = makeSut();
     findUserRepositorySpy.mockRejectedValueOnce(new Error());
     await expect(sut.execute(userDTO)).rejects.toThrow(new Error());
+  });
+
+  it("Should rethrow if AuthIdentityRepository throws", async () => {
+    const { sut, findUserRepositorySpy, authIdentityRepositorySpy } = makeSut();
+    findUserRepositorySpy.mockImplementationOnce(() => Promise.resolve(null));
+    authIdentityRepositorySpy.mockRejectedValueOnce(new Error("any_error"));
+    await expect(sut.execute(userDTO)).rejects.toThrow(new Error("any_error"));
   });
 });

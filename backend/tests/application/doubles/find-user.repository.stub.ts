@@ -10,7 +10,6 @@ export class FindUserRepositoryStub implements FindUserRepository {
         name: "valid_name",
         email: "valid_email@mail.com",
         created_at: FIXED_DATE,
-        password_hash: "hashed_valid_password",
       }),
     );
   }
@@ -22,7 +21,6 @@ export class FindUserRepositoryStub implements FindUserRepository {
         name: "valid_name",
         email: "valid_email@mail.com",
         created_at: FIXED_DATE,
-        password_hash: "hashed_valid_password",
       }),
     );
   }

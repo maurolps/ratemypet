@@ -1,12 +1,11 @@
-import type { CreateUserDTO } from "@domain/usecases/create-user.contract";
+import type { CreateUserData } from "@application/repositories/create-user.repository";
 import { it, describe, expect } from "vitest";
 import { PgUserRepository } from "@infra/db/postgres/pg-user.repository";
 
 describe("PgUserRepository", () => {
-  const userDTO: CreateUserDTO = {
+  const userDTO: CreateUserData = {
     name: "valid_name",
     email: "valid_email@mail.com",
-    password: "hashed_password",
   };
 
   describe("create", () => {
@@ -19,11 +18,10 @@ describe("PgUserRepository", () => {
   });
 
   describe("findByEmail", () => {
-    it("Should return an User with passwordHash on success", async () => {
+    it("Should return an User on success", async () => {
       const sut = new PgUserRepository();
       const user = await sut.findByEmail(userDTO.email);
       expect(user?.name).toEqual(userDTO.name);
-      expect(user?.password_hash).toEqual(userDTO.password);
       expect(user?.created_at).toBeInstanceOf(Date);
     });
     it("Should return null on fail", async () => {
@@ -36,19 +34,17 @@ describe("PgUserRepository", () => {
   });
 
   describe("findById", () => {
-    it("Should return an User with passwordHash on success", async () => {
+    it("Should return an User on success", async () => {
       const sut = new PgUserRepository();
-      const newUser: CreateUserDTO = {
+      const newUser: CreateUserData = {
         name: "valid_user_name",
         email: "valid_user_email@mail.com",
-        password: "hashed_user_password",
       };
       const createdUser = await sut.create(newUser);
 
       const user = await sut.findById(createdUser.id);
 
       expect(user?.name).toEqual(newUser.name);
-      expect(user?.password_hash).toEqual(newUser.password);
       expect(user?.created_at).toBeInstanceOf(Date);
     });
     it("Should return null on fail", async () => {

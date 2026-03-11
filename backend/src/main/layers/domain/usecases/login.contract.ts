@@ -6,9 +6,10 @@ export interface LoginDTO {
   password: string;
 }
 
-export type LoggedUser = Omit<User, "password_hash"> & {
-  tokens: Tokens;
-};
+export type LoggedUser = Record<string, unknown> &
+  User & {
+    tokens: Tokens;
+  };
 
 export interface Login {
   auth(loginDTO: LoginDTO): Promise<LoggedUser>;

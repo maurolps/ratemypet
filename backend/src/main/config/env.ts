@@ -6,9 +6,9 @@ export const env = {
     "postgres://ratemypet:ratemypet@localhost:5432/ratemypet_dev?sslmode=disable",
   JWT_ACCESS_TOKEN_SECRET:
     process.env.JWT_ACCESS_TOKEN_SECRET || "dev_access_token_secret",
-  JWT_ACCESS_TOKEN_TTL: process.env.JWT_ACCESS_TOKEN_TTL || "10s",
+  JWT_ACCESS_TOKEN_TTL: process.env.JWT_ACCESS_TOKEN_TTL || "30s",
   REFRESH_TOKEN_TTL:
-    (process.env.REFRESH_TOKEN_TTL as unknown as number) || 20_000,
+    (process.env.REFRESH_TOKEN_TTL as unknown as number) || 60_000,
   RATE_LIMIT_ENABLED: process.env.RATE_LIMIT_ENABLED || "true",
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
   AWS_REGION: process.env.AWS_REGION || "auto",
