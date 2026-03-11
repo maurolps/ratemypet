@@ -46,6 +46,23 @@ describe("[E2E] UC-001 CreateUser", () => {
       savedUser?.created_at.toISOString(),
     );
     expect(authIdentity).not.toBeNull();
+    expect(authIdentity?.identifier).toEqual(userDTO.email);
     expect(authIdentity?.password_hash).toBeTruthy();
+  });
+
+  it("Should return 409 when local email identifier is already in use", async () => {
+    const { app } = makeSut();
+    const userDTO = {
+      name: "any_name",
+      email: `user_${crypto.randomUUID()}@mail.com`,
+      password: "any_password",
+    };
+
+    const firstResponse = await request(app).post("/api/users").send(userDTO);
+    const secondResponse = await request(app).post("/api/users").send(userDTO);
+
+    expect(firstResponse.status).toBe(201);
+    expect(secondResponse.status).toBe(409);
+    expect(secondResponse.body.message).toEqual("Email already in use");
   });
 });

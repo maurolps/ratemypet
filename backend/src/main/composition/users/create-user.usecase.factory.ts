@@ -10,7 +10,6 @@ export const makeCreateUserUseCase = () => {
   const hasher = new BcryptAdapter();
   const unitOfWork = new PgUnitOfWorkAdapter();
   const usecase = new CreateUserUseCase(
-    userRepository,
     hasher,
     userRepository,
     authIdentityRepository,
