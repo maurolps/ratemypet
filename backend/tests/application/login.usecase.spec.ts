@@ -28,7 +28,8 @@ describe("LoginUseCase", () => {
   };
 
   it("Should throw UNAUTHORIZED error when user is not found", async () => {
-    const { sut } = makeSut();
+    const { sut, findUserStub } = makeSut();
+    vi.spyOn(findUserStub, "findByEmail").mockResolvedValueOnce(null);
     const loginDTO = {
       email: "non_exists@mail.com",
       password: "any_password",
