@@ -10,6 +10,7 @@ export const env = {
   REFRESH_TOKEN_TTL:
     (process.env.REFRESH_TOKEN_TTL as unknown as number) || 60_000,
   RATE_LIMIT_ENABLED: process.env.RATE_LIMIT_ENABLED || "true",
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
   AWS_REGION: process.env.AWS_REGION || "auto",
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
