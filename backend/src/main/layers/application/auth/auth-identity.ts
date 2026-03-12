@@ -1,4 +1,4 @@
-export type AuthProvider = "local";
+export type AuthProvider = "local" | "google";
 
 export interface AuthIdentity {
   id: string;
