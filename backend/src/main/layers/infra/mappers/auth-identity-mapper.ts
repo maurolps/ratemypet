@@ -3,7 +3,7 @@ import type { AuthIdentity } from "@application/auth/auth-identity";
 export type AuthIdentityRow = {
   id: string;
   user_id: string;
-  provider: "local";
+  provider: "local" | "google";
   identifier: string;
   provider_user_id: string | null;
   password_hash: string | null;

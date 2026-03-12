@@ -96,14 +96,14 @@ describe("PgAuthIdentityRepository", () => {
       const user = await insertFakeUser(`user_${crypto.randomUUID()}@mail.com`);
       const createdAuthIdentity = await sut.create({
         user_id: user.id,
-        provider: "local",
+        provider: "google",
         identifier: user.email,
         provider_user_id: crypto.randomUUID(),
         password_hash: "hashed_password",
       });
 
       const authIdentity = await sut.findByProviderUserId(
-        "local",
+        "google",
         createdAuthIdentity.provider_user_id as string,
       );
 
@@ -114,7 +114,7 @@ describe("PgAuthIdentityRepository", () => {
       const sut = makeSut();
 
       const authIdentity = await sut.findByProviderUserId(
-        "local",
+        "google",
         crypto.randomUUID(),
       );
 
@@ -164,7 +164,7 @@ describe("PgAuthIdentityRepository", () => {
 
       await sut.create({
         user_id: firstUser.id,
-        provider: "local",
+        provider: "google",
         identifier: `first_${crypto.randomUUID()}@mail.com`,
         provider_user_id: providerUserId,
         password_hash: "hashed_password",
@@ -173,7 +173,7 @@ describe("PgAuthIdentityRepository", () => {
       await expect(
         sut.create({
           user_id: secondUser.id,
-          provider: "local",
+          provider: "google",
           identifier: `second_${crypto.randomUUID()}@mail.com`,
           provider_user_id: providerUserId,
           password_hash: "hashed_password",
