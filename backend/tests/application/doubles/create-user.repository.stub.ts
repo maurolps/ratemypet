@@ -12,6 +12,7 @@ export class CreateUserRepositoryStub implements CreateUserRepository {
         created_at: FIXED_DATE,
         name: userDTO.name,
         email: userDTO.email,
+        ...(userDTO.picture !== undefined ? { picture: userDTO.picture } : {}),
       });
     });
   }
