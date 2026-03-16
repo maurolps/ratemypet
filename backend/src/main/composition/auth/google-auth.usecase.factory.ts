@@ -1,20 +1,23 @@
-import { CreateUserUseCase } from "@application/usecases/create-user.usecase";
+import { GoogleAuthUseCase } from "@application/usecases/google-auth.usecase";
 import { PgUnitOfWorkAdapter } from "@infra/db/postgres/adapters/pg-unit-of-work.adapter";
 import { PgAuthIdentityRepository } from "@infra/db/postgres/pg-auth-identity.repository";
 import { PgUserRepository } from "@infra/db/postgres/pg-user.repository";
-import { BcryptAdapter } from "@infra/security/bcrypt.adapter";
+import { makeTokenIssuer } from "@main/composition/users/token-issuer.factory";
+import { makeGoogleTokenVerifier } from "./google-token-verifier.factory";
 
-export const makeCreateUserUseCase = () => {
+export const makeGoogleAuthUseCase = () => {
+  const googleTokenVerifier = makeGoogleTokenVerifier();
   const userRepository = new PgUserRepository();
   const authIdentityRepository = new PgAuthIdentityRepository();
-  const hasher = new BcryptAdapter();
+  const tokenIssuer = makeTokenIssuer();
   const unitOfWork = new PgUnitOfWorkAdapter();
-  const usecase = new CreateUserUseCase(
-    hasher,
+
+  return new GoogleAuthUseCase(
+    googleTokenVerifier,
+    userRepository,
     userRepository,
     authIdentityRepository,
+    tokenIssuer,
     unitOfWork,
   );
-
-  return usecase;
 };

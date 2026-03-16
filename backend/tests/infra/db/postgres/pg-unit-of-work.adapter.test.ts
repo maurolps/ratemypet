@@ -16,6 +16,7 @@ describe("PgUnitOfWorkAdapter", () => {
       const inserted = await client.query<UserRow>(sql.CREATE_USER, [
         "any_name",
         email,
+        null,
       ]);
       return inserted.rows[0];
     });
@@ -34,7 +35,7 @@ describe("PgUnitOfWorkAdapter", () => {
     await expect(
       sut.execute(async (transactionClient) => {
         const client = transactionClient as PgPool;
-        await client.query<UserRow>(sql.CREATE_USER, ["any_name", email]);
+        await client.query<UserRow>(sql.CREATE_USER, ["any_name", email, null]);
         throw new Error("forced failure");
       }),
     ).rejects.toThrow("forced failure");

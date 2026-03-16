@@ -15,6 +15,16 @@ describe("PgUserRepository", () => {
       expect(user.id).toBeTruthy();
       expect(user.name).toEqual("valid_name");
     });
+
+    it("Should persist picture when provided", async () => {
+      const sut = new PgUserRepository();
+      const user = await sut.create({
+        ...userDTO,
+        picture: "https://valid.picture/image.png",
+      });
+
+      expect(user.picture).toEqual("https://valid.picture/image.png");
+    });
   });
 
   describe("findByEmail", () => {

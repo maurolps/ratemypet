@@ -1,10 +1,12 @@
 import { makeApp } from "@main/http/app";
+import { PgAuthIdentityRepository } from "@infra/db/postgres/pg-auth-identity.repository";
 import { describe, it, expect } from "vitest";
 import request from "supertest";
 
 describe("[E2E] UC-002 Login", () => {
   it("Should login an existing user and return credentials with status 200", async () => {
     const app = makeApp();
+    const authIdentityRepository = new PgAuthIdentityRepository();
     const userDTO = {
       name: "any_name",
       email: "any_email@example.com",
@@ -17,8 +19,14 @@ describe("[E2E] UC-002 Login", () => {
       email: userDTO.email,
       password: userDTO.password,
     });
+    const authIdentity =
+      await authIdentityRepository.findByProviderAndIdentifier(
+        "local",
+        userDTO.email,
+      );
 
     expect(response.status).toBe(200);
+    expect(authIdentity?.identifier).toEqual(userDTO.email);
     expect(response.body.tokens.accessToken).toBeTruthy();
 
     const cookies = response.headers["set-cookie"];

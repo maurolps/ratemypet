@@ -32,6 +32,32 @@ export class PgAuthIdentityRepository implements AuthIdentityRepository {
     return authIdentityRow ? toAuthIdentity(authIdentityRow) : null;
   }
 
+  async findByProviderAndIdentifier(
+    provider: AuthProvider,
+    identifier: string,
+  ): Promise<AuthIdentity | null> {
+    const authIdentityRows = await this.pool.query<AuthIdentityRow>(
+      sql.FIND_BY_PROVIDER_AND_IDENTIFIER,
+      [provider, identifier],
+    );
+    const authIdentityRow = authIdentityRows.rows[0] || null;
+
+    return authIdentityRow ? toAuthIdentity(authIdentityRow) : null;
+  }
+
+  async findByProviderUserId(
+    provider: AuthProvider,
+    providerUserId: string,
+  ): Promise<AuthIdentity | null> {
+    const authIdentityRows = await this.pool.query<AuthIdentityRow>(
+      sql.FIND_BY_PROVIDER_USER_ID,
+      [provider, providerUserId],
+    );
+    const authIdentityRow = authIdentityRows.rows[0] || null;
+
+    return authIdentityRow ? toAuthIdentity(authIdentityRow) : null;
+  }
+
   async create(
     authIdentity: CreateAuthIdentityData,
     transaction?: Transaction,
@@ -42,6 +68,7 @@ export class PgAuthIdentityRepository implements AuthIdentityRepository {
       [
         authIdentity.user_id,
         authIdentity.provider,
+        authIdentity.identifier,
         authIdentity.provider_user_id,
         authIdentity.password_hash,
       ],

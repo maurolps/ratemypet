@@ -1,6 +1,5 @@
 import type { AuthIdentityRepository } from "@application/repositories/auth-identity-repository";
 import type { UnitOfWork } from "@application/ports/unit-of-work.contract";
-import type { FindUserRepository } from "@application/repositories/find-user.repository";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { User } from "@domain/entities/user";
 import type { CreateUserRepository } from "@application/repositories/create-user.repository";
@@ -12,7 +11,6 @@ import { AppError } from "@application/errors/app-error";
 
 export class CreateUserUseCase implements CreateUser {
   constructor(
-    private readonly findUser: FindUserRepository,
     private readonly hashPassword: Hasher,
     private readonly createUserRepository: CreateUserRepository,
     private readonly authIdentityRepository: AuthIdentityRepository,
@@ -20,9 +18,13 @@ export class CreateUserUseCase implements CreateUser {
   ) {}
 
   async execute(userDTO: CreateUserDTO): Promise<User> {
-    const userExists = await this.findUser.findByEmail(userDTO.email);
+    const authIdentityExists =
+      await this.authIdentityRepository.findByProviderAndIdentifier(
+        "local",
+        userDTO.email,
+      );
 
-    if (userExists) {
+    if (authIdentityExists) {
       throw new AppError("EMAIL_TAKEN");
     }
 
@@ -41,6 +43,7 @@ export class CreateUserUseCase implements CreateUser {
         {
           user_id: createdUser.id,
           provider: "local",
+          identifier: userDTO.email,
           password_hash: hashedPassword,
           provider_user_id: null,
         },
