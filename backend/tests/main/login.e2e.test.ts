@@ -15,7 +15,7 @@ describe("[E2E] UC-002 Login", () => {
 
     await request(app).post("/api/users").send(userDTO);
 
-    const response = await request(app).post("/api/users/login").send({
+    const response = await request(app).post("/api/auth/login").send({
       email: userDTO.email,
       password: userDTO.password,
     });
