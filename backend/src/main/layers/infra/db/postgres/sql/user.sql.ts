@@ -1,7 +1,7 @@
 export const sql = {
   CREATE_USER: `
-  INSERT INTO users (name, email, picture)
-  VALUES ($1, $2, $3)
+  INSERT INTO users (name, email, picture, display_name, bio)
+  VALUES ($1, $2, $3, $4, $5)
   RETURNING id, name, email, picture, created_at
   `,
   FIND_BY_EMAIL: `

@@ -86,6 +86,8 @@ describe("CreateUserUseCase", () => {
       {
         name: userDTO.name,
         email: userDTO.email,
+        display_name: userDTO.name,
+        bio: expect.any(String),
       },
       expect.any(Object),
     );

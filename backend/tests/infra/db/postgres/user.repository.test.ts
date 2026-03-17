@@ -1,11 +1,14 @@
 import type { CreateUserData } from "@application/repositories/create-user.repository";
 import { it, describe, expect } from "vitest";
 import { PgUserRepository } from "@infra/db/postgres/pg-user.repository";
+import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 
 describe("PgUserRepository", () => {
   const userDTO: CreateUserData = {
     name: "valid_name",
     email: "valid_email@mail.com",
+    display_name: "valid_display_name",
+    bio: "Pet lover 🐶",
   };
 
   describe("create", () => {
@@ -24,6 +27,35 @@ describe("PgUserRepository", () => {
       });
 
       expect(user.picture).toEqual("https://valid.picture/image.png");
+    });
+
+    it("Should persist display_name and bio when provided", async () => {
+      const sut = new PgUserRepository();
+      const pool = PgPool.getInstance();
+      const email = `user_${crypto.randomUUID()}@mail.com`;
+      const user = await sut.create({
+        ...userDTO,
+        email,
+        display_name: "custom_display_name",
+        bio: "custom_bio",
+      });
+
+      const persistedRows = await pool.query<{
+        display_name: string;
+        bio: string;
+      }>(
+        `
+        SELECT display_name, bio
+        FROM users
+        WHERE id = $1
+        `,
+        [user.id],
+      );
+
+      expect(persistedRows.rows[0]).toEqual({
+        display_name: "custom_display_name",
+        bio: "custom_bio",
+      });
     });
   });
 
@@ -49,6 +81,8 @@ describe("PgUserRepository", () => {
       const newUser: CreateUserData = {
         name: "valid_user_name",
         email: "valid_user_email@mail.com",
+        display_name: "valid_user_name",
+        bio: "Pet lover 🐶",
       };
       const createdUser = await sut.create(newUser);
 

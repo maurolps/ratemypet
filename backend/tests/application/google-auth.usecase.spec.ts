@@ -121,6 +121,8 @@ describe("GoogleAuthUseCase", () => {
         name: "Google User",
         email: "google_user@mail.com",
         picture: "https://valid.picture/google.png",
+        display_name: "Google User",
+        bio: expect.any(String),
       },
       expect.any(Object),
     );

@@ -12,6 +12,8 @@ export const insertFakeUser = async (
     "any_name",
     email ?? "fake_email@mail.com",
     picture ?? null,
+    "any_name",
+    "Pet lover 🐶",
   ]);
   return toUser(userRows.rows[0]);
 };
