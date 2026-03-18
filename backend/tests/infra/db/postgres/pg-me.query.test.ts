@@ -20,7 +20,11 @@ describe("PgMeQuery", () => {
     });
 
     it("Should return profile summary with published-only stats", async () => {
-      const user = await insertFakeUser(generateFakeEmail("pg_me_query_owner"));
+      const picture = "https://valid.picture/me.png";
+      const user = await insertFakeUser(
+        generateFakeEmail("pg_me_query_owner"),
+        picture,
+      );
       const pet = await insertFakePet(user.id);
 
       const publishedPost = await postRepository.save(
@@ -71,6 +75,7 @@ describe("PgMeQuery", () => {
         displayName: "any_name",
         email: user.email,
         bio: "Pet lover 🐶",
+        picture,
         stats: {
           postsCount: 1,
           likesReceived: 12,

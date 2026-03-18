@@ -8,6 +8,7 @@ export class GetMeProfileQueryStub implements GetMeProfileQuery {
       displayName: "valid_display_name",
       email: "valid_email@mail.com",
       bio: "Pet lover 🐶",
+      picture: "https://valid.picture/me.png",
       stats: {
         postsCount: 2,
         likesReceived: 7,

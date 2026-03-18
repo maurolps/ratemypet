@@ -9,6 +9,7 @@ type MeProfileRow = {
   display_name: string;
   email: string;
   bio: string;
+  picture: string | null;
   posts_count: number;
   likes_received: number;
 };
@@ -43,6 +44,7 @@ export class PgMeQuery implements GetMeProfileQuery, GetMePetsQuery {
       displayName: profile.display_name,
       email: profile.email,
       bio: profile.bio,
+      picture: profile.picture,
       stats: {
         postsCount: profile.posts_count,
         likesReceived: profile.likes_received,

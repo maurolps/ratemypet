@@ -17,6 +17,7 @@ export type GetMeProfile = {
   displayName: string;
   email: string;
   bio: string;
+  picture: string | null;
   stats: GetMeStats;
 };
 
