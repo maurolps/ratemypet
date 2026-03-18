@@ -63,6 +63,7 @@ describe("GetProfileUseCase", () => {
       id: "valid_user_id",
       displayName: "valid_display_name",
       bio: "Pet lover 🐶",
+      picture: "https://valid.picture/profile.png",
       stats: {
         postsCount: 2,
         likesReceived: 7,

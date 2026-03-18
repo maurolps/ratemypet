@@ -20,8 +20,10 @@ describe("PgProfileQuery", () => {
     });
 
     it("Should return public profile summary with published-only stats", async () => {
+      const picture = "https://valid.picture/profile.png";
       const user = await insertFakeUser(
         generateFakeEmail("pg_profile_query_owner"),
+        picture,
       );
       const pet = await insertFakePet(user.id);
 
@@ -72,6 +74,7 @@ describe("PgProfileQuery", () => {
         id: user.id,
         displayName: "any_name",
         bio: "Pet lover 🐶",
+        picture,
         stats: {
           postsCount: 1,
           likesReceived: 12,

@@ -11,6 +11,7 @@ type ProfileRow = {
   id: string;
   display_name: string;
   bio: string;
+  picture: string | null;
   posts_count: number;
   likes_received: number;
 };
@@ -45,6 +46,7 @@ export class PgProfileQuery
       id: profile.id,
       displayName: profile.display_name,
       bio: profile.bio,
+      picture: profile.picture,
       stats: {
         postsCount: profile.posts_count,
         likesReceived: profile.likes_received,
