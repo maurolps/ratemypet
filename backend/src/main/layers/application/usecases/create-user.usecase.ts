@@ -8,7 +8,7 @@ import type {
   CreateUserDTO,
 } from "@domain/usecases/create-user.contract";
 import { AppError } from "@application/errors/app-error";
-import { makeDefaultUserProfile } from "@application/services/default-user-profile";
+import { makeDefaultUserProfile } from "@application/helpers/default-user-profile";
 
 export class CreateUserUseCase implements CreateUser {
   constructor(
@@ -37,7 +37,7 @@ export class CreateUserUseCase implements CreateUser {
         {
           name: userDTO.name,
           email: userDTO.email,
-          display_name: defaultUserProfile.display_name,
+          displayName: defaultUserProfile.displayName,
           bio: defaultUserProfile.bio,
         },
         transaction,

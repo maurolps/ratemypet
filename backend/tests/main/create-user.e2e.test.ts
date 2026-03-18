@@ -35,16 +35,16 @@ describe("[E2E] UC-001 CreateUser", () => {
       : null;
 
     expect(response.status).toBe(201);
-    expect(response.body.name).toEqual(userDTO.name);
     expect(response.body.email).toEqual(userDTO.email);
+    expect(response.body.displayName).toEqual(userDTO.name);
+    expect(response.body.bio).toBeTruthy();
     expect(response.body.id).toBeTruthy();
     expect(savedUser).not.toBeNull();
-    expect(new Date(response.body.created_at).toString()).not.toBe(
+    expect(response.body.name).toBeUndefined();
+    expect(new Date(response.body.createdAt).toString()).not.toBe(
       "Invalid Date",
     );
-    expect(response.body.created_at).toEqual(
-      savedUser?.created_at.toISOString(),
-    );
+    expect(response.body.createdAt).toEqual(savedUser?.createdAt.toISOString());
     expect(authIdentity).not.toBeNull();
     expect(authIdentity?.identifier).toEqual(userDTO.email);
     expect(authIdentity?.password_hash).toBeTruthy();

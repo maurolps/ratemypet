@@ -7,7 +7,7 @@ describe("PgUserRepository", () => {
   const userDTO: CreateUserData = {
     name: "valid_name",
     email: "valid_email@mail.com",
-    display_name: "valid_display_name",
+    displayName: "valid_display_name",
     bio: "Pet lover 🐶",
   };
 
@@ -17,6 +17,8 @@ describe("PgUserRepository", () => {
       const user = await sut.create(userDTO);
       expect(user.id).toBeTruthy();
       expect(user.name).toEqual("valid_name");
+      expect(user.displayName).toEqual("valid_display_name");
+      expect(user.bio).toEqual("Pet lover 🐶");
     });
 
     it("Should persist picture when provided", async () => {
@@ -36,7 +38,7 @@ describe("PgUserRepository", () => {
       const user = await sut.create({
         ...userDTO,
         email,
-        display_name: "custom_display_name",
+        displayName: "custom_display_name",
         bio: "custom_bio",
       });
 
@@ -64,7 +66,8 @@ describe("PgUserRepository", () => {
       const sut = new PgUserRepository();
       const user = await sut.findByEmail(userDTO.email);
       expect(user?.name).toEqual(userDTO.name);
-      expect(user?.created_at).toBeInstanceOf(Date);
+      expect(user?.displayName).toEqual(userDTO.displayName);
+      expect(user?.createdAt).toBeInstanceOf(Date);
     });
     it("Should return null on fail", async () => {
       const sut = new PgUserRepository();
@@ -81,7 +84,7 @@ describe("PgUserRepository", () => {
       const newUser: CreateUserData = {
         name: "valid_user_name",
         email: "valid_user_email@mail.com",
-        display_name: "valid_user_name",
+        displayName: "valid_user_name",
         bio: "Pet lover 🐶",
       };
       const createdUser = await sut.create(newUser);
@@ -89,7 +92,8 @@ describe("PgUserRepository", () => {
       const user = await sut.findById(createdUser.id);
 
       expect(user?.name).toEqual(newUser.name);
-      expect(user?.created_at).toBeInstanceOf(Date);
+      expect(user?.displayName).toEqual(newUser.displayName);
+      expect(user?.createdAt).toBeInstanceOf(Date);
     });
     it("Should return null on fail", async () => {
       const sut = new PgUserRepository();

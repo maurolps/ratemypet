@@ -121,7 +121,7 @@ describe("GoogleAuthUseCase", () => {
         name: "Google User",
         email: "google_user@mail.com",
         picture: "https://valid.picture/google.png",
-        display_name: "Google User",
+        displayName: "Google User",
         bio: expect.any(String),
       },
       expect.any(Object),
@@ -201,8 +201,10 @@ describe("GoogleAuthUseCase", () => {
       id: "any_id",
       name: "Google User",
       email: "google_user@mail.com",
+      displayName: "Google User",
+      bio: expect.any(String),
       picture: "https://valid.picture/google.png",
-      created_at: FIXED_DATE,
+      createdAt: FIXED_DATE,
     });
   });
 
@@ -214,10 +216,11 @@ describe("GoogleAuthUseCase", () => {
 
     expect(loggedUser).toEqual({
       id: "any_id",
-      name: "Google User",
       email: "google_user@mail.com",
+      displayName: "Google User",
+      bio: expect.any(String),
       picture: "https://valid.picture/google.png",
-      created_at: FIXED_DATE,
+      createdAt: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",

@@ -135,9 +135,10 @@ describe("LoginUseCase", () => {
 
     expect(loggedUser).toEqual({
       id: "valid_user_id",
-      name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: FIXED_DATE,
+      displayName: "valid_display_name",
+      bio: "Pet lover 🐶",
+      createdAt: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",

@@ -27,6 +27,13 @@ describe("[E2E] UC-002 Login", () => {
 
     expect(response.status).toBe(200);
     expect(authIdentity?.identifier).toEqual(userDTO.email);
+    expect(response.body.email).toEqual(userDTO.email);
+    expect(response.body.displayName).toEqual(userDTO.name);
+    expect(response.body.bio).toBeTruthy();
+    expect(response.body.name).toBeUndefined();
+    expect(new Date(response.body.createdAt).toString()).not.toBe(
+      "Invalid Date",
+    );
     expect(response.body.tokens.accessToken).toBeTruthy();
 
     const cookies = response.headers["set-cookie"];

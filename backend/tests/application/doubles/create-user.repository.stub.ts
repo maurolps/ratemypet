@@ -9,9 +9,11 @@ export class CreateUserRepositoryStub implements CreateUserRepository {
     return new Promise((resolve) => {
       resolve({
         id: "any_id",
-        created_at: FIXED_DATE,
+        createdAt: FIXED_DATE,
         name: userDTO.name,
         email: userDTO.email,
+        displayName: userDTO.displayName,
+        bio: userDTO.bio,
         ...(userDTO.picture !== undefined ? { picture: userDTO.picture } : {}),
       });
     });

@@ -1,4 +1,5 @@
 import type { TokenIssuer } from "@domain/entities/token";
+import { toUserResponse } from "@application/helpers/to-user-response";
 import type {
   CreateUser,
   CreateUserDTO,
@@ -29,7 +30,7 @@ export class CreateUserController implements Controller {
       });
       const tokens = await this.tokenIssuer.execute(user);
       const loggedUser = {
-        ...user,
+        ...toUserResponse(user),
         tokens,
       };
       return created(loggedUser);

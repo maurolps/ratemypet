@@ -20,12 +20,12 @@ export class PgUserRepository
     transaction?: Transaction,
   ): Promise<User> {
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
-    const { name, email, picture, display_name, bio } = userDTO;
+    const { name, email, picture, displayName, bio } = userDTO;
     const userRows = await client.query<UserRow>(sql.CREATE_USER, [
       name,
       email,
       picture ?? null,
-      display_name,
+      displayName,
       bio,
     ]);
     return toUser(userRows.rows[0]);

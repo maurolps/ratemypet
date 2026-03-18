@@ -27,6 +27,6 @@ export const pickRandomDefaultBio = () => {
 };
 
 export const makeDefaultUserProfile = (name: string) => ({
-  display_name: name,
+  displayName: name,
   bio: pickRandomDefaultBio(),
 });

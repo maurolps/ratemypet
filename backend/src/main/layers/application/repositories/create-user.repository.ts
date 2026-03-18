@@ -5,7 +5,7 @@ export type CreateUserData = {
   name: string;
   email: string;
   picture?: string | null;
-  display_name: string;
+  displayName: string;
   bio: string;
 };
 

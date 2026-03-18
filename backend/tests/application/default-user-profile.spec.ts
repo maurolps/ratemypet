@@ -2,16 +2,16 @@ import { describe, expect, it, vi } from "vitest";
 import {
   makeDefaultUserProfile,
   pickRandomDefaultBio,
-} from "@application/services/default-user-profile";
+} from "@application/helpers/default-user-profile";
 
 describe("default-user-profile", () => {
-  it("Should return display_name based on the user name", () => {
+  it("Should return displayName based on the user name", () => {
     vi.spyOn(Math, "random").mockReturnValueOnce(0);
 
     const result = makeDefaultUserProfile("Mauro");
 
     expect(result).toEqual({
-      display_name: "Mauro",
+      displayName: "Mauro",
       bio: "Pet lover 🐶",
     });
   });
