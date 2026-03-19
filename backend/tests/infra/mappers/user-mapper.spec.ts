@@ -56,4 +56,18 @@ describe("toUser", () => {
     expect(user.displayName).toEqual("valid_display_name");
     expect(user.bio).toEqual("Pet lover 🐶");
   });
+
+  it("Should keep empty bio when present", () => {
+    const user = toUser({
+      id: "valid_user_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      display_name: "valid_display_name",
+      bio: "",
+      picture: null,
+      created_at: FIXED_DATE,
+    });
+
+    expect(user.bio).toEqual("");
+  });
 });

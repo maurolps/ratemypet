@@ -103,4 +103,88 @@ describe("PgUserRepository", () => {
       expect(response).toBeNull();
     });
   });
+
+  describe("updateProfile", () => {
+    it("Should update only display_name and preserve bio", async () => {
+      const sut = new PgUserRepository();
+      const createdUser = await sut.create({
+        ...userDTO,
+        email: `user_${crypto.randomUUID()}@mail.com`,
+        displayName: "original_display_name",
+        bio: "original_bio",
+      });
+
+      const updatedUser = await sut.updateProfile({
+        id: createdUser.id,
+        displayName: "updated_display_name",
+      });
+
+      expect(updatedUser?.displayName).toEqual("updated_display_name");
+      expect(updatedUser?.bio).toEqual("original_bio");
+    });
+
+    it("Should update only bio and preserve display_name", async () => {
+      const sut = new PgUserRepository();
+      const createdUser = await sut.create({
+        ...userDTO,
+        email: `user_${crypto.randomUUID()}@mail.com`,
+        displayName: "original_display_name",
+        bio: "original_bio",
+      });
+
+      const updatedUser = await sut.updateProfile({
+        id: createdUser.id,
+        bio: "updated_bio",
+      });
+
+      expect(updatedUser?.displayName).toEqual("original_display_name");
+      expect(updatedUser?.bio).toEqual("updated_bio");
+    });
+
+    it("Should update display_name and bio together", async () => {
+      const sut = new PgUserRepository();
+      const createdUser = await sut.create({
+        ...userDTO,
+        email: `user_${crypto.randomUUID()}@mail.com`,
+        displayName: "original_display_name",
+        bio: "original_bio",
+      });
+
+      const updatedUser = await sut.updateProfile({
+        id: createdUser.id,
+        displayName: "updated_display_name",
+        bio: "updated_bio",
+      });
+
+      expect(updatedUser?.displayName).toEqual("updated_display_name");
+      expect(updatedUser?.bio).toEqual("updated_bio");
+    });
+
+    it("Should persist empty bio when provided", async () => {
+      const sut = new PgUserRepository();
+      const pool = PgPool.getInstance();
+      const createdUser = await sut.create({
+        ...userDTO,
+        email: `user_${crypto.randomUUID()}@mail.com`,
+        displayName: "original_display_name",
+        bio: "original_bio",
+      });
+
+      const updatedUser = await sut.updateProfile({
+        id: createdUser.id,
+        bio: "",
+      });
+      const persistedRows = await pool.query<{ bio: string }>(
+        `
+        SELECT bio
+        FROM users
+        WHERE id = $1
+        `,
+        [createdUser.id],
+      );
+
+      expect(updatedUser?.bio).toEqual("");
+      expect(persistedRows.rows[0].bio).toEqual("");
+    });
+  });
 });
