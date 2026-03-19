@@ -74,6 +74,7 @@ describe("PgProfileQuery", () => {
         id: user.id,
         displayName: "any_name",
         bio: "Pet lover 🐶",
+        createdAt: user.createdAt,
         picture,
         stats: {
           postsCount: 1,

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { GetProfileController } from "@presentation/controllers/get-profile.controller";
 import { GetProfileValidatorStub } from "./doubles/get-profile.validator.stub";
 import { GetProfileUseCaseStub } from "./doubles/get-profile.usecase.stub";
+import { FIXED_DATE } from "../config/constants";
 
 const { errorPresenterSpy } = vi.hoisted(() => {
   return {
@@ -67,6 +68,7 @@ describe("GetProfileController", () => {
       id: "valid_user_id",
       displayName: "valid_display_name",
       bio: "Pet lover 🐶",
+      createdAt: FIXED_DATE,
       picture: "https://valid.picture/profile.png",
       stats: {
         postsCount: 2,

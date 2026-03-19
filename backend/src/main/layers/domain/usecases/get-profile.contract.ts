@@ -16,6 +16,7 @@ export type GetProfileData = {
   id: string;
   displayName: string;
   bio: string;
+  createdAt: Date;
   picture: string | null;
   stats: GetProfileStats;
 };

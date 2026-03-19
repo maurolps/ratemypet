@@ -4,6 +4,7 @@ export const sql = {
     u.id,
     u.display_name,
     u.bio,
+    u.created_at,
     u.picture,
     COUNT(p.id)::int AS posts_count,
     COALESCE(SUM(p.likes_count), 0)::int AS likes_received
@@ -12,7 +13,7 @@ export const sql = {
     ON p.author_id = u.id
     AND p.status = 'PUBLISHED'
   WHERE u.id = $1
-  GROUP BY u.id, u.display_name, u.bio, u.picture
+  GROUP BY u.id, u.display_name, u.bio, u.created_at, u.picture
   `,
   FIND_PROFILE_PETS: `
   SELECT

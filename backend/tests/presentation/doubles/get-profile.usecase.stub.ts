@@ -3,6 +3,7 @@ import type {
   GetProfileDTO,
   GetProfileResult,
 } from "@domain/usecases/get-profile.contract";
+import { FIXED_DATE } from "../../config/constants";
 
 export class GetProfileUseCaseStub implements GetProfile {
   async execute(_: GetProfileDTO): Promise<GetProfileResult> {
@@ -10,6 +11,7 @@ export class GetProfileUseCaseStub implements GetProfile {
       id: "valid_user_id",
       displayName: "valid_display_name",
       bio: "Pet lover 🐶",
+      createdAt: FIXED_DATE,
       picture: "https://valid.picture/profile.png",
       stats: {
         postsCount: 2,
