@@ -14,6 +14,14 @@ export const sql = {
   FROM users
   WHERE id = $1
   `,
+  UPDATE_PROFILE: `
+  UPDATE users
+  SET
+    display_name = CASE WHEN $2 THEN $3 ELSE display_name END,
+    bio = CASE WHEN $4 THEN $5 ELSE bio END
+  WHERE id = $1
+  RETURNING id, name, email, display_name, bio, picture, created_at
+  `,
   CREATE_REFRESH_TOKEN: `
   INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at)
   VALUES ($1, $2, $3, $4)

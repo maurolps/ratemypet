@@ -25,7 +25,7 @@ export const toUser = (row: UserRow): User => {
     user.displayName = row.display_name;
   }
 
-  if (row.bio) {
+  if (row.bio !== undefined && row.bio !== null) {
     user.bio = row.bio;
   }
 
