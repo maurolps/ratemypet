@@ -84,6 +84,9 @@ describe("[E2E] UC-016 Get Me", () => {
     expect(response.body.displayName).toBe("any_name");
     expect(response.body.email).toContain("@example.com");
     expect(response.body.bio).toBeTruthy();
+    expect(new Date(response.body.createdAt).toString()).not.toBe(
+      "Invalid Date",
+    );
     expect(response.body.picture).toBeNull();
     expect(response.body.stats).toEqual({
       postsCount: 1,

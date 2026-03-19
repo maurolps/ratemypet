@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { GetMeController } from "@presentation/controllers/get-me.controller";
 import { GetMeValidatorStub } from "./doubles/get-me.validator.stub";
 import { GetMeUseCaseStub } from "./doubles/get-me.usecase.stub";
+import { FIXED_DATE } from "../config/constants";
 
 const { errorPresenterSpy } = vi.hoisted(() => {
   return {
@@ -67,6 +68,7 @@ describe("GetMeController", () => {
       displayName: "valid_display_name",
       email: "valid_email@mail.com",
       bio: "Pet lover 🐶",
+      createdAt: FIXED_DATE,
       picture: "https://valid.picture/me.png",
       stats: {
         postsCount: 2,

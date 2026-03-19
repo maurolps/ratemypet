@@ -75,6 +75,7 @@ describe("PgMeQuery", () => {
         displayName: "any_name",
         email: user.email,
         bio: "Pet lover 🐶",
+        createdAt: user.createdAt,
         picture,
         stats: {
           postsCount: 1,

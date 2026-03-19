@@ -1,6 +1,7 @@
 import { AppError } from "@application/errors/app-error";
 import { GetMeUseCase } from "@application/usecases/get-me.usecase";
 import { describe, expect, it, vi } from "vitest";
+import { FIXED_DATE } from "../config/constants";
 import { GetMePetsQueryStub } from "./doubles/get-me-pets.query.stub";
 import { GetMeProfileQueryStub } from "./doubles/get-me-profile.query.stub";
 
@@ -58,6 +59,7 @@ describe("GetMeUseCase", () => {
       displayName: "valid_display_name",
       email: "valid_email@mail.com",
       bio: "Pet lover 🐶",
+      createdAt: FIXED_DATE,
       picture: "https://valid.picture/me.png",
       stats: {
         postsCount: 2,
