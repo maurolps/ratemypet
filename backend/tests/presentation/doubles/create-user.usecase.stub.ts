@@ -13,6 +13,7 @@ export class CreateUserStub implements CreateUser {
       name: user.name,
       displayName: user.name,
       bio: "Pet lover 🐶",
+      picture: "valid_picture",
       email: user.email,
     };
   }

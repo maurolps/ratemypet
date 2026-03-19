@@ -87,7 +87,8 @@ describe("[E2E] UC-016 Get Me", () => {
     expect(new Date(response.body.createdAt).toString()).not.toBe(
       "Invalid Date",
     );
-    expect(response.body.picture).toBeNull();
+    expect(response.body.picture).toBeTypeOf("string");
+    expect(response.body.picture).toBeTruthy();
     expect(response.body.stats).toEqual({
       postsCount: 1,
       likesReceived: 7,

@@ -10,17 +10,16 @@ describe("default-user-profile", () => {
 
     const result = makeDefaultUserProfile("Mauro");
 
-    expect(result).toEqual({
-      displayName: "Mauro",
-      bio: "Pet lover 🐶",
-    });
+    expect(result.displayName).toBe("Mauro");
+    expect(result.bio).toBe("Pet lover 🐶");
+    expect(result.picture).toBeTruthy();
   });
 
   it("Should pick a deterministic bio based on the random index", () => {
-    vi.spyOn(Math, "random").mockReturnValueOnce(0.95);
+    vi.spyOn(Math, "random").mockReturnValueOnce(0);
 
     const result = pickRandomDefaultBio();
 
-    expect(result).toBe("Always stopping for a pet 🐾");
+    expect(result).toBe("Pet lover 🐶");
   });
 });

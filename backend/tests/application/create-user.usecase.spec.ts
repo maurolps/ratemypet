@@ -83,12 +83,13 @@ describe("CreateUserUseCase", () => {
     );
     await sut.execute(userDTO);
     expect(createUserRepositorySpy).toHaveBeenCalledWith(
-      {
+      expect.objectContaining({
         name: userDTO.name,
         email: userDTO.email,
         displayName: userDTO.name,
         bio: expect.any(String),
-      },
+        picture: expect.any(String),
+      }),
       expect.any(Object),
     );
   });

@@ -29,4 +29,5 @@ export const pickRandomDefaultBio = () => {
 export const makeDefaultUserProfile = (name: string) => ({
   displayName: name,
   bio: pickRandomDefaultBio(),
+  picture: `https://api.dicebear.com/9.x/pixel-art/svg?seed=${crypto.randomUUID()}&size=160`,
 });

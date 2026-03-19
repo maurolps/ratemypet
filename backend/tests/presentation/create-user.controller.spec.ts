@@ -116,6 +116,7 @@ describe("CreateUserController", () => {
       name: "valid_name",
       displayName: "valid_name",
       bio: "Pet lover 🐶",
+      picture: "valid_picture",
       email: "valid_email@mail.com",
       createdAt: FIXED_DATE,
     });
@@ -138,6 +139,7 @@ describe("CreateUserController", () => {
       email: "valid_email@mail.com",
       displayName: "valid_name",
       bio: "Pet lover 🐶",
+      picture: "valid_picture",
       createdAt: FIXED_DATE,
       tokens: {
         accessToken: "access_token",

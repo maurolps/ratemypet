@@ -38,6 +38,7 @@ export class CreateUserUseCase implements CreateUser {
           name: userDTO.name,
           email: userDTO.email,
           displayName: defaultUserProfile.displayName,
+          picture: defaultUserProfile.picture,
           bio: defaultUserProfile.bio,
         },
         transaction,
