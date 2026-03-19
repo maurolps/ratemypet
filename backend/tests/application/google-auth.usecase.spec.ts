@@ -138,6 +138,36 @@ describe("GoogleAuthUseCase", () => {
     );
   });
 
+  it("Should persist null picture when Google identity has no picture", async () => {
+    const {
+      sut,
+      createUserRepositorySpy,
+      googleTokenVerifierSpy,
+      findByProviderUserIdSpy,
+    } = makeSut();
+    googleTokenVerifierSpy.mockResolvedValueOnce({
+      sub: "google_sub_123",
+      email: "google_user@mail.com",
+      name: "Google User",
+      picture: undefined,
+      email_verified: true,
+    });
+    findByProviderUserIdSpy.mockResolvedValueOnce(null);
+
+    await sut.auth(googleAuthDTO);
+
+    expect(createUserRepositorySpy).toHaveBeenCalledWith(
+      {
+        name: "Google User",
+        email: "google_user@mail.com",
+        picture: null,
+        displayName: "Google User",
+        bio: expect.any(String),
+      },
+      expect.any(Object),
+    );
+  });
+
   it("Should authenticate an existing Google user without creating a new user", async () => {
     const { sut, findByProviderUserIdSpy, createUserRepositorySpy } = makeSut();
     findByProviderUserIdSpy.mockResolvedValueOnce({

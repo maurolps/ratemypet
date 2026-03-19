@@ -1,7 +1,9 @@
+import type { Transaction } from "@application/ports/unit-of-work.contract";
 import type { CreateUserData } from "@application/repositories/create-user.repository";
 import { it, describe, expect } from "vitest";
 import { PgUserRepository } from "@infra/db/postgres/pg-user.repository";
 import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
+import { FIXED_DATE } from "../../../config/constants";
 
 describe("PgUserRepository", () => {
   const userDTO: CreateUserData = {
@@ -57,6 +59,42 @@ describe("PgUserRepository", () => {
       expect(persistedRows.rows[0]).toEqual({
         display_name: "custom_display_name",
         bio: "custom_bio",
+      });
+    });
+
+    it("Should use the provided transaction when available", async () => {
+      const sut = new PgUserRepository();
+      const transaction = {
+        query: async () => ({
+          rows: [
+            {
+              id: "transaction_user_id",
+              name: "transaction_name",
+              email: "transaction@mail.com",
+              display_name: "transaction_display_name",
+              bio: "transaction_bio",
+              picture: null,
+              created_at: FIXED_DATE,
+            },
+          ],
+        }),
+      } as Transaction;
+
+      const user = await sut.create(
+        {
+          ...userDTO,
+          email: "transaction@mail.com",
+        },
+        transaction,
+      );
+
+      expect(user).toEqual({
+        id: "transaction_user_id",
+        name: "transaction_name",
+        email: "transaction@mail.com",
+        displayName: "transaction_display_name",
+        bio: "transaction_bio",
+        createdAt: FIXED_DATE,
       });
     });
   });
@@ -185,6 +223,17 @@ describe("PgUserRepository", () => {
 
       expect(updatedUser?.bio).toEqual("");
       expect(persistedRows.rows[0].bio).toEqual("");
+    });
+
+    it("Should return null when trying to update a non-existing user", async () => {
+      const sut = new PgUserRepository();
+
+      const updatedUser = await sut.updateProfile({
+        id: crypto.randomUUID(),
+        displayName: "updated_display_name",
+      });
+
+      expect(updatedUser).toBeNull();
     });
   });
 });

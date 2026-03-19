@@ -145,6 +145,77 @@ describe("UpdateProfileUseCase", () => {
     });
   });
 
+  it("Should call UpdateProfileRepository with only bio when displayName is not provided", async () => {
+    const { sut, updateProfileRepositorySpy } = makeSut();
+
+    await sut.execute({
+      user_id: "valid_user_id",
+      bio: "Updated bio",
+    });
+
+    expect(updateProfileRepositorySpy).toHaveBeenCalledWith({
+      id: "valid_user_id",
+      bio: "Updated bio",
+    });
+  });
+
+  it("Should fallback to user.name and empty bio when no profile fields exist and no changes are detected", async () => {
+    const { sut, findUserRepositorySpy, updateProfileRepositorySpy } =
+      makeSut();
+    findUserRepositorySpy.mockResolvedValueOnce({
+      id: "valid_user_id",
+      name: "fallback_name",
+      email: "valid_email@mail.com",
+      createdAt: new Date(),
+    });
+
+    const result = await sut.execute({
+      user_id: "valid_user_id",
+    });
+
+    expect(updateProfileRepositorySpy).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      id: "valid_user_id",
+      displayName: "fallback_name",
+      bio: "",
+    });
+  });
+
+  it("Should throw when UpdateProfileRepository fails to update the profile", async () => {
+    const { sut, updateProfileRepositorySpy } = makeSut();
+    updateProfileRepositorySpy.mockResolvedValueOnce(null);
+
+    await expect(
+      sut.execute({
+        user_id: "valid_user_id",
+        displayName: "Updated Name",
+      }),
+    ).rejects.toThrow(new Error("Failed to update user profile."));
+  });
+
+  it("Should fallback to updated user name and empty bio when repository returns nullable profile fields", async () => {
+    const { sut, updateProfileRepositorySpy } = makeSut();
+    updateProfileRepositorySpy.mockResolvedValueOnce({
+      id: "valid_user_id",
+      name: "updated_name_fallback",
+      email: "valid_email@mail.com",
+      displayName: undefined,
+      bio: undefined,
+      createdAt: new Date(),
+    });
+
+    const result = await sut.execute({
+      user_id: "valid_user_id",
+      displayName: "Updated Name",
+    });
+
+    expect(result).toEqual({
+      id: "valid_user_id",
+      displayName: "updated_name_fallback",
+      bio: "",
+    });
+  });
+
   it("Should return updated profile data on success", async () => {
     const { sut } = makeSut();
 
