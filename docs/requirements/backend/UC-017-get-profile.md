@@ -4,7 +4,7 @@
 
 - [x] The system must allow any user (authenticated or not) to fetch a public user profile by `userId`
 - [x] The system must require a valid and existing `userId`
-- [x] The system must return public user information (`id`, `displayName`, `bio`)
+- [x] The system must return public user information (`id`, `displayName`, `bio`, `createdAt` and `picture`)
 - [x] The system must return aggregated user stats (`postsCount`, `likesReceived`)
 - [x] The system must return the list of user pets (non-paginated)
 - [x] The system must return pets in a summarized format (`id`, `name`, `type`, `imageUrl`)

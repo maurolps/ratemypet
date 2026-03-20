@@ -4,7 +4,7 @@
 
 - [x] The system must allow an authenticated user to fetch their own profile data
 - [x] The system must require a valid authentication token  
-- [x] The system must return user basic information (`id`, `displayName`, `email`, `bio`)
+- [x] The system must return user basic information (`id`, `displayName`, `email`, `bio`, `createdAt` and `picture`)
 - [x] The system must return aggregated user stats (`postsCount`, `likesReceived`)
 - [x] The system must return the list of user pets (non-paginated)
 - [x] The system must return pets in a summarized format (`id`, `name`, `type`, `imageUrl`)
