@@ -9,7 +9,9 @@ export class FindUserRepositoryStub implements FindUserRepository {
         id: "valid_user_id",
         name: "valid_name",
         email: "valid_email@mail.com",
-        created_at: FIXED_DATE,
+        displayName: "valid_display_name",
+        bio: "Pet lover 🐶",
+        createdAt: FIXED_DATE,
       }),
     );
   }
@@ -20,7 +22,9 @@ export class FindUserRepositoryStub implements FindUserRepository {
         id: "valid_user_id",
         name: "valid_name",
         email: "valid_email@mail.com",
-        created_at: FIXED_DATE,
+        displayName: "valid_display_name",
+        bio: "Pet lover 🐶",
+        createdAt: FIXED_DATE,
       }),
     );
   }

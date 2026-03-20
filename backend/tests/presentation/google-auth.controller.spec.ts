@@ -60,9 +60,11 @@ describe("GoogleAuthController", () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(dummyRequest);
     expect(httpResponse.body).toHaveProperty("id");
-    expect(httpResponse.body).toHaveProperty("name");
     expect(httpResponse.body).toHaveProperty("email");
+    expect(httpResponse.body).toHaveProperty("displayName");
+    expect(httpResponse.body).toHaveProperty("createdAt");
     expect(httpResponse.body).toHaveProperty("picture");
     expect(httpResponse.body).toHaveProperty("tokens");
+    expect(httpResponse.body).not.toHaveProperty("name");
   });
 });

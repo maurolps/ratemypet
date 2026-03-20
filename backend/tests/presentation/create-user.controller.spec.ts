@@ -114,8 +114,11 @@ describe("CreateUserController", () => {
     expect(tokenIssuerSpy).toHaveBeenCalledWith({
       id: "valid_id",
       name: "valid_name",
+      displayName: "valid_name",
+      bio: "Pet lover 🐶",
+      picture: "valid_picture",
       email: "valid_email@mail.com",
-      created_at: FIXED_DATE,
+      createdAt: FIXED_DATE,
     });
   });
 
@@ -133,14 +136,17 @@ describe("CreateUserController", () => {
 
     expect(response.body).toEqual({
       id: "valid_id",
-      name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: FIXED_DATE,
+      displayName: "valid_name",
+      bio: "Pet lover 🐶",
+      picture: "valid_picture",
+      createdAt: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",
       },
     });
+    expect((response.body as { name?: unknown }).name).toBeUndefined();
     expect(
       (response.body as { password_hash?: unknown }).password_hash,
     ).toBeUndefined();

@@ -28,7 +28,19 @@ describe("LoginUseCase", () => {
   };
 
   it("Should throw UNAUTHORIZED error when user is not found", async () => {
-    const { sut, findUserStub } = makeSut();
+    const { sut, findUserStub, authIdentityRepositoryStub } = makeSut();
+    vi.spyOn(
+      authIdentityRepositoryStub,
+      "findByProviderAndIdentifier",
+    ).mockResolvedValueOnce({
+      id: "valid_auth_identity_id",
+      user_id: "valid_user_id",
+      provider: "local",
+      identifier: "valid_email@mail.com",
+      password_hash: "hashed_any_password",
+      provider_user_id: null,
+      created_at: FIXED_DATE,
+    });
     vi.spyOn(findUserStub, "findById").mockResolvedValueOnce(null);
     const loginDTO = {
       email: "non_exists@mail.com",
@@ -39,7 +51,19 @@ describe("LoginUseCase", () => {
   });
 
   it("Should throw UNAUTHORIZED error when password is incorrect", async () => {
-    const { sut } = makeSut();
+    const { sut, authIdentityRepositoryStub } = makeSut();
+    vi.spyOn(
+      authIdentityRepositoryStub,
+      "findByProviderAndIdentifier",
+    ).mockResolvedValueOnce({
+      id: "valid_auth_identity_id",
+      user_id: "valid_user_id",
+      provider: "local",
+      identifier: "valid_email@mail.com",
+      password_hash: "hashed_valid_password",
+      provider_user_id: null,
+      created_at: FIXED_DATE,
+    });
     const loginDTO = {
       email: "valid_email@mail.com",
       password: "wrong_password",
@@ -135,9 +159,10 @@ describe("LoginUseCase", () => {
 
     expect(loggedUser).toEqual({
       id: "valid_user_id",
-      name: "valid_name",
       email: "valid_email@mail.com",
-      created_at: FIXED_DATE,
+      displayName: "valid_display_name",
+      bio: "Pet lover 🐶",
+      createdAt: FIXED_DATE,
       tokens: {
         accessToken: "access_token",
         refreshToken: "refresh_token",

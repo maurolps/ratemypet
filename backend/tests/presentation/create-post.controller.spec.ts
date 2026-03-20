@@ -17,7 +17,7 @@ describe("CreatePostController", () => {
     return { sut, httpValidatorSpy, createPostUseCaseSpy };
   };
 
-  const dummyRequest = {
+  const makeRequest = () => ({
     body: {
       pet_id: "valid_pet_id",
       author_id: "valid_author_id",
@@ -28,17 +28,21 @@ describe("CreatePostController", () => {
       name: "authenticated_user_name",
       email: "authenticated_user_email",
     },
-  };
+  });
 
   it("Should call HttpValidator with correct values", async () => {
     const { sut, httpValidatorSpy } = makeSut();
-    await sut.handle(dummyRequest);
-    expect(httpValidatorSpy).toHaveBeenCalledWith(dummyRequest);
+    const request = makeRequest();
+
+    await sut.handle(request);
+
+    expect(httpValidatorSpy).toHaveBeenCalledTimes(1);
+    expect(httpValidatorSpy.mock.calls[0][0]).toBe(request);
   });
 
   it("Should call CreatePost use case with correct values", async () => {
     const { sut, createPostUseCaseSpy } = makeSut();
-    await sut.handle(dummyRequest);
+    await sut.handle(makeRequest());
     expect(createPostUseCaseSpy).toHaveBeenCalledWith({
       pet_id: "valid_pet_id",
       author_id: "valid_author_id",
@@ -48,7 +52,7 @@ describe("CreatePostController", () => {
 
   it("Should return 200 with post data on successful creation", async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.handle(dummyRequest);
+    const httpResponse = await sut.handle(makeRequest());
     expect(httpResponse.status).toBe(200);
     expect(httpResponse.body).toEqual({
       id: "valid_post_id",
@@ -67,7 +71,7 @@ describe("CreatePostController", () => {
     httpValidatorSpy.mockImplementationOnce(() => {
       throw new AppError("INVALID_PARAM", "caption");
     });
-    const httpResponse = await sut.handle(dummyRequest);
+    const httpResponse = await sut.handle(makeRequest());
     expect(httpResponse.status).toBe(400);
     expect(httpResponse.body.message).toEqual("Invalid Param: caption");
   });

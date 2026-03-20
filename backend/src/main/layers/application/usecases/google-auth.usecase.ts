@@ -13,6 +13,8 @@ import type {
 } from "@domain/usecases/google-auth.contract";
 import type { LoggedUser } from "@domain/usecases/login.contract";
 import { AppError } from "@application/errors/app-error";
+import { makeDefaultUserProfile } from "@application/helpers/default-user-profile";
+import { toUserResponse } from "@application/helpers/to-user-response";
 
 export class GoogleAuthUseCase implements GoogleAuth {
   constructor(
@@ -43,6 +45,7 @@ export class GoogleAuthUseCase implements GoogleAuth {
       "google",
       googleIdentity.sub,
     );
+    const defaultUserProfile = makeDefaultUserProfile(googleIdentity.name);
 
     const user = authIdentity
       ? await this.findUser.findById(authIdentity.user_id)
@@ -52,6 +55,8 @@ export class GoogleAuthUseCase implements GoogleAuth {
               name: googleIdentity.name,
               email: googleIdentity.email,
               picture: googleIdentity.picture ?? null,
+              displayName: defaultUserProfile.displayName,
+              bio: defaultUserProfile.bio,
             },
             transaction,
           );
@@ -77,7 +82,7 @@ export class GoogleAuthUseCase implements GoogleAuth {
     const tokens = await this.tokenIssuer.execute(user);
 
     return {
-      ...user,
+      ...toUserResponse(user),
       tokens,
     };
   }

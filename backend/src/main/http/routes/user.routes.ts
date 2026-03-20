@@ -1,29 +1,41 @@
 import { Router } from "express";
 import { expressAdapter } from "../adapters/express-controller.adapter";
 import { makeCreateUserController } from "@main/composition/users/create-user.controller.factory";
-import { makeLoginController } from "@main/composition/users/login.controller.factory";
+import { makeGetMeController } from "@main/composition/users/get-me.controller.factory";
+import { makeGetProfileController } from "@main/composition/users/get-profile.controller.factory";
+import { makeUpdateProfileController } from "@main/composition/users/update-profile.controller.factory";
 import { makeRateLimiter } from "../middlewares/rate-limit";
-import { makeRefreshTokenController } from "@main/composition/users/refresh-token.controller.factory";
+import { authMiddleware } from "../middlewares/authenticate";
 
 export const userRoutes = Router();
 
-const loginRateLimit = makeRateLimiter({ limit: 10 });
 const createUserRateLimit = makeRateLimiter({ limit: 5 });
-const refreshTokenRateLimit = makeRateLimiter({ limit: 5 });
+const getMeRateLimit = makeRateLimiter({ limit: 30 });
+const getProfileRateLimit = makeRateLimiter({ limit: 30 });
+const updateProfileRateLimit = makeRateLimiter({ limit: 10 });
 
 userRoutes.post(
   "/users",
   createUserRateLimit,
   expressAdapter(makeCreateUserController()),
 );
-userRoutes.post(
-  "/users/login",
-  loginRateLimit,
-  expressAdapter(makeLoginController()),
+
+userRoutes.get(
+  "/users/me",
+  authMiddleware(),
+  getMeRateLimit,
+  expressAdapter(makeGetMeController()),
 );
 
-userRoutes.post(
-  "/users/refresh-token",
-  refreshTokenRateLimit,
-  expressAdapter(makeRefreshTokenController()),
+userRoutes.patch(
+  "/users/me",
+  authMiddleware(),
+  updateProfileRateLimit,
+  expressAdapter(makeUpdateProfileController()),
+);
+
+userRoutes.get(
+  "/users/:id",
+  getProfileRateLimit,
+  expressAdapter(makeGetProfileController()),
 );

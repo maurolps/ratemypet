@@ -8,6 +8,7 @@ import type {
   CreateUserDTO,
 } from "@domain/usecases/create-user.contract";
 import { AppError } from "@application/errors/app-error";
+import { makeDefaultUserProfile } from "@application/helpers/default-user-profile";
 
 export class CreateUserUseCase implements CreateUser {
   constructor(
@@ -29,12 +30,16 @@ export class CreateUserUseCase implements CreateUser {
     }
 
     const hashedPassword = await this.hashPassword.hash(userDTO.password);
+    const defaultUserProfile = makeDefaultUserProfile(userDTO.name);
 
     const user = await this.unitOfWork.execute(async (transaction) => {
       const createdUser = await this.createUserRepository.create(
         {
           name: userDTO.name,
           email: userDTO.email,
+          displayName: defaultUserProfile.displayName,
+          picture: defaultUserProfile.picture,
+          bio: defaultUserProfile.bio,
         },
         transaction,
       );

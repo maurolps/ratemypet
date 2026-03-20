@@ -10,6 +10,8 @@ describe("toUser", () => {
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
+      display_name: "valid_display_name",
+      bio: "Pet lover 🐶",
       picture: null,
       created_at: createdAt,
     });
@@ -17,8 +19,10 @@ describe("toUser", () => {
     expect(user).toEqual({
       id: "valid_user_id",
       name: "valid_name",
+      displayName: "valid_display_name",
       email: "valid_email@mail.com",
-      created_at: createdAt,
+      bio: "Pet lover 🐶",
+      createdAt: createdAt,
     });
   });
 
@@ -27,12 +31,14 @@ describe("toUser", () => {
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
+      display_name: "valid_display_name",
+      bio: "Pet lover 🐶",
       picture: null,
       created_at: "2026-03-10T12:00:00.000Z",
     });
 
-    expect(user.created_at).toBeInstanceOf(Date);
-    expect(user.created_at.toISOString()).toBe("2026-03-10T12:00:00.000Z");
+    expect(user.createdAt).toBeInstanceOf(Date);
+    expect(user.createdAt.toISOString()).toBe("2026-03-10T12:00:00.000Z");
   });
 
   it("Should keep picture when present", () => {
@@ -40,10 +46,28 @@ describe("toUser", () => {
       id: "valid_user_id",
       name: "valid_name",
       email: "valid_email@mail.com",
+      display_name: "valid_display_name",
+      bio: "Pet lover 🐶",
       picture: "https://valid.picture/image.png",
       created_at: FIXED_DATE,
     });
 
     expect(user.picture).toEqual("https://valid.picture/image.png");
+    expect(user.displayName).toEqual("valid_display_name");
+    expect(user.bio).toEqual("Pet lover 🐶");
+  });
+
+  it("Should keep empty bio when present", () => {
+    const user = toUser({
+      id: "valid_user_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      display_name: "valid_display_name",
+      bio: "",
+      picture: null,
+      created_at: FIXED_DATE,
+    });
+
+    expect(user.bio).toEqual("");
   });
 });

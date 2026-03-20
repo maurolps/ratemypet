@@ -2,6 +2,7 @@ import type { AuthIdentityRepository } from "@application/repositories/auth-iden
 import type { TokenIssuer } from "@domain/entities/token";
 import type { Hasher } from "@application/ports/hasher.contract";
 import type { FindUserRepository } from "@application/repositories/find-user.repository";
+import { toUserResponse } from "@application/helpers/to-user-response";
 import type {
   LoggedUser,
   Login,
@@ -44,7 +45,7 @@ export class LoginUseCase implements Login {
 
     const tokens = await this.tokenIssuer.execute(user);
     const loggedUser = {
-      ...user,
+      ...toUserResponse(user),
       tokens,
     };
 

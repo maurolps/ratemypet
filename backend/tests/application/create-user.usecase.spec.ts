@@ -83,10 +83,13 @@ describe("CreateUserUseCase", () => {
     );
     await sut.execute(userDTO);
     expect(createUserRepositorySpy).toHaveBeenCalledWith(
-      {
+      expect.objectContaining({
         name: userDTO.name,
         email: userDTO.email,
-      },
+        displayName: userDTO.name,
+        bio: expect.any(String),
+        picture: expect.any(String),
+      }),
       expect.any(Object),
     );
   });
@@ -117,7 +120,9 @@ describe("CreateUserUseCase", () => {
     const result = await sut.execute(userDTO);
     expect(result.id).toEqual("any_id");
     expect(result.name).toEqual(userDTO.name);
+    expect(result.displayName).toEqual(userDTO.name);
     expect(result.email).toEqual(userDTO.email);
+    expect(result.createdAt).toEqual(FIXED_DATE);
   });
 
   it("Should rethrow if AuthIdentityRepository lookup throws", async () => {

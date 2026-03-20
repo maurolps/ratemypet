@@ -8,10 +8,11 @@ export class GoogleAuthUseCaseStub implements GoogleAuth {
   async auth(_googleAuthDTO: GoogleAuthDTO) {
     return {
       id: "valid_user_id",
-      name: "Google User",
       email: "google_user@mail.com",
+      displayName: "Google User",
+      bio: "Pet lover 🐶",
       picture: "https://valid.picture/google.png",
-      created_at: FIXED_DATE,
+      createdAt: FIXED_DATE,
       tokens: {
         accessToken: "valid_access_token",
         refreshToken: "valid_refresh_token",
