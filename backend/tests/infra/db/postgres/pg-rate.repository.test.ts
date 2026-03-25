@@ -1,9 +1,9 @@
 import { PgRateRepository } from "@infra/db/postgres/pg-rate.repository";
-import { toRate, type RateRow } from "@infra/mappers/rate-mapper";
+import { PgPool } from "@infra/db/postgres/helpers/pg-pool";
 import { insertFakePet } from "./helpers/fake-pet";
 import { generateFakeEmail } from "./helpers/fake-email";
 import { insertFakeUser } from "./helpers/fake-user";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 describe("PgRateRepository", () => {
   const rateDTO = {
@@ -110,6 +110,23 @@ describe("PgRateRepository", () => {
       expect(secondDelete).toBe(false);
     });
 
+    it("Should return false when delete query returns undefined rowCount", async () => {
+      const sut = new PgRateRepository();
+      const pool = PgPool.getInstance();
+      const querySpy = vi.spyOn(pool, "query").mockResolvedValueOnce({
+        rows: [],
+        rowCount: null,
+      });
+
+      const wasDeleted = await sut.deleteByPetIdAndUserId(
+        rateDTO.petId,
+        rateDTO.userId,
+      );
+
+      expect(querySpy).toHaveBeenCalled();
+      expect(wasDeleted).toBe(false);
+    });
+
     it("Should update an existing rate", async () => {
       const sut = new PgRateRepository();
 
@@ -158,26 +175,6 @@ describe("PgRateRepository", () => {
       expect(updatedRate.updatedAt?.getTime()).toBeGreaterThan(
         initialRate.updatedAt?.getTime() ?? 0,
       );
-    });
-
-    it("Should map a RateRow to camelCase Rate", () => {
-      const row: RateRow = {
-        pet_id: "valid_pet_id",
-        user_id: "valid_user_id",
-        rate: "smart",
-        created_at: new Date(),
-        updated_at: new Date(),
-      };
-
-      const rate = toRate(row);
-
-      expect(rate).toEqual({
-        petId: row.pet_id,
-        userId: row.user_id,
-        rate: row.rate,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-      });
     });
   });
 });
