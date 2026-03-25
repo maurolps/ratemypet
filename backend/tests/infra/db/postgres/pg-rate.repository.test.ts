@@ -59,6 +59,57 @@ describe("PgRateRepository", () => {
       expect(rate).toBeNull();
     });
 
+    it("Should delete an existing rate and return true", async () => {
+      const sut = new PgRateRepository();
+      await sut.upsert({
+        ...rateDTO,
+        rate: "sleepy",
+      });
+
+      const wasDeleted = await sut.deleteByPetIdAndUserId(
+        rateDTO.petId,
+        rateDTO.userId,
+      );
+      const deletedRate = await sut.findByPetIdAndUserId(
+        rateDTO.petId,
+        rateDTO.userId,
+      );
+
+      expect(wasDeleted).toBe(true);
+      expect(deletedRate).toBeNull();
+    });
+
+    it("Should return false when deleting a non-existent rate", async () => {
+      const sut = new PgRateRepository();
+
+      const wasDeleted = await sut.deleteByPetIdAndUserId(
+        crypto.randomUUID(),
+        crypto.randomUUID(),
+      );
+
+      expect(wasDeleted).toBe(false);
+    });
+
+    it("Should remain idempotent when deleting the same rate repeatedly", async () => {
+      const sut = new PgRateRepository();
+      await sut.upsert({
+        ...rateDTO,
+        rate: "chaos",
+      });
+
+      const firstDelete = await sut.deleteByPetIdAndUserId(
+        rateDTO.petId,
+        rateDTO.userId,
+      );
+      const secondDelete = await sut.deleteByPetIdAndUserId(
+        rateDTO.petId,
+        rateDTO.userId,
+      );
+
+      expect(firstDelete).toBe(true);
+      expect(secondDelete).toBe(false);
+    });
+
     it("Should update an existing rate", async () => {
       const sut = new PgRateRepository();
 
