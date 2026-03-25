@@ -1,10 +1,11 @@
+import type { DeleteRateRepository } from "@application/repositories/delete-rate.repository";
 import type { RateRepository } from "@application/repositories/rate.repository";
 import type { Rate } from "@domain/entities/rate";
 import { toRate, type RateRow } from "@infra/mappers/rate-mapper";
 import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/rate.sql";
 
-export class PgRateRepository implements RateRepository {
+export class PgRateRepository implements RateRepository, DeleteRateRepository {
   private readonly pool: PgPool;
 
   constructor() {
@@ -31,5 +32,13 @@ export class PgRateRepository implements RateRepository {
       rate.rate,
     ]);
     return toRate(rateRows.rows[0]);
+  }
+
+  async deleteByPetIdAndUserId(
+    petId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const result = await this.pool.query(sql.DELETE_RATE, [petId, userId]);
+    return (result.rowCount ?? 0) > 0;
   }
 }

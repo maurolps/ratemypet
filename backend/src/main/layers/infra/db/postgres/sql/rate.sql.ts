@@ -4,6 +4,10 @@ export const sql = {
   FROM ratings
   WHERE pet_id = $1 AND user_id = $2
   `,
+  DELETE_RATE: `
+  DELETE FROM ratings
+  WHERE pet_id = $1 AND user_id = $2
+  `,
   UPSERT_RATE: `
   INSERT INTO ratings (pet_id, user_id, rate)
   VALUES ($1, $2, $3)
