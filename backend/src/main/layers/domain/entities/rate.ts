@@ -10,9 +10,9 @@ export const RATE_VALUES = [
 export type RateValue = (typeof RATE_VALUES)[number];
 
 export type Rate = {
-  pet_id: string;
-  user_id: string;
+  petId: string;
+  userId: string;
   rate: RateValue;
-  created_at?: Date;
-  updated_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 };

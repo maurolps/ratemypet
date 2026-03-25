@@ -1,13 +1,13 @@
 import type { RateValue } from "@domain/entities/rate";
 
 export interface RatePetDTO {
-  pet_id: string;
-  user_id: string;
+  petId: string;
+  userId: string;
   rate: RateValue;
 }
 
 export type RatePetResult = {
-  pet_id: string;
+  petId: string;
   rate: RateValue;
 };
 
