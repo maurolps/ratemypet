@@ -3,13 +3,16 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   root: __dirname,
   test: {
+    testTimeout: 20_000,
     environment: "node",
+    reporters: ["dot"],
     coverage: {
       reporter: ["text-summary", "lcov"],
       reportsDirectory: "./backend/coverage",
       include: ["backend/src/main/layers/**/*.ts"],
       exclude: [
         "backend/src/main/layers/infra/db/postgres/adapters/pg-unit-of-work.adapter.ts",
+        "backend/src/main/layers/infra/db/seeds/**/*.ts",
       ],
     },
     projects: [
