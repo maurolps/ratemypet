@@ -14,6 +14,7 @@
   - Max `limit` is **50**
   - Cursor must be an opaque string encoding (`created_at`, `id`)
 - [x] The system must return post items with author and pet names
+- [ ] The system must return the total ratings count for the pet in each feed item (`pet.ratings_count`)
 - [x] The system must return `viewer_has_liked` for each post
 - [x] The system must set `viewer_has_liked` to `false` when unauthenticated
 - [x] The system must compute `viewer_has_liked` when a valid token is provided
@@ -25,6 +26,7 @@
 - [x] The system must ensure stable ordering for pagination with Tie-breaker
 - [x] The system must use seek pagination (cursor-based)
 - [x] The system must avoid N+1 queries when resolving `author_name` and `pet_name`
+- [ ] The system must compute `pet.ratings_count` efficiently for each returned item
 - [x] The system must support fast lookup for `viewer_has_liked`
 - [x] The system should implement rate limiting
 
