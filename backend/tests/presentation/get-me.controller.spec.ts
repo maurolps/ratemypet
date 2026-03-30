@@ -80,6 +80,7 @@ describe("GetMeController", () => {
           name: "valid_pet_name",
           type: "dog",
           imageUrl: "https://valid.image/pet.png",
+          ratingsCount: 4,
         },
       ],
     });
