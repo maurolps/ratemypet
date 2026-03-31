@@ -13,6 +13,7 @@ type FeedRow = {
   pet_id: string;
   pet_name: string;
   pet_type: FeedItem["pet"]["type"];
+  pet_ratings_count: number;
   author_id: string;
   author_name: string;
   likes_count: number;
@@ -45,6 +46,7 @@ export class PgFeedQuery implements GetFeedQuery {
         id: feedRow.pet_id,
         name: feedRow.pet_name,
         type: feedRow.pet_type,
+        ratings_count: feedRow.pet_ratings_count,
       },
       author: {
         id: feedRow.author_id,
