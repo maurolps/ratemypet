@@ -7,8 +7,8 @@
 - [x] The system must return public user information (`id`, `displayName`, `bio`, `createdAt` and `picture`)
 - [x] The system must return aggregated user stats (`postsCount`, `likesReceived`)
 - [x] The system must return the list of user pets (non-paginated)
-- [ ] The system must return pets in a summarized format (`id`, `name`, `type`, `imageUrl`, `ratingsCount`)
-- [ ] The system must return only the total ratings count per pet
+- [x] The system must return pets in a summarized format (`id`, `name`, `type`, `imageUrl`, `ratingsCount`)
+- [x] The system must return only the total ratings count per pet
 - [x] The system must not return sensitive data such as `email`, `password`, or internal flags
 - [x] The system must ignore authentication token if provided (public endpoint)
 - [x] Happy Path: The system must return **200** with public profile data, stats, and pets

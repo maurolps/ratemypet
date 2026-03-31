@@ -5,8 +5,8 @@
 - [x] The system must allow any user to fetch a post by id
 - [x] The system must require a valid and existing `postId`
 - [x] The system must return post details and counters
-- [ ] The system must return a top-level ratings summary for the post pet
-- [ ] The system must return the total ratings count and the per-rate counts for `cute`, `funny`, `majestic`, `chaos`, `smart`, and `sleepy`
+- [x] The system must return a top-level ratings summary for the post pet
+- [x] The system must return the total ratings count and the per-rate counts for `cute`, `funny`, `majestic`, `chaos`, `smart`, and `sleepy`
 - [x] The system must return `viewer_has_liked` boolean if authenticated
 - [x] The system must support optional authentication
 - [x] The system must return the 20 most recent comments by default
@@ -18,7 +18,7 @@
 - [x] The system must enforce database integrity through foreign keys and constraints
 - [x] The system must ensure stable ordering for comment pagination
 - [x] The system must avoid N+1 queries when resolving comment author names.
-- [ ] The system must compute the ratings summary efficiently from the existing ratings table
+- [x] The system must compute the ratings summary efficiently from the existing ratings table
 - [x] The system must support fast lookup for `viewer_has_liked`
 - [x] The system must implement rate limiting to prevent abuse on GetPost
 
