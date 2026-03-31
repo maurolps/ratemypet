@@ -21,6 +21,18 @@ export type GetPostData = {
   viewer_has_liked: boolean;
 };
 
+export type GetPostRatings = {
+  total_count: number;
+  by_rate: {
+    cute: number;
+    funny: number;
+    majestic: number;
+    chaos: number;
+    smart: number;
+    sleepy: number;
+  };
+};
+
 export interface GetPostDTO {
   post_id: string;
   viewer_id?: string;
@@ -30,6 +42,7 @@ export interface GetPostDTO {
 
 export type GetPostResult = {
   post: GetPostData;
+  ratings: GetPostRatings;
   comments: GetPostComment[];
   pagination: {
     limit: number;

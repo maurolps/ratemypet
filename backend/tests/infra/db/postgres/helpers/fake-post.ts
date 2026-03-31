@@ -7,6 +7,7 @@ import { insertFakeUser } from "./fake-user";
 export const insertFakePost = async (): Promise<{
   post_id: string;
   owner_id: string;
+  pet_id: string;
 }> => {
   const postRepository = new PgPostRepository();
   const owner = await insertFakeUser(generateFakeEmail("pg_post_query_owner"));
@@ -23,5 +24,6 @@ export const insertFakePost = async (): Promise<{
   return {
     post_id: post.toState.id ?? "",
     owner_id: owner.id,
+    pet_id: pet.id,
   };
 };

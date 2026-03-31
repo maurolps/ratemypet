@@ -87,6 +87,17 @@ describe("GetPostUseCase", () => {
         comments_count: 1,
         viewer_has_liked: true,
       },
+      ratings: {
+        total_count: 4,
+        by_rate: {
+          cute: 1,
+          funny: 1,
+          majestic: 1,
+          chaos: 0,
+          smart: 1,
+          sleepy: 0,
+        },
+      },
       comments: [
         {
           id: "valid_comment_id",
@@ -101,6 +112,24 @@ describe("GetPostUseCase", () => {
         limit: 2,
         next_cursor: null,
         has_more: false,
+      },
+    });
+  });
+
+  it("Should preserve ratings summary from GetPostQuery", async () => {
+    const { sut } = makeSut();
+
+    const result = await sut.execute(getPostDTO);
+
+    expect(result.ratings).toEqual({
+      total_count: 4,
+      by_rate: {
+        cute: 1,
+        funny: 1,
+        majestic: 1,
+        chaos: 0,
+        smart: 1,
+        sleepy: 0,
       },
     });
   });

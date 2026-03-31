@@ -22,6 +22,7 @@ type ProfilePetRow = {
   name: string;
   type: GetProfilePet["type"];
   image_url: string;
+  ratings_count: number;
 };
 
 export class PgProfileQuery
@@ -67,6 +68,7 @@ export class PgProfileQuery
       name: petRow.name,
       type: petRow.type,
       imageUrl: petRow.image_url,
+      ratingsCount: petRow.ratings_count,
     }));
   }
 }

@@ -7,6 +7,7 @@ export const sql = {
     pet.id AS pet_id,
     pet.name AS pet_name,
     pet.type AS pet_type,
+    COALESCE(ratings.ratings_count, 0)::int AS pet_ratings_count,
     u.id AS author_id,
     u.name AS author_name,
     p.likes_count,
@@ -25,6 +26,11 @@ export const sql = {
   FROM posts p
   INNER JOIN users u ON u.id = p.author_id
   INNER JOIN pets pet ON pet.id = p.pet_id
+  LEFT JOIN LATERAL (
+    SELECT COUNT(*)::int AS ratings_count
+    FROM ratings r
+    WHERE r.pet_id = pet.id
+  ) ratings ON TRUE
   WHERE p.status = 'PUBLISHED'
     AND (
       $1::timestamptz IS NULL

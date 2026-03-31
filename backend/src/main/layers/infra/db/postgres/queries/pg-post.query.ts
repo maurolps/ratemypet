@@ -1,4 +1,7 @@
-import type { GetPostQuery } from "@application/queries/get-post.query";
+import type {
+  GetPostDetails,
+  GetPostQuery,
+} from "@application/queries/get-post.query";
 import type {
   FindPostCommentsInput,
   GetCommentsQuery,
@@ -7,6 +10,7 @@ import type { PostExistsQuery } from "@application/queries/post-exists.query";
 import type {
   GetPostComment,
   GetPostData,
+  GetPostRatings,
 } from "@domain/usecases/get-post.contract";
 import { PgPool } from "../helpers/pg-pool";
 import { sql } from "../sql/post.query.sql";
@@ -21,6 +25,13 @@ type PostDetailsRow = {
   likes_count: number;
   comments_count: number;
   viewer_has_liked: boolean;
+  ratings_total_count: number;
+  cute_count: number;
+  funny_count: number;
+  majestic_count: number;
+  chaos_count: number;
+  smart_count: number;
+  sleepy_count: number;
 };
 
 type PostCommentRow = {
@@ -57,7 +68,7 @@ export class PgPostQuery
   async findPostDetailsById(
     post_id: string,
     viewer_id?: string,
-  ): Promise<GetPostData | null> {
+  ): Promise<GetPostDetails | null> {
     const postRows = await this.pool.query<PostDetailsRow>(
       sql.FIND_POST_DETAILS_BY_ID,
       [post_id, viewer_id ?? null],
@@ -68,16 +79,31 @@ export class PgPostQuery
       return null;
     }
 
+    const ratings: GetPostRatings = {
+      total_count: post.ratings_total_count,
+      by_rate: {
+        cute: post.cute_count,
+        funny: post.funny_count,
+        majestic: post.majestic_count,
+        chaos: post.chaos_count,
+        smart: post.smart_count,
+        sleepy: post.sleepy_count,
+      },
+    };
+
     return {
-      id: post.id,
-      pet_id: post.pet_id,
-      author_id: post.author_id,
-      caption: post.caption,
-      status: post.status,
-      created_at: post.created_at,
-      likes_count: post.likes_count,
-      comments_count: post.comments_count,
-      viewer_has_liked: post.viewer_has_liked,
+      post: {
+        id: post.id,
+        pet_id: post.pet_id,
+        author_id: post.author_id,
+        caption: post.caption,
+        status: post.status,
+        created_at: post.created_at,
+        likes_count: post.likes_count,
+        comments_count: post.comments_count,
+        viewer_has_liked: post.viewer_has_liked,
+      },
+      ratings,
     };
   }
 

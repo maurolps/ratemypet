@@ -10,6 +10,7 @@ export type GetMePet = {
   name: string;
   type: PetType;
   imageUrl: string;
+  ratingsCount: number;
 };
 
 export type GetMeProfile = {

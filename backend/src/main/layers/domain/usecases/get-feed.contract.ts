@@ -14,6 +14,7 @@ export type FeedItem = {
     id: string;
     name: string;
     type: PetType;
+    ratings_count: number;
   };
   author: {
     id: string;

@@ -7,13 +7,15 @@
 - [x] The system must return user basic information (`id`, `displayName`, `email`, `bio`, `createdAt` and `picture`)
 - [x] The system must return aggregated user stats (`postsCount`, `likesReceived`)
 - [x] The system must return the list of user pets (non-paginated)
-- [x] The system must return pets in a summarized format (`id`, `name`, `type`, `imageUrl`)
+- [x] The system must return pets in a summarized format (`id`, `name`, `type`, `imageUrl`, `ratingsCount`)
+- [x] The system must return only the total ratings count per pet
 - [x] Happy Path: The system must return **200** with user profile data, stats, and pets
 
 ## Non-Functional Requirements
 
 - [x] The system must avoid N+1 queries when resolving pets
 - [x] The system must compute stats efficiently (using aggregation queries)
+- [x] The system must compute pet ratings totals efficiently without changing the endpoint pagination behavior
 - [x] The system must enforce proper indexing on `posts.user_id`
 - [x] The system must implement rate limiting to prevent abuse on profile endpoint
 

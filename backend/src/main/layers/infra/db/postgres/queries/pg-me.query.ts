@@ -20,6 +20,7 @@ type MePetRow = {
   name: string;
   type: GetMePet["type"];
   image_url: string;
+  ratings_count: number;
 };
 
 export class PgMeQuery implements GetMeProfileQuery, GetMePetsQuery {
@@ -64,6 +65,7 @@ export class PgMeQuery implements GetMeProfileQuery, GetMePetsQuery {
       name: petRow.name,
       type: petRow.type,
       imageUrl: petRow.image_url,
+      ratingsCount: petRow.ratings_count,
     }));
   }
 }

@@ -139,6 +139,7 @@ describe("PgProfileQuery", () => {
           name: "fake_pet_name",
           type: "dog",
           imageUrl: "https://fake.image.url/pet.png",
+          ratingsCount: 0,
         },
       ]);
     });

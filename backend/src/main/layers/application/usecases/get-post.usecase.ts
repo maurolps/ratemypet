@@ -18,12 +18,12 @@ export class GetPostUseCase implements GetPost {
     const commentsLimit = data.limit;
     const commentsCursor = data.cursor;
 
-    const post = await this.getPostQuery.findPostDetailsById(
+    const postDetails = await this.getPostQuery.findPostDetailsById(
       data.post_id,
       data.viewer_id,
     );
 
-    if (!post) {
+    if (!postDetails) {
       throw new AppError("NOT_FOUND", "The specified post does not exist.");
     }
 
@@ -42,7 +42,8 @@ export class GetPostUseCase implements GetPost {
       : null;
 
     return {
-      post,
+      post: postDetails.post,
+      ratings: postDetails.ratings,
       comments: paginatedComments,
       pagination: {
         limit: commentsLimit,

@@ -19,6 +19,17 @@ export class GetPostUseCaseStub implements GetPost {
         comments_count: 1,
         viewer_has_liked: true,
       },
+      ratings: {
+        total_count: 4,
+        by_rate: {
+          cute: 1,
+          funny: 1,
+          majestic: 1,
+          chaos: 0,
+          smart: 1,
+          sleepy: 0,
+        },
+      },
       comments: [
         {
           id: "valid_comment_id",
