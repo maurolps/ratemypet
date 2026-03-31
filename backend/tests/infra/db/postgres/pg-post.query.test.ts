@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PgPostQuery } from "@infra/db/postgres/queries/pg-post.query";
 import { PgLikeRepository } from "@infra/db/postgres/pg-like.repository";
+import { PgRateRepository } from "@infra/db/postgres/pg-rate.repository";
 import { insertComment } from "./helpers/fake-comment";
 import { generateFakeEmail } from "./helpers/fake-email";
 import { insertFakePost } from "./helpers/fake-post";
@@ -8,6 +9,7 @@ import { insertFakeUser } from "./helpers/fake-user";
 
 describe("PgPostQuery", () => {
   const likeRepository = new PgLikeRepository();
+  const rateRepository = new PgRateRepository();
   const sut = new PgPostQuery();
 
   describe("findPostDetailsById", () => {
@@ -23,14 +25,15 @@ describe("PgPostQuery", () => {
       const result = await sut.findPostDetailsById(post_id, owner_id);
 
       expect(result).not.toBeNull();
-      expect(result?.id).toBe(post_id);
-      expect(result?.author_id).toBe(owner_id);
-      expect(result?.caption).toBe("Post caption");
-      expect(result?.status).toBe("PUBLISHED");
-      expect(result?.likes_count).toBe(0);
-      expect(result?.comments_count).toBe(0);
-      expect(result?.created_at).toBeInstanceOf(Date);
-      expect(result?.viewer_has_liked).toBe(false);
+      expect(result?.post.id).toBe(post_id);
+      expect(result?.post.author_id).toBe(owner_id);
+      expect(result?.post.caption).toBe("Post caption");
+      expect(result?.post.status).toBe("PUBLISHED");
+      expect(result?.post.likes_count).toBe(0);
+      expect(result?.post.comments_count).toBe(0);
+      expect(result?.post.created_at).toBeInstanceOf(Date);
+      expect(result?.post.viewer_has_liked).toBe(false);
+      expect(result?.ratings.total_count).toEqual(0);
     });
 
     it("Should return viewer_has_liked true when the viewer liked the post", async () => {
@@ -46,7 +49,42 @@ describe("PgPostQuery", () => {
       const result = await sut.findPostDetailsById(post_id, viewer.id);
 
       expect(result).not.toBeNull();
-      expect(result?.viewer_has_liked).toBe(true);
+      expect(result?.post.viewer_has_liked).toBe(true);
+    });
+
+    it("Should return ratings summary grouped by rate", async () => {
+      const { post_id, pet_id } = await insertFakePost();
+      const raterA = await insertFakeUser(
+        generateFakeEmail("pg_post_query_rater_a"),
+      );
+      const raterB = await insertFakeUser(
+        generateFakeEmail("pg_post_query_rater_b"),
+      );
+
+      await rateRepository.upsert({
+        petId: pet_id,
+        userId: raterA.id,
+        rate: "cute",
+      });
+      await rateRepository.upsert({
+        petId: pet_id,
+        userId: raterB.id,
+        rate: "funny",
+      });
+
+      const result = await sut.findPostDetailsById(post_id);
+
+      expect(result?.ratings).toEqual({
+        total_count: 2,
+        by_rate: {
+          cute: 1,
+          funny: 1,
+          majestic: 0,
+          chaos: 0,
+          smart: 0,
+          sleepy: 0,
+        },
+      });
     });
   });
 
