@@ -17,6 +17,13 @@ export const sql = {
     p.created_at,
     p.likes_count,
     p.comments_count,
+    COALESCE(ratings.total_count, 0)::int AS ratings_total_count,
+    COALESCE(ratings.cute_count, 0)::int AS cute_count,
+    COALESCE(ratings.funny_count, 0)::int AS funny_count,
+    COALESCE(ratings.majestic_count, 0)::int AS majestic_count,
+    COALESCE(ratings.chaos_count, 0)::int AS chaos_count,
+    COALESCE(ratings.smart_count, 0)::int AS smart_count,
+    COALESCE(ratings.sleepy_count, 0)::int AS sleepy_count,
     (
       $2::uuid IS NOT NULL
       AND EXISTS (
@@ -27,6 +34,18 @@ export const sql = {
       )
     ) AS viewer_has_liked
   FROM posts p
+  LEFT JOIN LATERAL (
+    SELECT
+      COUNT(*)::int AS total_count,
+      COUNT(*) FILTER (WHERE r.rate = 'cute')::int AS cute_count,
+      COUNT(*) FILTER (WHERE r.rate = 'funny')::int AS funny_count,
+      COUNT(*) FILTER (WHERE r.rate = 'majestic')::int AS majestic_count,
+      COUNT(*) FILTER (WHERE r.rate = 'chaos')::int AS chaos_count,
+      COUNT(*) FILTER (WHERE r.rate = 'smart')::int AS smart_count,
+      COUNT(*) FILTER (WHERE r.rate = 'sleepy')::int AS sleepy_count
+    FROM ratings r
+    WHERE r.pet_id = p.pet_id
+  ) ratings ON TRUE
   WHERE p.id = $1
     AND p.status = 'PUBLISHED'
   `,
