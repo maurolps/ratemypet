@@ -8,6 +8,7 @@ export class GetMePetsQueryStub implements GetMePetsQuery {
         name: "valid_pet_name",
         type: "dog" as const,
         imageUrl: "https://valid.image/pet.png",
+        ratingsCount: 4,
       },
     ];
   }

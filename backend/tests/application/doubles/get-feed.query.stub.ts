@@ -16,6 +16,7 @@ export class GetFeedQueryStub implements GetFeedQuery {
           id: "valid_pet_id",
           name: "valid_pet_name",
           type: "dog",
+          ratings_count: 4,
         },
         author: {
           id: "valid_author_id",

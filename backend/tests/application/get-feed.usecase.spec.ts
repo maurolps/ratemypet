@@ -32,6 +32,7 @@ describe("GetFeedUseCase", () => {
       id: "valid_pet_id",
       name: "valid_pet_name",
       type: "dog" as "dog" | "cat",
+      ratings_count: 4,
     },
     author: {
       id: "valid_author_id",
@@ -68,6 +69,14 @@ describe("GetFeedUseCase", () => {
       has_more: false,
       next_cursor: null,
     });
+  });
+
+  it("Should preserve pet ratings_count on success", async () => {
+    const { sut } = makeSut();
+
+    const result = await sut.execute(getFeedDTO);
+
+    expect(result.items[0]?.pet.ratings_count).toBe(4);
   });
 
   it("Should return paginated items and next_cursor when there are additional items", async () => {
