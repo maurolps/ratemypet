@@ -99,6 +99,7 @@ describe("[E2E] UC-016 Get Me", () => {
         name: "fake_pet_name",
         type: "dog",
         imageUrl: "https://fake.image.url/pet.png",
+        ratingsCount: 0,
       },
     ]);
   });

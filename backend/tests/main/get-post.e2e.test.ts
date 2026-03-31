@@ -2,6 +2,7 @@ import type { Express } from "express";
 import type { Pet } from "@domain/entities/pet";
 import { describe, it, expect, beforeAll } from "vitest";
 import { PgPostRepository } from "@infra/db/postgres/pg-post.repository";
+import { PgRateRepository } from "@infra/db/postgres/pg-rate.repository";
 import { insertFakePet } from "../infra/db/postgres/helpers/fake-pet";
 import { createAndLoginUser } from "./helpers/create-and-login-user";
 import { createPost } from "./helpers/create-post";
@@ -11,16 +12,19 @@ import request from "supertest";
 const makeSut = () => {
   const app = makeApp();
   const postRepository = new PgPostRepository();
+  const rateRepository = new PgRateRepository();
 
   return {
     app,
     postRepository,
+    rateRepository,
   };
 };
 
 describe("[E2E] UC-009 GetPost", () => {
   let app: Express;
   let postRepository: PgPostRepository;
+  let rateRepository: PgRateRepository;
   let ownerId: string;
   let viewerAccessToken: string;
   let pet: Pet;
@@ -29,6 +33,7 @@ describe("[E2E] UC-009 GetPost", () => {
     const sut = makeSut();
     app = sut.app;
     postRepository = sut.postRepository;
+    rateRepository = sut.rateRepository;
 
     const owner = await createAndLoginUser(app);
     ownerId = owner.userId;
@@ -53,6 +58,17 @@ describe("[E2E] UC-009 GetPost", () => {
     expect(response.body.post.author_id).toBe(ownerId);
     expect(response.body.post.caption).toBe("GetPost caption");
     expect(response.body.post.viewer_has_liked).toBe(false);
+    expect(response.body.ratings).toEqual({
+      total_count: 0,
+      by_rate: {
+        cute: 0,
+        funny: 0,
+        majestic: 0,
+        chaos: 0,
+        smart: 0,
+        sleepy: 0,
+      },
+    });
     expect(response.body.comments).toEqual([]);
     expect(response.body.pagination).toEqual({
       limit: 20,
@@ -80,6 +96,49 @@ describe("[E2E] UC-009 GetPost", () => {
     expect(response.body.post.id).toBe(post.toState.id);
     expect(response.body.post.viewer_has_liked).toBe(true);
     expect(response.body.post.likes_count).toBe(1);
+  });
+
+  it("Should return top-level ratings summary grouped by rate", async () => {
+    const post = await createPost(
+      postRepository,
+      pet.id,
+      ownerId,
+      "Rated post",
+    );
+    const cuteRater = await createAndLoginUser(app);
+    const funnyRaterA = await createAndLoginUser(app);
+    const funnyRaterB = await createAndLoginUser(app);
+
+    await rateRepository.upsert({
+      petId: pet.id,
+      userId: cuteRater.userId,
+      rate: "cute",
+    });
+    await rateRepository.upsert({
+      petId: pet.id,
+      userId: funnyRaterA.userId,
+      rate: "funny",
+    });
+    await rateRepository.upsert({
+      petId: pet.id,
+      userId: funnyRaterB.userId,
+      rate: "funny",
+    });
+
+    const response = await request(app).get(`/api/posts/${post.toState.id}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.ratings).toEqual({
+      total_count: 3,
+      by_rate: {
+        cute: 1,
+        funny: 2,
+        majestic: 0,
+        chaos: 0,
+        smart: 0,
+        sleepy: 0,
+      },
+    });
   });
 
   it("Should return status 401 when Authorization token is invalid", async () => {
