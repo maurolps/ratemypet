@@ -5,4 +5,6 @@ export class UpdatePetRatingsCountRepositoryStub
   implements UpdatePetRatingsCountRepository
 {
   async incrementRatingsCount(_: string, __: Transaction = {}): Promise<void> {}
+
+  async decrementRatingsCount(_: string, __: Transaction = {}): Promise<void> {}
 }

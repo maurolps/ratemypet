@@ -5,4 +5,8 @@ export interface UpdatePetRatingsCountRepository {
     petId: string,
     transaction?: Transaction,
   ): Promise<void>;
+  decrementRatingsCount(
+    petId: string,
+    transaction?: Transaction,
+  ): Promise<void>;
 }
