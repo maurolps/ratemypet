@@ -9,8 +9,8 @@
   - Mood Tags: `cute`, `funny`, `majestic`, `chaos`, `smart`, `sleepy`.
 - [x] The system must allow only **one rating per user per pet**
 - [x] The system must use a toggle based behavior:
-  - If no existing rating exists for (userId, petId): CREATE
-  - If an existing rating exists with a different rate: UPDATE
+  - If no existing rating exists for (userId, petId): CREATE and increment `pets.ratings_count`
+  - If an existing rating exists with a different rate: UPDATE 
   - If an existing rating exists with the same rate: NO-OP (idempotent)
 - [x] The system must persist one user rating with `userId`, `petId`, and `rate`
 - [x] The system must persist timestamps for rating creation and updates (`created_at`, `updated_at`)
@@ -23,6 +23,8 @@
 - [x] The system must enforce uniqueness at db level for (user_id, pet_id) in the ratings table
 - [x] The system must be idempotent for repeated requests (same rate)
 - [x] The system must handle concurrent updates safely (no duplicate ratings)
+- [x] The system must increment `pets.ratings_count` atomically at database level
+- [x] The system must execute the rating write flow inside a UnitOfWork transaction
 
 ## TDD
 

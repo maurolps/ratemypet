@@ -7,6 +7,7 @@
 - [x] The system must require a valid and existing `petId`
 - [x] The system must remove the rate only if it exists for the pair `(userId, petId)`
 - [x] The system must perform a **hard delete** of the rate record when it exists
+- [x] The system must decrement `pets.ratings_count` when deleting an existing rate
 - [x] The system must not fail when the user has not rated the pet yet (idempotent no-op)
 - [x] The system must expose the endpoint `DELETE /pets/:id/rate`
 - [x] Happy Path: The system must return **200 OK** with the delete status, e.g.:
@@ -18,6 +19,9 @@
 - [x] The system must be idempotent for repeated delete requests
 - [x] The system must handle concurrent deletes safely (no inconsistent results)
 - [x] The system must preserve database integrity through foreign keys and constraints
+- [x] The system must execute rate delete and `pets.ratings_count` decrement atomically in a UnitOfWork transaction
+- [x] The system must decrement `pets.ratings_count` at database level
+- [x] Repeated delete requests must not decrement `pets.ratings_count` more than once
 
 ## TDD
 

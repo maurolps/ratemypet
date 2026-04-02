@@ -1,6 +1,8 @@
 import { AppError } from "@application/errors/app-error";
 import type { DeleteRateRepository } from "@application/repositories/delete-rate.repository";
 import type { FindPetRepository } from "@application/repositories/find-pet.repository";
+import type { UpdatePetRatingsCountRepository } from "@application/repositories/update-pet-ratings-count.repository";
+import type { UnitOfWork } from "@application/ports/unit-of-work.contract";
 import type {
   DeleteRate,
   DeleteRateDTO,
@@ -11,6 +13,8 @@ export class DeleteRateUseCase implements DeleteRate {
   constructor(
     private readonly findPetRepository: FindPetRepository,
     private readonly deleteRateRepository: DeleteRateRepository,
+    private readonly updatePetRatingsCountRepository: UpdatePetRatingsCountRepository,
+    private readonly unitOfWork: UnitOfWork,
   ) {}
 
   async execute(data: DeleteRateDTO): Promise<DeleteRateResult> {
@@ -20,14 +24,29 @@ export class DeleteRateUseCase implements DeleteRate {
       throw new AppError("NOT_FOUND", "The specified pet does not exist.");
     }
 
-    const wasDeleted = await this.deleteRateRepository.deleteByPetIdAndUserId(
-      data.petId,
-      data.userId,
-    );
+    return await this.unitOfWork.execute(async (transactionClient) => {
+      const wasDeleted = await this.deleteRateRepository.deleteByPetIdAndUserId(
+        data.petId,
+        data.userId,
+        transactionClient,
+      );
 
-    return {
-      petId: data.petId,
-      status: wasDeleted ? "deleted" : "unchanged",
-    };
+      if (!wasDeleted) {
+        return {
+          petId: data.petId,
+          status: "unchanged",
+        };
+      }
+
+      await this.updatePetRatingsCountRepository.decrementRatingsCount(
+        data.petId,
+        transactionClient,
+      );
+
+      return {
+        petId: data.petId,
+        status: "deleted",
+      };
+    });
   }
 }

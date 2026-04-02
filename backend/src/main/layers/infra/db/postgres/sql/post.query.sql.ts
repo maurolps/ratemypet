@@ -17,7 +17,7 @@ export const sql = {
     p.created_at,
     p.likes_count,
     p.comments_count,
-    COALESCE(ratings.total_count, 0)::int AS ratings_total_count,
+    pet.ratings_count AS ratings_total_count,
     COALESCE(ratings.cute_count, 0)::int AS cute_count,
     COALESCE(ratings.funny_count, 0)::int AS funny_count,
     COALESCE(ratings.majestic_count, 0)::int AS majestic_count,
@@ -34,9 +34,9 @@ export const sql = {
       )
     ) AS viewer_has_liked
   FROM posts p
+  INNER JOIN pets pet ON pet.id = p.pet_id
   LEFT JOIN LATERAL (
     SELECT
-      COUNT(*)::int AS total_count,
       COUNT(*) FILTER (WHERE r.rate = 'cute')::int AS cute_count,
       COUNT(*) FILTER (WHERE r.rate = 'funny')::int AS funny_count,
       COUNT(*) FILTER (WHERE r.rate = 'majestic')::int AS majestic_count,

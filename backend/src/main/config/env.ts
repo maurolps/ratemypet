@@ -1,14 +1,15 @@
+type NodeEnv = "development" | "production";
+
 export const env = {
-  NODE_ENV: process.env.NODE_ENV || "development",
-  PORT: process.env.PORT || 8000,
+  NODE_ENV: (process.env.NODE_ENV as NodeEnv) || "development",
+  PORT: Number(process.env.PORT) || 8000,
   DATABASE_URL:
     process.env.DATABASE_URL ||
     "postgres://ratemypet:ratemypet@localhost:5432/ratemypet_dev?sslmode=disable",
   JWT_ACCESS_TOKEN_SECRET:
     process.env.JWT_ACCESS_TOKEN_SECRET || "dev_access_token_secret",
   JWT_ACCESS_TOKEN_TTL: process.env.JWT_ACCESS_TOKEN_TTL || "30s",
-  REFRESH_TOKEN_TTL:
-    (process.env.REFRESH_TOKEN_TTL as unknown as number) || 60_000,
+  REFRESH_TOKEN_TTL: Number(process.env.REFRESH_TOKEN_TTL) || 60_000,
   RATE_LIMIT_ENABLED: process.env.RATE_LIMIT_ENABLED || "true",
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
@@ -17,4 +18,4 @@ export const env = {
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME || "development-bucket",
   AWS_ENDPOINT: process.env.AWS_ENDPOINT || "https://my-s3-endpoint.com",
-};
+} as const;

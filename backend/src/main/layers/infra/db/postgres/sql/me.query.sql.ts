@@ -22,13 +22,8 @@ export const sql = {
     name,
     type,
     image_url,
-    COALESCE(ratings.ratings_count, 0)::int AS ratings_count
+    ratings_count
   FROM pets
-  LEFT JOIN LATERAL (
-    SELECT COUNT(*)::int AS ratings_count
-    FROM ratings r
-    WHERE r.pet_id = pets.id
-  ) ratings ON TRUE
   WHERE owner_id = $1
     AND deleted_at IS NULL
   ORDER BY created_at ASC, id ASC
