@@ -20,7 +20,7 @@ export class RateRepositoryStub implements RateRepository {
         createdAt: FIXED_DATE,
         updatedAt: FIXED_DATE,
       },
-      operation: "created",
+      wasCreated: true,
     };
   }
 }

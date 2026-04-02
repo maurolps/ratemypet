@@ -30,7 +30,7 @@ export class RatePetUseCase implements RatePet {
         transactionClient,
       );
 
-      if (upsertResult.operation === "created") {
+      if (upsertResult.wasCreated) {
         await this.updatePetRatingsCountRepository.incrementRatingsCount(
           data.petId,
           transactionClient,

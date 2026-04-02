@@ -108,7 +108,7 @@ describe("RatePetUseCase", () => {
         createdAt: FIXED_DATE,
         updatedAt: FIXED_DATE,
       },
-      operation: "updated",
+      wasCreated: false,
     });
 
     const result = await sut.execute(ratePetDTO);
@@ -131,7 +131,7 @@ describe("RatePetUseCase", () => {
         createdAt: FIXED_DATE,
         updatedAt: FIXED_DATE,
       },
-      operation: "unchanged",
+      wasCreated: false,
     });
 
     const result = await sut.execute(ratePetDTO);
