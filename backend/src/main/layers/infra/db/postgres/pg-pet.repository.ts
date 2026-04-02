@@ -3,6 +3,7 @@ import type { UploadPetRepository } from "@application/repositories/upload-pet.r
 import type { FindPetRepository } from "@application/repositories/find-pet.repository";
 import type { FindPetWithDeletedRepository } from "@application/repositories/find-pet-with-deleted.repository";
 import type { DeletePetRepository } from "@application/repositories/delete-pet.repository";
+import type { UpdatePetRatingsCountRepository } from "@application/repositories/update-pet-ratings-count.repository";
 import type { Transaction } from "@application/ports/unit-of-work.contract";
 import { PgPool } from "./helpers/pg-pool";
 import { sql } from "./sql/pet.sql";
@@ -12,7 +13,8 @@ export class PgPetRepository
     UploadPetRepository,
     FindPetRepository,
     FindPetWithDeletedRepository,
-    DeletePetRepository
+    DeletePetRepository,
+    UpdatePetRatingsCountRepository
 {
   private readonly pool: PgPool;
   constructor() {
@@ -66,5 +68,13 @@ export class PgPetRepository
   ): Promise<void> {
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     await client.query(sql.SOFT_DELETE_PET, [petId]);
+  }
+
+  async incrementRatingsCount(
+    petId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    await client.query(sql.INCREMENT_RATINGS_COUNT, [petId]);
   }
 }
