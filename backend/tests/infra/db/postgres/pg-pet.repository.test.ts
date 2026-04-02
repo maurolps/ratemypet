@@ -124,4 +124,58 @@ describe("PgPetRepository", () => {
       expect(petRows.rows[0]?.ratings_count).toBe(1);
     });
   });
+
+  describe("decrementRatingsCount", () => {
+    it("Should decrement ratings_count in the database", async () => {
+      const sut = new PgPetRepository();
+      const pet = await sut.save({
+        ...unsavedPet,
+        petName: "decrement_ratings_count_pet_name",
+      });
+      const pool = PgPool.getInstance();
+      await pool.query(
+        `
+        UPDATE pets
+        SET ratings_count = 2
+        WHERE id = $1
+        `,
+        [pet.id],
+      );
+
+      await sut.decrementRatingsCount(pet.id);
+
+      const petRows = await pool.query<{ ratings_count: number }>(
+        `
+          SELECT ratings_count
+          FROM pets
+          WHERE id = $1
+        `,
+        [pet.id],
+      );
+
+      expect(petRows.rows[0]?.ratings_count).toBe(1);
+    });
+
+    it("Should not decrement ratings_count below zero", async () => {
+      const sut = new PgPetRepository();
+      const pet = await sut.save({
+        ...unsavedPet,
+        petName: "decrement_ratings_count_floor_pet_name",
+      });
+      const pool = PgPool.getInstance();
+
+      await sut.decrementRatingsCount(pet.id);
+
+      const petRows = await pool.query<{ ratings_count: number }>(
+        `
+          SELECT ratings_count
+          FROM pets
+          WHERE id = $1
+        `,
+        [pet.id],
+      );
+
+      expect(petRows.rows[0]?.ratings_count).toBe(0);
+    });
+  });
 });

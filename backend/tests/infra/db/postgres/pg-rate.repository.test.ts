@@ -177,6 +177,26 @@ describe("PgRateRepository", () => {
       expect(transaction.query).toHaveBeenCalled();
     });
 
+    it("Should delete a rate inside a transaction", async () => {
+      const sut = new PgRateRepository();
+      const query = vi.fn().mockResolvedValue({
+        rows: [],
+        rowCount: 1,
+      });
+      const transaction = {
+        query,
+      };
+
+      const wasDeleted = await sut.deleteByPetIdAndUserId(
+        rateDTO.petId,
+        rateDTO.userId,
+        transaction,
+      );
+
+      expect(wasDeleted).toBe(true);
+      expect(transaction.query).toHaveBeenCalled();
+    });
+
     it("Should keep updatedAt unchanged when the same rate is upserted again", async () => {
       const sut = new PgRateRepository();
       const initialResult = await sut.upsert({
