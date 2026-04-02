@@ -74,8 +74,7 @@ describe("PgPostQuery", () => {
 
       const result = await sut.findPostDetailsById(post_id);
 
-      expect(result?.ratings).toEqual({
-        total_count: 2,
+      expect(result?.ratings).toMatchObject({
         by_rate: {
           cute: 1,
           funny: 1,

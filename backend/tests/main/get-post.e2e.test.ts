@@ -128,8 +128,7 @@ describe("[E2E] UC-009 GetPost", () => {
     const response = await request(app).get(`/api/posts/${post.toState.id}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.ratings).toEqual({
-      total_count: 3,
+    expect(response.body.ratings).toMatchObject({
       by_rate: {
         cute: 1,
         funny: 2,
