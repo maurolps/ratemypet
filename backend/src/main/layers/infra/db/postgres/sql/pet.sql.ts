@@ -32,4 +32,9 @@ export const sql = {
   SET ratings_count = ratings_count + 1
   WHERE id = $1
   `,
+  DECREMENT_RATINGS_COUNT: `
+  UPDATE pets
+  SET ratings_count = GREATEST(0, ratings_count - 1)
+  WHERE id = $1
+  `,
 };

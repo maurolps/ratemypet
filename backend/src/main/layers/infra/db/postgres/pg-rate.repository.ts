@@ -54,8 +54,10 @@ export class PgRateRepository implements RateRepository, DeleteRateRepository {
   async deleteByPetIdAndUserId(
     petId: string,
     userId: string,
+    transaction?: Transaction,
   ): Promise<boolean> {
-    const result = await this.pool.query(sql.DELETE_RATE, [petId, userId]);
+    const client = (transaction ? transaction : this.pool) as PgPool;
+    const result = await client.query(sql.DELETE_RATE, [petId, userId]);
     return (result.rowCount ?? 0) > 0;
   }
 }

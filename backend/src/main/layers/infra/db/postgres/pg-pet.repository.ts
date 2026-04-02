@@ -77,4 +77,12 @@ export class PgPetRepository
     const client = (transaction ? transaction : this.pool) as typeof this.pool;
     await client.query(sql.INCREMENT_RATINGS_COUNT, [petId]);
   }
+
+  async decrementRatingsCount(
+    petId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const client = (transaction ? transaction : this.pool) as typeof this.pool;
+    await client.query(sql.DECREMENT_RATINGS_COUNT, [petId]);
+  }
 }
